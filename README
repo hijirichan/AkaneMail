@@ -1,14 +1,15 @@
-Akane Mail(Ak@Ne!) github (http://github.com/) Edition Version 1.2.1
+Akane Mail(Ak@Ne!) GitHub Edition Version 1.2.1
+========
 
 Licence     : Modified BSD Licence
 Platform    : WindowsXP(SP3), WindowsVista(SP2), Windows7(SP1), Windows Server2003/2008
 Discription : This application is a Windows e-mail client software that supports POP3/APOP.
 
-***** ’ˆÓ *****
+***** æ³¨æ„ *****
 
-github”Å‚Ìƒ\[ƒXƒR[ƒh‚É‚Íƒrƒ‹ƒh‚É•K—v‚ÈnMail.dll‚¨‚æ‚ÑnMail.cs‚ğ“¯«‚µ‚Ä‚¢‚Ü‚¹‚ñB
-•Ê“rˆÈ‰º‚ÌƒTƒCƒg‚æ‚ènMail.dllŠJ”­ƒZƒbƒg‚ğƒ_ƒEƒ“ƒ[ƒh‚µ‚ÄAkaneMail‚¨‚æ‚ÑMailConverter‚Ì
-ƒfƒBƒŒƒNƒgƒŠ‚ÉnMail.dll‚ÆnMail.cs‚ğƒRƒs[‚µ‚Ä‚­‚¾‚³‚¢B
+githubç‰ˆã®ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã«ã¯ãƒ“ãƒ«ãƒ‰ã«å¿…è¦ãªnMail.dllãŠã‚ˆã³nMail.csã‚’åŒæ¢±ã—ã¦ã„ã¾ã›ã‚“ã€‚
+åˆ¥é€”ä»¥ä¸‹ã®ã‚µã‚¤ãƒˆã‚ˆã‚ŠnMail.dllé–‹ç™ºã‚»ãƒƒãƒˆ(32bitãŠã‚ˆã³64bit)ã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¦AkaneMailãŠã‚ˆã³
+MailConverterã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«nMail.dllã¨nMail.csã‚’ã‚³ãƒ”ãƒ¼ã—ã¦ãã ã•ã„ã€‚
 
 http://www.nanshiki.co.jp/software/index.html?nmail
 
@@ -27,8 +28,8 @@ http://www.nanshiki.co.jp/software/index.html?nmail
   MailConverter
   <Checkout Dir>\MailConvert\MailConvert\nMail.cs
 
-‘S‚Ä‚Ìƒ\ƒŠƒ…[ƒVƒ‡ƒ“‚Ìƒrƒ‹ƒh‚ªŠ®—¹‚µ‚½‚çAkaneMail‚Ìbin/Release(Debug‚Ìê‡‚ÍDebug)ƒfƒBƒŒƒNƒgƒŠ‚É
-ˆÈ‰º‚Ìƒtƒ@ƒCƒ‹‚ğŠi”[‚µ‚Ä‚©‚çÀs‚ğŠJn‚µ‚Ä‚­‚¾‚³‚¢B
+å…¨ã¦ã®ã‚½ãƒªãƒ¥ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ“ãƒ«ãƒ‰ãŒå®Œäº†ã—ãŸã‚‰AkaneMailã®bin\Release(Debugã®å ´åˆã¯Debug)ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«
+ä»¥ä¸‹ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ ¼ç´ã—ã¦ã‹ã‚‰å®Ÿè¡Œã‚’é–‹å§‹ã—ã¦ãã ã•ã„ã€‚
 
 * ACryptLib.dll
   <Checkout Dir>\ACryptLib\ACryptLib\bin\<Debug/Release>\ACryptLib.dll
@@ -36,22 +37,25 @@ http://www.nanshiki.co.jp/software/index.html?nmail
 * MailConvert.exe
   <Checkout Dir>\MailConvert\MailConvert\bin\<Debug/Release>MailConvert.exe
 
-* <Checkout Dir>\AkaneMail\AkaneMail\bin\<Debug/Release>\‚ÉŠi”[‚³‚ê‚éƒtƒ@ƒCƒ‹
+* <Checkout Dir>\AkaneMail\AkaneMail\bin\<Debug/Release>\ã«æ ¼ç´ã•ã‚Œã‚‹ãƒ•ã‚¡ã‚¤ãƒ«
   AkaneMail.exe
   ACryptLib.dll
   MailConvert.exe
   nMail.dll
 
-„‚Ì’˜ìŒ ‚Ì‚ ‚éƒR[ƒh‚Ì‚İ‚ÌŒöŠJ‚Ì‚½‚ß‘¼Ğ‚É’˜ìŒ ‚Ì‚ ‚énMail.dll‚¨‚æ‚ÑnMail.cs‚ğgithub‚É
-Ú‚¹‚é‚Ì‚Íƒ‰ƒCƒZƒ“ƒXˆá”½‚É¬‚è“¾‚é‰Â”\«‚à‚ ‚é‚½‚ßAZIP”Å‚Å”z•z‚µ‚Ä‚¢‚éƒ\[ƒXƒR[ƒh‚æ‚è
-nMail.dll‚¨‚æ‚ÑnMail.cs‚Æˆê•”‚Ìƒtƒ@ƒCƒ‹‚ğíœ‚µ‚½ƒR[ƒh‚Ì‚İ‚Éi‚Á‚Ägithub‚ÅŒöŠJ‚µ‚Ä‚¢‚Ü‚·B
+ç§ã®è‘—ä½œæ¨©ã®ã‚ã‚‹ã‚³ãƒ¼ãƒ‰ã®ã¿ã®å…¬é–‹ã®ãŸã‚ä»–ç¤¾ã«è‘—ä½œæ¨©ã®ã‚ã‚‹nMail.dllãŠã‚ˆã³nMail.csã‚’githubã«
+è¼‰ã›ã‚‹ã®ã¯ãƒ©ã‚¤ã‚»ãƒ³ã‚¹é•åã«æˆã‚Šå¾—ã‚‹å¯èƒ½æ€§ã‚‚ã‚ã‚‹ãŸã‚ã€ZIPç‰ˆã§é…å¸ƒã—ã¦ã„ã‚‹ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ã‚ˆã‚Š
+nMail.dllãŠã‚ˆã³nMail.csã¨ä¸€éƒ¨ã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤ã—ãŸã‚³ãƒ¼ãƒ‰ã®ã¿ã«çµã£ã¦githubã§å…¬é–‹ã—ã¦ã„ã¾ã™ã€‚
 
-‚·‚®‚Éƒ\[ƒX‚ğƒrƒ‹ƒh‚µ‚½‚¢ê‡‚Íƒz[ƒ€ƒy[ƒW‚ÉŒöŠJ‚³‚ê‚Ä‚¢‚éƒ\[ƒXƒR[ƒh”Å‚ğƒ_ƒEƒ“ƒ[ƒh‚µ‚Ä
-ƒrƒ‹ƒh‚µ‚Ä‚­‚¾‚³‚¢B(http://www.angel-teatime.com/soft/akane.htm)
+ã™ãã«ã‚½ãƒ¼ã‚¹ã‚’ãƒ“ãƒ«ãƒ‰ã—ãŸã„å ´åˆã¯ãƒ›ãƒ¼ãƒ ãƒšãƒ¼ã‚¸ã«å…¬é–‹ã•ã‚Œã¦ã„ã‚‹ã‚½ãƒ¼ã‚¹ã‚³ãƒ¼ãƒ‰ç‰ˆã‚’ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ã—ã¦
+ãƒ“ãƒ«ãƒ‰ã—ã¦ãã ã•ã„ã€‚(http://www.angel-teatime.com/soft/akane.htm)
 
-‚²•s•Ö‚ğ‚¨Š|‚¯’v‚µ‚Ü‚·‚ªA‚²—‰ğ‚Æ‚²‹¦—Í‚ğ‚æ‚ë‚µ‚­‚¨Šè‚¢’v‚µ‚Ü‚·B
+ãªãŠã€AkaneMailãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®readme.txtãƒ•ã‚¡ã‚¤ãƒ«ã¯ç¾çŠ¶ZIPç‰ˆã¨åŒã˜ShiftJISã‚³ãƒ¼ãƒ‰ã¨ãªã£ã¦ã„ã‚‹ãŸã‚
+GitHubã®ãƒ¬ãƒã‚¸ãƒˆãƒªã‹ã‚‰ç·¨é›†ã—ã‚ˆã†ã¨ã™ã‚‹ã¨æ—¥æœ¬èªéƒ¨åˆ†ãŒæ–‡å­—åŒ–ã‘ã™ã‚‹ã®ã§ç›´æ¥ç·¨é›†ã¯ãŠæ§ãˆãã ã•ã„ã€‚
+
+ã”ä¸ä¾¿ã‚’ãŠæ›ã‘è‡´ã—ã¾ã™ãŒã€ã”ç†è§£ã¨ã”å”åŠ›ã‚’ã‚ˆã‚ã—ããŠé¡˜ã„è‡´ã—ã¾ã™ã€‚
 
 2013.07.16 Sakura Mizuki(Angelic Software)
-URL   Fhttp://www.angel-teatime.com/
+URL   ï¼šhttp://www.angel-teatime.com/
 
 
