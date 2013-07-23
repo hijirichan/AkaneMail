@@ -1,4 +1,4 @@
-Akane Mail(Ak@Ne!) GitHub Edition Version 1.2.1
+Akane Mail Version 1.2.1
 ========
 
 Licence     : Modified BSD Licence
@@ -7,9 +7,16 @@ Discription : This application is a Windows e-mail client software that supports
 
 ***** 注意 *****
 
-github版のソースコードにはビルドに必要なnMail.dllおよびnMail.csを同梱していません。
-別途以下のサイトよりnMail.dll開発セット(32bitおよび64bit)をダウンロードしてAkaneMailおよび
-MailConverterのディレクトリにnMail.dllとnMail.csをコピーしてください。
+Akane Mailのソースコードは修正BSDライセンスの元に公開をさせて頂いています。
+
+・ソースコードは無保証であること。
+・ソースコード等の著作権表示を削除しない条件の下での再配布許可。
+・ソースコード、リソースの改変は私が著作権を持たないnMail.cs以外全てとする。
+・著作権者の条件を付け加えることが可能。(改変したソースコードの公開を必須とする)
+
+github版のソースコードには実行に必要なnMail.dllをレポジトリに格納していません。
+別途以下のサイトよりnMail.dll開発セット(32bitおよび64bit)をダウンロードし
+AkaneMailおよびMailConverterのディレクトリにnMail.dllをコピーしてください。
 
 http://www.nanshiki.co.jp/software/index.html?nmail
 
@@ -20,16 +27,8 @@ http://www.nanshiki.co.jp/software/index.html?nmail
   MailConverter
   <Checkout Dir>\MailConvert\MailConvert\bin\<Debug/Release>\nMail.dll
 
-* nMail.cs
-
-  AkaneMail
-  <Checkout Dir>\AkaneMail\AkaneMail\nMail.cs
-
-  MailConverter
-  <Checkout Dir>\MailConvert\MailConvert\nMail.cs
-
-全てのソリューションのビルドが完了したらAkaneMailのbin\Release(Debugの場合はDebug)ディレクトリに
-以下のファイルを格納してから実行を開始してください。
+全てのソリューションのビルドが完了したらAkaneMailのbin\Release(Debugの場合はDebug)の
+ディレクトリに以下のファイルを格納してから実行を開始してください。
 
 * ACryptLib.dll
   <Checkout Dir>\ACryptLib\ACryptLib\bin\<Debug/Release>\ACryptLib.dll
@@ -42,10 +41,6 @@ http://www.nanshiki.co.jp/software/index.html?nmail
   ACryptLib.dll
   MailConvert.exe
   nMail.dll
-
-私の著作権のあるコードのみの公開のため他社に著作権のあるnMail.dllおよびnMail.csをgithubに
-載せるのはライセンス違反に成り得る可能性もあるため、ZIP版で配布しているソースコードより
-nMail.dllおよびnMail.csと一部のファイルを削除したコードのみに絞ってgithubで公開しています。
 
 すぐにソースをビルドしたい場合はホームページに公開されているソースコード版をダウンロードして
 ビルドしてください。(http://www.angel-teatime.com/soft/akane.htm)
