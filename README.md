@@ -1,9 +1,9 @@
 Akane Mail Version 1.2.1
 ========
 
-Licence     : Modified BSD Licence
-Platform    : WindowsXP(SP3), WindowsVista(SP2), Windows7(SP1), Windows Server2003/2008
-Discription : This application is a Windows e-mail client software that supports POP3/APOP.
+Licence     : Modified BSD Licence  
+Platform    : WindowsXP(SP3), WindowsVista(SP2), Windows7(SP1), Windows Server2003/2008  
+Discription : This application is a Windows e-mail client software that supports POP3/APOP.  
 
 ***** 注意 *****
 
@@ -19,25 +19,25 @@ github版のソースコードには実行に必要なnMail.dllをレポジト�
 別途以下のサイトよりnMail.dll開発セット(32bitおよび64bit)をダウンロードし
 AkaneMailおよびMailConverterのディレクトリにnMail.dllをコピーしてください。
 
-http://www.nanshiki.co.jp/software/index.html?nmail
+<http://www.nanshiki.co.jp/software/index.html?nmail>
 
 * nMail.dll
-  * AkaneMail
-  * Checkout Dir\AkaneMail\AkaneMail\bin\<Debug/Release>\nMail.dll
+  * AkaneMail  
+    &lt;&lt;Checkout Dir&gt;&gt;\AkaneMail\AkaneMail\bin\(Debug / Release)\nMail.dll
 
-  * MailConverter
-  * Checkout Dir\MailConvert\MailConvert\bin\<Debug/Release>\nMail.dll
+  * MailConverter  
+    &lt;&lt;Checkout Dir&gt;&gt;\MailConvert\MailConvert\bin\(Debug / Release)\nMail.dll
 
 全てのソリューションのビルドが完了したらAkaneMailのbin\Release(Debugの場合はDebug)の
 ディレクトリに以下のファイルを格納してから実行を開始してください。
 
-* ACryptLib.dll
-  * Checkout Dir\ACryptLib\ACryptLib\bin\<Debug/Release>\ACryptLib.dll
+* ACryptLib.dll  
+  &lt;&lt;Checkout Dir&gt;&gt;\ACryptLib\ACryptLib\bin\(Debug / Release)\ACryptLib.dll
 
-* MailConvert.exe
-  * Checkout Dir\MailConvert\MailConvert\bin\<Debug/Release>MailConvert.exe
+* MailConvert.exe  
+  &lt;&lt;Checkout Dir&gt;&gt;\MailConvert\MailConvert\bin\(Debug / Release)\MailConvert.exe
 
-* Checkout Dir\AkaneMail\AkaneMail\bin\<Debug/Release>\に格納されるファイル
+* &lt;&lt;Checkout Dir&gt;&gt;\AkaneMail\AkaneMail\bin\(Debug / Release)\に格納されるファイル
   * AkaneMail.exe
   * ACryptLib.dll
   * MailConvert.exe
