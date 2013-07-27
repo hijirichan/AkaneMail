@@ -16,8 +16,8 @@ Akane Mailのソースコードは修正BSDライセンスの元に公開をさ�
 
 github版のソースコードには実行に必要なnMail.dllをレポジトリに格納していません。
 
-別途以下のサイトよりnMail.dll開発セット(32bitおよび64bit)をダウンロードし
-AkaneMailおよびMailConverterのディレクトリにnMail.dllをコピーしてください。
+別途以下のサイトよりnMail.dll開発セット(32bitおよび64bit)をダウンロードし  
+AkaneMailおよびMailConverterのディレクトリにnMail.dllをコピーしてください。  
 
 <http://www.nanshiki.co.jp/software/index.html?nmail>
 
@@ -43,15 +43,10 @@ AkaneMailおよびMailConverterのディレクトリにnMail.dllをコピーし�
   * MailConvert.exe
   * nMail.dll
 
-すぐにソースをビルドしたい場合はホームページに公開されているソースコード版をダウンロードして
-ビルドしてください。(http://www.angel-teatime.com/soft/akane.htm)
-
-なお、AkaneMailディレクトリのreadme.txtファイルは現状ZIP版と同じShiftJISコードとなっているため
-GitHubのレポジトリから編集しようとすると日本語部分が文字化けするので直接編集はお控えください。
-
-ご不便をお掛け致しますが、ご理解とご協力をよろしくお願い致します。
-
-2013.07.16 Sakura Mizuki(Angelic Software)
+すぐにソースをビルドしたい場合はホームページに公開されているソースコード版をダウンロードして  
+ビルドしてください。(http://www.angel-teatime.com/soft/akane.htm)  
+  
+2013.07.16 Sakura Mizuki(Angelic Software)  
 URL   ：http://www.angel-teatime.com/
 
 
