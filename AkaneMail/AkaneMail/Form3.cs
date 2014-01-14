@@ -536,7 +536,7 @@ namespace AkaneMail
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            // ファイルを開くかの確認をする
+            // 添付するファイルパスをを削除するのかを確認
             if(MessageBox.Show(e.ClickedItem.Text + "を削除しますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes){
                 // 選択した添付ファイルメニューを削除する
                 buttonAttachList.DropDownItems.Remove(e.ClickedItem);
@@ -545,6 +545,7 @@ namespace AkaneMail
                     buttonAttachList.Visible = false;
                 }
                 isDirty = true;
+                labelMessage.Text = "";
             }
         }
 
@@ -642,6 +643,47 @@ namespace AkaneMail
             else{
                 this.buttonPaste.Enabled = false;
             }
+        }
+
+        private void Form3_DragEnter(object sender, DragEventArgs e)
+        {
+            if(e.Data.GetDataPresent(DataFormats.FileDrop)){
+                // ドラッグ中のファイルやディレクトリの取得
+                string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                foreach(string d in drags){
+                    if(!System.IO.File.Exists(d)){
+                        // ファイル以外であればイベント・ハンドラを抜ける
+                        return;
+                    }
+                }
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void Form3_DragDrop(object sender, DragEventArgs e)
+        {
+            Icon appIcon;
+
+            // 添付ファイルが1個以上ある場合はそのメニューを削除する
+            if(buttonAttachList.DropDownItems.Count >= 1){
+                for(int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++){
+                    buttonAttachList.DropDownItems.RemoveAt(cnt);
+                }
+            }
+
+            buttonAttachList.Visible = true;
+
+            // ドラッグ＆ドロップされたファイルを添付ファイルリストに追加する
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            foreach(string fname in files){
+                appIcon = System.Drawing.Icon.ExtractAssociatedIcon(fname);
+                buttonAttachList.DropDownItems.Add(fname, appIcon.ToBitmap());
+            }
+
+            // isDirtyをtrueにする
+            isDirty = true;
         }
 
     }

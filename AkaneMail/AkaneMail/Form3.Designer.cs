@@ -68,21 +68,22 @@
             this.labelMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.buttonAttachList = new System.Windows.Forms.ToolStripDropDownButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.comboPriority = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBcc = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textCc = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.textSubject = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textAddress = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textBody = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.textCc = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBcc = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboPriority = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -444,6 +445,59 @@
             this.splitContainer1.SplitterDistance = 134;
             this.splitContainer1.TabIndex = 3;
             // 
+            // comboPriority
+            // 
+            this.comboPriority.FormattingEnabled = true;
+            this.comboPriority.Items.AddRange(new object[] {
+            "高い",
+            "普通",
+            "低い"});
+            this.comboPriority.Location = new System.Drawing.Point(59, 112);
+            this.comboPriority.Name = "comboPriority";
+            this.comboPriority.Size = new System.Drawing.Size(87, 20);
+            this.comboPriority.TabIndex = 9;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(41, 12);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "重要度";
+            // 
+            // textBcc
+            // 
+            this.textBcc.Location = new System.Drawing.Point(59, 62);
+            this.textBcc.Name = "textBcc";
+            this.textBcc.Size = new System.Drawing.Size(713, 19);
+            this.textBcc.TabIndex = 5;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 65);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 12);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "BCC";
+            // 
+            // textCc
+            // 
+            this.textCc.Location = new System.Drawing.Point(59, 37);
+            this.textCc.Name = "textCc";
+            this.textCc.Size = new System.Drawing.Size(713, 19);
+            this.textCc.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 40);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 12);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "CC";
+            // 
             // textSubject
             // 
             this.textSubject.Location = new System.Drawing.Point(59, 87);
@@ -494,61 +548,9 @@
             // 
             this.openFileDialog1.Filter = "すべてのファイル(*.*)|*.*";
             // 
-            // textCc
-            // 
-            this.textCc.Location = new System.Drawing.Point(59, 37);
-            this.textCc.Name = "textCc";
-            this.textCc.Size = new System.Drawing.Size(713, 19);
-            this.textCc.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 40);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(21, 12);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "CC";
-            // 
-            // textBcc
-            // 
-            this.textBcc.Location = new System.Drawing.Point(59, 62);
-            this.textBcc.Name = "textBcc";
-            this.textBcc.Size = new System.Drawing.Size(713, 19);
-            this.textBcc.TabIndex = 5;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 65);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 12);
-            this.label4.TabIndex = 4;
-            this.label4.Text = "BCC";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 115);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(41, 12);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "重要度";
-            // 
-            // comboPriority
-            // 
-            this.comboPriority.FormattingEnabled = true;
-            this.comboPriority.Items.AddRange(new object[] {
-            "高い",
-            "普通",
-            "低い"});
-            this.comboPriority.Location = new System.Drawing.Point(59, 112);
-            this.comboPriority.Name = "comboPriority";
-            this.comboPriority.Size = new System.Drawing.Size(87, 20);
-            this.comboPriority.TabIndex = 9;
-            // 
             // Form3
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 563);
@@ -561,8 +563,10 @@
             this.Name = "Form3";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "新規作成 - Ak@Ne!";
-            this.Load += new System.EventHandler(this.Form3_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3_FormClosing);
+            this.Load += new System.EventHandler(this.Form3_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form3_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form3_DragEnter);
             this.Resize += new System.EventHandler(this.Form3_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -574,6 +578,7 @@
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
