@@ -688,7 +688,7 @@
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip3;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "Ak@Ne! 1.2.0";
+            this.notifyIcon1.Text = "Ak@Ne!";
             this.notifyIcon1.Visible = true;
             // 
             // contextMenuStrip3

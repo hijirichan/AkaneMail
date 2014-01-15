@@ -56,6 +56,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.checkBrowser = new System.Windows.Forms.CheckBox();
             this.checkMinimizeTaskTray = new System.Windows.Forms.CheckBox();
+            this.checkPop3OverSSL = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.updownGetmailInterval)).BeginInit();
             this.SuspendLayout();
             // 
@@ -163,7 +164,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(287, 313);
+            this.buttonOK.Location = new System.Drawing.Point(287, 335);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 24;
@@ -174,7 +175,7 @@
             // buttonCencel
             // 
             this.buttonCencel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCencel.Location = new System.Drawing.Point(368, 313);
+            this.buttonCencel.Location = new System.Drawing.Point(368, 335);
             this.buttonCencel.Name = "buttonCencel";
             this.buttonCencel.Size = new System.Drawing.Size(75, 23);
             this.buttonCencel.TabIndex = 25;
@@ -225,7 +226,7 @@
             // checkAutGetMail
             // 
             this.checkAutGetMail.AutoSize = true;
-            this.checkAutGetMail.Location = new System.Drawing.Point(86, 223);
+            this.checkAutGetMail.Location = new System.Drawing.Point(86, 245);
             this.checkAutGetMail.Name = "checkAutGetMail";
             this.checkAutGetMail.Size = new System.Drawing.Size(133, 16);
             this.checkAutGetMail.TabIndex = 17;
@@ -236,7 +237,7 @@
             // updownGetmailInterval
             // 
             this.updownGetmailInterval.Enabled = false;
-            this.updownGetmailInterval.Location = new System.Drawing.Point(225, 222);
+            this.updownGetmailInterval.Location = new System.Drawing.Point(225, 244);
             this.updownGetmailInterval.Maximum = new decimal(new int[] {
             120,
             0,
@@ -260,7 +261,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Enabled = false;
-            this.label7.Location = new System.Drawing.Point(269, 224);
+            this.label7.Location = new System.Drawing.Point(269, 246);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(93, 12);
             this.label7.TabIndex = 19;
@@ -269,7 +270,7 @@
             // checkSoundPlay
             // 
             this.checkSoundPlay.AutoSize = true;
-            this.checkSoundPlay.Location = new System.Drawing.Point(86, 247);
+            this.checkSoundPlay.Location = new System.Drawing.Point(86, 269);
             this.checkSoundPlay.Name = "checkSoundPlay";
             this.checkSoundPlay.Size = new System.Drawing.Size(99, 16);
             this.checkSoundPlay.TabIndex = 20;
@@ -280,7 +281,7 @@
             // buttonBrowse
             // 
             this.buttonBrowse.Enabled = false;
-            this.buttonBrowse.Location = new System.Drawing.Point(415, 243);
+            this.buttonBrowse.Location = new System.Drawing.Point(415, 265);
             this.buttonBrowse.Name = "buttonBrowse";
             this.buttonBrowse.Size = new System.Drawing.Size(22, 23);
             this.buttonBrowse.TabIndex = 22;
@@ -291,7 +292,7 @@
             // textSoundFileName
             // 
             this.textSoundFileName.Enabled = false;
-            this.textSoundFileName.Location = new System.Drawing.Point(189, 245);
+            this.textSoundFileName.Location = new System.Drawing.Point(189, 267);
             this.textSoundFileName.Name = "textSoundFileName";
             this.textSoundFileName.Size = new System.Drawing.Size(220, 19);
             this.textSoundFileName.TabIndex = 21;
@@ -303,7 +304,7 @@
             // checkBrowser
             // 
             this.checkBrowser.AutoSize = true;
-            this.checkBrowser.Location = new System.Drawing.Point(86, 269);
+            this.checkBrowser.Location = new System.Drawing.Point(86, 291);
             this.checkBrowser.Name = "checkBrowser";
             this.checkBrowser.Size = new System.Drawing.Size(218, 16);
             this.checkBrowser.TabIndex = 23;
@@ -314,18 +315,29 @@
             // checkMinimizeTaskTray
             // 
             this.checkMinimizeTaskTray.AutoSize = true;
-            this.checkMinimizeTaskTray.Location = new System.Drawing.Point(86, 291);
+            this.checkMinimizeTaskTray.Location = new System.Drawing.Point(86, 313);
             this.checkMinimizeTaskTray.Name = "checkMinimizeTaskTray";
             this.checkMinimizeTaskTray.Size = new System.Drawing.Size(184, 16);
             this.checkMinimizeTaskTray.TabIndex = 26;
             this.checkMinimizeTaskTray.Text = "最小化時にタスクトレイに格納する";
             this.checkMinimizeTaskTray.UseVisualStyleBackColor = true;
             // 
+            // checkPop3OverSSL
+            // 
+            this.checkPop3OverSSL.AutoSize = true;
+            this.checkPop3OverSSL.Location = new System.Drawing.Point(86, 223);
+            this.checkPop3OverSSL.Name = "checkPop3OverSSL";
+            this.checkPop3OverSSL.Size = new System.Drawing.Size(189, 16);
+            this.checkPop3OverSSL.TabIndex = 27;
+            this.checkPop3OverSSL.Text = "POP3 over SSL/TLSを有効にする";
+            this.checkPop3OverSSL.UseVisualStyleBackColor = true;
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 350);
+            this.ClientSize = new System.Drawing.Size(449, 370);
+            this.Controls.Add(this.checkPop3OverSSL);
             this.Controls.Add(this.checkMinimizeTaskTray);
             this.Controls.Add(this.checkBrowser);
             this.Controls.Add(this.textSoundFileName);
@@ -397,5 +409,6 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.CheckBox checkBrowser;
         private System.Windows.Forms.CheckBox checkMinimizeTaskTray;
+        private System.Windows.Forms.CheckBox checkPop3OverSSL;
     }
 }

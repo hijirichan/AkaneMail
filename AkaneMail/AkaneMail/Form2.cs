@@ -32,6 +32,7 @@ namespace AkaneMail
             Mail.apopFlag = checkApop.Checked;
             Mail.deleteMail = checkDeleteMail.Checked;
             Mail.popBeforeSMTP = checkPopBeforeSmtp.Checked;
+            Mail.popOverSSL = checkPop3OverSSL.Checked;
             Mail.autoMailFlag = checkAutGetMail.Checked;
             Mail.getMailInterval = Int32.Parse(updownGetmailInterval.Value.ToString());
             Mail.popSoundFlag = checkSoundPlay.Checked;
@@ -66,8 +67,10 @@ namespace AkaneMail
                 checkApop.Checked = Mail.apopFlag;
                 checkDeleteMail.Checked = Mail.deleteMail;
                 checkPopBeforeSmtp.Checked = Mail.popBeforeSMTP;
+                checkPop3OverSSL.Checked = Mail.popOverSSL;
                 checkAutGetMail.Checked = Mail.autoMailFlag;
                 checkMinimizeTaskTray.Checked = Mail.minimizeTaskTray;
+
                 // 旧バージョンのコンフィグ用対策
                 if(Mail.getMailInterval != 0){
                     updownGetmailInterval.Value = Mail.getMailInterval;
@@ -75,6 +78,7 @@ namespace AkaneMail
                 else{
                     updownGetmailInterval.Value = 10;
                 }
+
                 checkSoundPlay.Checked = Mail.popSoundFlag;
                 textSoundFileName.Text = Mail.popSoundName;
                 checkBrowser.Checked = Mail.bodyIEShow;

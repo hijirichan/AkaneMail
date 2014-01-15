@@ -70,6 +70,7 @@ namespace AkaneMail
             public bool m_apopFlag;             // APOPのフラグ
             public bool m_deleteMail;           // POP受信時メール削除フラグ
             public bool m_popBeforeSMTP;        // POP before SMTPフラグ
+            public bool m_popOverSSL;           // POP3 over SSL/TLSフラグ
             public bool m_autoMailFlag;         // メール自動受信フラグ
             public int m_getMailInterval;       // メール受信間隔
             public bool m_popSoundFlag;         // メール着信音フラグ
@@ -715,8 +716,14 @@ namespace AkaneMail
                 // APOPを使用するときに使うフラグ
                 pop.APop = Mail.apopFlag;
 
-                // POP3へ接続する
-                pop.Connect(Mail.popServer, Mail.popPortNumber);
+                // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
+                if(Mail.popOverSSL == true){
+                    pop.SSL = nMail.Pop3.SSL3;
+                    pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
+                }else{
+                    // POP3へ接続する
+                    pop.Connect(Mail.popServer, Mail.popPortNumber);
+                }
 
                 // POP3への認証処理を行う
                 pop.Authenticate(Mail.userName, Mail.passWord);
@@ -939,8 +946,14 @@ namespace AkaneMail
                         // APOPを使用するときに使うフラグ
                         pop.APop = Mail.apopFlag;
 
-                        // POP3へ接続する
-                        pop.Connect(Mail.popServer, Mail.popPortNumber);
+                        // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
+                        if(Mail.popOverSSL == true){
+                            pop.SSL = nMail.Pop3.SSL3;
+                            pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
+                        }else{
+                            // POP3へ接続する
+                            pop.Connect(Mail.popServer, Mail.popPortNumber);
+                        }
 
                         // POP3への認証処理を行う
                         pop.Authenticate(Mail.userName, Mail.passWord);
@@ -1170,8 +1183,14 @@ namespace AkaneMail
                         // APOPを使用するときに使うフラグ
                         pop.APop = Mail.apopFlag;
 
-                        // POP3へ接続する
-                        pop.Connect(Mail.popServer, Mail.popPortNumber);
+                        // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
+                        if(Mail.popOverSSL == true){
+                            pop.SSL = nMail.Pop3.SSL3;
+                            pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
+                        }else{
+                            // POP3へ接続する
+                            pop.Connect(Mail.popServer, Mail.popPortNumber);
+                        }
 
                         // POP3への認証処理を行う
                         pop.Authenticate(Mail.userName, Mail.passWord);
@@ -1890,6 +1909,7 @@ namespace AkaneMail
             initMail.m_apopFlag = Mail.apopFlag;
             initMail.m_deleteMail = Mail.deleteMail;
             initMail.m_popBeforeSMTP = Mail.popBeforeSMTP;
+            initMail.m_popOverSSL = Mail.popOverSSL;
             initMail.m_autoMailFlag = Mail.autoMailFlag;
             initMail.m_getMailInterval = Mail.getMailInterval;
             initMail.m_popSoundFlag = Mail.popSoundFlag;
@@ -1939,6 +1959,7 @@ namespace AkaneMail
             Mail.apopFlag = false;
             Mail.deleteMail = false;
             Mail.popBeforeSMTP = false;
+            Mail.popOverSSL = false;
             Mail.autoMailFlag = false;
             Mail.getMailInterval = 10;
             Mail.popSoundName = "";
@@ -1975,6 +1996,7 @@ namespace AkaneMail
                 Mail.apopFlag = initMail.m_apopFlag;
                 Mail.deleteMail = initMail.m_deleteMail;
                 Mail.popBeforeSMTP = initMail.m_popBeforeSMTP;
+                Mail.popOverSSL = initMail.m_popOverSSL;
                 Mail.autoMailFlag = initMail.m_autoMailFlag;
                 Mail.getMailInterval = initMail.m_getMailInterval;
                 Mail.popSoundFlag = initMail.m_popSoundFlag;
