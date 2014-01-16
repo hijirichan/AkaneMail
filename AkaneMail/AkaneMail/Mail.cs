@@ -19,6 +19,7 @@ namespace AkaneMail
         public static bool deleteMail;          // POP受信時メール削除フラグ
         public static bool popBeforeSMTP;       // POP before SMTPフラグ
         public static bool popOverSSL;          // POP3 over SSL/TLSフラグ
+        public static bool smtpAuth;            // SMTP認証フラグ
         public static bool autoMailFlag;        // メール自動受信フラグ
         public static int getMailInterval;      // メール取得間隔
         public static bool popSoundFlag;        // メール着信音フラグ

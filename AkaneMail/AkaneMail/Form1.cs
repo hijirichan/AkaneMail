@@ -71,6 +71,7 @@ namespace AkaneMail
             public bool m_deleteMail;           // POP受信時メール削除フラグ
             public bool m_popBeforeSMTP;        // POP before SMTPフラグ
             public bool m_popOverSSL;           // POP3 over SSL/TLSフラグ
+            public bool m_smtpAuth;             // SMTP認証フラグ
             public bool m_autoMailFlag;         // メール自動受信フラグ
             public int m_getMailInterval;       // メール受信間隔
             public bool m_popSoundFlag;         // メール着信音フラグ
@@ -985,6 +986,14 @@ namespace AkaneMail
                 nMail.Smtp smtp = new nMail.Smtp(Mail.smtpServer);
                 smtp.Port = Mail.smtpPortNumber;
 
+                // SMTP認証フラグが有効の時はSMTP認証を行う
+                if(Mail.smtpAuth == true){
+                    // SMTPサーバに接続
+                    smtp.Connect();
+                    // SMTP認証を行う
+                    smtp.Authenticate(Mail.userName, Mail.passWord, nMail.Smtp.AuthPlain | nMail.Smtp.AuthCramMd5);
+                }
+
                 foreach (Mail mail in collectionMail[SEND]) {
                     if (mail.notReadYet == true) {
                         // CCが存在するとき
@@ -1212,7 +1221,15 @@ namespace AkaneMail
                 // SMTPのセッションを作成する
                 nMail.Smtp smtp = new nMail.Smtp(Mail.smtpServer);
                 smtp.Port = Mail.smtpPortNumber;
-                
+
+                // SMTP認証フラグが有効の時はSMTP認証を行う
+                if(Mail.smtpAuth == true){
+                    // SMTPサーバに接続
+                    smtp.Connect();
+                    // SMTP認証を行う
+                    smtp.Authenticate(Mail.userName, Mail.passWord, nMail.Smtp.AuthPlain | nMail.Smtp.AuthCramMd5);
+                }
+
                 // CCが存在するとき
                 if(cc != ""){
                     // CCの宛先を設定する
@@ -1910,6 +1927,7 @@ namespace AkaneMail
             initMail.m_deleteMail = Mail.deleteMail;
             initMail.m_popBeforeSMTP = Mail.popBeforeSMTP;
             initMail.m_popOverSSL = Mail.popOverSSL;
+            initMail.m_smtpAuth = Mail.smtpAuth;
             initMail.m_autoMailFlag = Mail.autoMailFlag;
             initMail.m_getMailInterval = Mail.getMailInterval;
             initMail.m_popSoundFlag = Mail.popSoundFlag;
@@ -1960,6 +1978,7 @@ namespace AkaneMail
             Mail.deleteMail = false;
             Mail.popBeforeSMTP = false;
             Mail.popOverSSL = false;
+            Mail.smtpAuth = false;
             Mail.autoMailFlag = false;
             Mail.getMailInterval = 10;
             Mail.popSoundName = "";
@@ -1997,6 +2016,7 @@ namespace AkaneMail
                 Mail.deleteMail = initMail.m_deleteMail;
                 Mail.popBeforeSMTP = initMail.m_popBeforeSMTP;
                 Mail.popOverSSL = initMail.m_popOverSSL;
+                Mail.smtpAuth = initMail.m_smtpAuth;
                 Mail.autoMailFlag = initMail.m_autoMailFlag;
                 Mail.getMailInterval = initMail.m_getMailInterval;
                 Mail.popSoundFlag = initMail.m_popSoundFlag;

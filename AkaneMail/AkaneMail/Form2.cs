@@ -33,6 +33,7 @@ namespace AkaneMail
             Mail.deleteMail = checkDeleteMail.Checked;
             Mail.popBeforeSMTP = checkPopBeforeSmtp.Checked;
             Mail.popOverSSL = checkPop3OverSSL.Checked;
+            Mail.smtpAuth = checkSmtpAuth.Checked;
             Mail.autoMailFlag = checkAutGetMail.Checked;
             Mail.getMailInterval = Int32.Parse(updownGetmailInterval.Value.ToString());
             Mail.popSoundFlag = checkSoundPlay.Checked;
@@ -68,6 +69,7 @@ namespace AkaneMail
                 checkDeleteMail.Checked = Mail.deleteMail;
                 checkPopBeforeSmtp.Checked = Mail.popBeforeSMTP;
                 checkPop3OverSSL.Checked = Mail.popOverSSL;
+                checkSmtpAuth.Checked = Mail.smtpAuth;
                 checkAutGetMail.Checked = Mail.autoMailFlag;
                 checkMinimizeTaskTray.Checked = Mail.minimizeTaskTray;
 
