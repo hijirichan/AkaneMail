@@ -1418,7 +1418,7 @@ namespace AkaneMail
             DialogResult ret = Form2.ShowDialog();
 
             if(ret == DialogResult.OK){
-                if(Form2.checkAutGetMail.Checked == true){
+                if(Form2.checkAutoGetMail.Checked == true){
                     timer2.Interval = Mail.getMailInterval * 60000;
                     timer2.Enabled = true;
                 }

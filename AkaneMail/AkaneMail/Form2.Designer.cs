@@ -47,7 +47,7 @@
             this.textPopPortNo = new System.Windows.Forms.TextBox();
             this.textFromName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.checkAutGetMail = new System.Windows.Forms.CheckBox();
+            this.checkAutoGetMail = new System.Windows.Forms.CheckBox();
             this.updownGetmailInterval = new System.Windows.Forms.NumericUpDown();
             this.label7 = new System.Windows.Forms.Label();
             this.checkSoundPlay = new System.Windows.Forms.CheckBox();
@@ -224,21 +224,21 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "名前";
             // 
-            // checkAutGetMail
+            // checkAutoGetMail
             // 
-            this.checkAutGetMail.AutoSize = true;
-            this.checkAutGetMail.Location = new System.Drawing.Point(86, 268);
-            this.checkAutGetMail.Name = "checkAutGetMail";
-            this.checkAutGetMail.Size = new System.Drawing.Size(133, 16);
-            this.checkAutGetMail.TabIndex = 17;
-            this.checkAutGetMail.Text = "自動受信を有効にする";
-            this.checkAutGetMail.UseVisualStyleBackColor = true;
-            this.checkAutGetMail.CheckedChanged += new System.EventHandler(this.checkAutGetMail_CheckedChanged);
+            this.checkAutoGetMail.AutoSize = true;
+            this.checkAutoGetMail.Location = new System.Drawing.Point(86, 267);
+            this.checkAutoGetMail.Name = "checkAutoGetMail";
+            this.checkAutoGetMail.Size = new System.Drawing.Size(133, 16);
+            this.checkAutoGetMail.TabIndex = 17;
+            this.checkAutoGetMail.Text = "自動受信を有効にする";
+            this.checkAutoGetMail.UseVisualStyleBackColor = true;
+            this.checkAutoGetMail.CheckedChanged += new System.EventHandler(this.checkAutGetMail_CheckedChanged);
             // 
             // updownGetmailInterval
             // 
             this.updownGetmailInterval.Enabled = false;
-            this.updownGetmailInterval.Location = new System.Drawing.Point(225, 267);
+            this.updownGetmailInterval.Location = new System.Drawing.Point(225, 266);
             this.updownGetmailInterval.Maximum = new decimal(new int[] {
             120,
             0,
@@ -262,7 +262,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Enabled = false;
-            this.label7.Location = new System.Drawing.Point(269, 269);
+            this.label7.Location = new System.Drawing.Point(269, 268);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(93, 12);
             this.label7.TabIndex = 19;
@@ -357,7 +357,7 @@
             this.Controls.Add(this.checkSoundPlay);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.updownGetmailInterval);
-            this.Controls.Add(this.checkAutGetMail);
+            this.Controls.Add(this.checkAutoGetMail);
             this.Controls.Add(this.textFromName);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textPopPortNo);
@@ -382,7 +382,7 @@
             this.MinimizeBox = false;
             this.Name = "Form2";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "設定";
             this.Load += new System.EventHandler(this.Form2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.updownGetmailInterval)).EndInit();
@@ -412,7 +412,7 @@
         private System.Windows.Forms.TextBox textPopPortNo;
         private System.Windows.Forms.TextBox textFromName;
         private System.Windows.Forms.Label label6;
-        public System.Windows.Forms.CheckBox checkAutGetMail;
+        public System.Windows.Forms.CheckBox checkAutoGetMail;
         private System.Windows.Forms.NumericUpDown updownGetmailInterval;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox checkSoundPlay;
