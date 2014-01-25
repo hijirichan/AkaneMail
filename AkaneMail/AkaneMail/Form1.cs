@@ -121,9 +121,6 @@ namespace AkaneMail
             };
 
             private int _column;
-            private SortOrder _order;
-            private ComparerMode _mode;
-            private ComparerMode[] _columnModes;
 
             /// <summary>
             /// 並び替えるListView列の番号
@@ -133,10 +130,10 @@ namespace AkaneMail
                 set
                 {
                     if (_column == value) {
-                        if (_order == SortOrder.Ascending)
-                            _order = SortOrder.Descending;
-                        else if (_order == SortOrder.Descending)
-                            _order = SortOrder.Ascending;
+                        if (Order == SortOrder.Ascending)
+                            Order = SortOrder.Descending;
+                        else if (Order == SortOrder.Descending)
+                            Order = SortOrder.Ascending;
                     }
                     _column = value;
                 }
@@ -149,28 +146,17 @@ namespace AkaneMail
             /// <summary>
             /// 昇順か降順か
             /// </summary>
-            public SortOrder Order
-            {
-                set { _order = value; }
-                get { return _order; }
-            }
+            public SortOrder Order { get; set; }
 
             /// <summary>
             /// 並び替えの方法
             /// </summary>
-            public ComparerMode Mode
-            {
-                set { _mode = value; }
-                get { return _mode; }
-            }
+            public ComparerMode Mode { get; private set; }
 
             /// <summary>
             /// 列ごとの並び替えの方法
             /// </summary>
-            public ComparerMode[] ColumnModes
-            {
-                set { _columnModes = value; }
-            }
+            public ComparerMode[] ColumnModes { get; set; }
 
             /// <summary>
             /// ListViewItemComparerクラスのコンストラクタ
@@ -181,15 +167,15 @@ namespace AkaneMail
             public ListViewItemComparer(int col, SortOrder ord, ComparerMode cmod)
             {
                 _column = col;
-                _order = ord;
-                _mode = cmod;
+                Order = ord;
+                Mode = cmod;
             }
 
             public ListViewItemComparer()
             {
                 _column = 0;
-                _order = SortOrder.Ascending;
-                _mode = ComparerMode.String;
+                Order = SortOrder.Ascending;
+                Mode = ComparerMode.String;
             }
 
             // xがyより小さいときはマイナスの数、大きいときはプラスの数、
@@ -203,11 +189,11 @@ namespace AkaneMail
                 ListViewItem itemy = (ListViewItem)y;
 
                 //並べ替えの方法を決定
-                if (_columnModes != null && _columnModes.Length > _column)
-                    _mode = _columnModes[_column];
+                if (ColumnModes != null && ColumnModes.Length > _column)
+                    Mode = ColumnModes[_column];
 
                 // 並び替えの方法別に、xとyを比較する
-                switch (_mode) {
+                switch (Mode) {
                     case ComparerMode.String:
                         result = string.Compare(itemx.SubItems[_column].Text,
                             itemy.SubItems[_column].Text);
@@ -224,9 +210,9 @@ namespace AkaneMail
                 }
 
                 // 降順の時は結果を+-逆にする
-                if (_order == SortOrder.Descending)
+                if (Order == SortOrder.Descending)
                     result = -result;
-                else if (_order == SortOrder.None)
+                else if (Order == SortOrder.None)
                     result = 0;
 
                 // 結果を返す
@@ -712,125 +698,126 @@ namespace AkaneMail
                 labelMessage.Text = "メール受信中";
 
                 // POP3のセッションを作成する
-                nMail.Pop3 pop = new nMail.Pop3();
+                using (var pop = new nMail.Pop3())
+                {
+                    // POP3への接続タイムアウト設定をする
+                    nMail.Options.EnableConnectTimeout();
 
-                // POP3への接続タイムアウト設定をする
-                nMail.Options.EnableConnectTimeout();
+                    // APOPを使用するときに使うフラグ
+                    pop.APop = Mail.apopFlag;
 
-                // APOPを使用するときに使うフラグ
-                pop.APop = Mail.apopFlag;
-
-                // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
-                if(Mail.popOverSSL == true){
-                    pop.SSL = nMail.Pop3.SSL3;
-                    pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
-                }else{
-                    // POP3へ接続する
-                    pop.Connect(Mail.popServer, Mail.popPortNumber);
-                }
-
-                // POP3への認証処理を行う
-                pop.Authenticate(Mail.userName, Mail.passWord);
-
-                // POP3サーバ上に1件以上のメールが存在するとき
-                if (pop.Count >= 1) {
-                    // ステータスバーに状況表示する
-                    labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
-                } else {
-                    // ステータスバーに状況表示する
-                    labelMessage.Text = "新着のメッセージはありませんでした。";
-
-                    // POP3から切断する
-                    pop.Close();
-
-                    // メール受信のメニューとツールボタンを有効化する
-                    Invoke(enableButton, 0);
-
-                    return;
-                }
-
-                // 未受信のメールが何件あるかチェックする
-                for (int no = 1; no <= pop.Count; no++) {
-                    // メールのUIDLを取得する
-                    pop.GetUidl(no);
-
-                    // UIDLを文字列として格納
-                    string uidl = pop.Uidl;
-
-                    // 受信メールに該当するUIDLのものがある個数を数える
-                    receivedCount += collectionMail[RECEIVE].Count(m => m.uidl == uidl);
-
-                    // 受信メールに該当するUIDLのものがある個数を数える
-                    receivedCount += collectionMail[DELETE].Count(m => m.uidl == uidl);
-
-                }
-
-                // 受信済みメールカウントがPOP3サーバ上にあるメール件数と同じとき
-                if (receivedCount == pop.Count) {
-                    // ステータスバーに状況表示する
-                    labelMessage.Text = "新着のメッセージはありませんでした。";
-
-                    // POP3から切断する
-                    pop.Close();
-
-                    // プログレスバーを非表示に戻す
-                    Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
-
-                    // メール受信のメニューとツールボタンを有効化する
-                    Invoke(enableButton, 0);
-
-                    return;
-                }
-
-                // プログレスバーを表示して最大値を未受信メール件数に設定する
-                int mailCountMax = pop.Count - receivedCount;
-                Invoke(progressMailInit, mailCountMax);
-
-                // 未受信のメールを取得するためカウントを1増加させる
-                receivedCount++;
-
-                // 取得したメールをコレクションに追加する
-                for (int no = receivedCount; no <= pop.Count; no++) {
-                    // 受信中件数を表示
-                    labelMessage.Text = no + "件目のメールを受信しています。";
-
-                    // メールのUIDLを取得する
-                    pop.GetUidl(no);
-
-                    // ヘッダのデコードを無効にする(実験)
-                    //nMail.Options.DisableDecodeHeader();
-
-                    // HTML/Base64のデコードを無効にする
-                    nMail.Options.DisableDecodeBodyText();
-
-                    // メールの情報を取得する
-                    pop.GetMail(no);
-
-                    // メールの情報を格納する
-                    //Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetHeaderField("Cc:"), "", GetPriority(pop.Header));
-                    Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", GetPriority(pop.Header));
-                    collectionMail[RECEIVE].Add(mail);
-
-                    // 受信メールの数を増加する
-                    mailCount++;
-
-                    // メール受信時にPOP3サーバ上のメール削除のチェックがある時はPOP3サーバからメールを削除する
-                    if (Mail.deleteMail == true) {
-                        pop.Delete(no);
+                    // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
+                    if (Mail.popOverSSL == true)
+                    {
+                        pop.SSL = nMail.Pop3.SSL3;
+                        pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
+                    }
+                    else
+                    {
+                        // POP3へ接続する
+                        pop.Connect(Mail.popServer, Mail.popPortNumber);
                     }
 
-                    // メールの受信件数を更新する
-                    Invoke(progressMailUpdate, mailCount);
+                    // POP3への認証処理を行う
+                    pop.Authenticate(Mail.userName, Mail.passWord);
 
-                    // スレッドを1秒間待機させる
-                    System.Threading.Thread.Sleep(1000);
+                    // POP3サーバ上に1件以上のメールが存在するとき
+                    if (pop.Count >= 1)
+                    {
+                        // ステータスバーに状況表示する
+                        labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
+                    }
+                    else
+                    {
+                        // ステータスバーに状況表示する
+                        labelMessage.Text = "新着のメッセージはありませんでした。";
+
+                        // メール受信のメニューとツールボタンを有効化する
+                        Invoke(enableButton, 0);
+
+                        return;
+                    }
+
+                    // 未受信のメールが何件あるかチェックする
+                    for (int no = 1; no <= pop.Count; no++)
+                    {
+                        // メールのUIDLを取得する
+                        pop.GetUidl(no);
+
+                        // UIDLを文字列として格納
+                        string uidl = pop.Uidl;
+
+                        // 受信メールに該当するUIDLのものがある個数を数える
+                        receivedCount += collectionMail[RECEIVE].Count(m => m.uidl == uidl);
+
+                        // 受信メールに該当するUIDLのものがある個数を数える
+                        receivedCount += collectionMail[DELETE].Count(m => m.uidl == uidl);
+
+                    }
+
+                    // 受信済みメールカウントがPOP3サーバ上にあるメール件数と同じとき
+                    if (receivedCount == pop.Count)
+                    {
+                        // ステータスバーに状況表示する
+                        labelMessage.Text = "新着のメッセージはありませんでした。";
+
+                        // プログレスバーを非表示に戻す
+                        Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+
+                        // メール受信のメニューとツールボタンを有効化する
+                        Invoke(enableButton, 0);
+
+                        return;
+                    }
+
+                    // プログレスバーを表示して最大値を未受信メール件数に設定する
+                    int mailCountMax = pop.Count - receivedCount;
+                    Invoke(progressMailInit, mailCountMax);
+
+                    // 未受信のメールを取得するためカウントを1増加させる
+                    receivedCount++;
+
+                    // 取得したメールをコレクションに追加する
+                    for (int no = receivedCount; no <= pop.Count; no++)
+                    {
+                        // 受信中件数を表示
+                        labelMessage.Text = no + "件目のメールを受信しています。";
+
+                        // メールのUIDLを取得する
+                        pop.GetUidl(no);
+
+                        // ヘッダのデコードを無効にする(実験)
+                        //nMail.Options.DisableDecodeHeader();
+
+                        // HTML/Base64のデコードを無効にする
+                        nMail.Options.DisableDecodeBodyText();
+
+                        // メールの情報を取得する
+                        pop.GetMail(no);
+
+                        // メールの情報を格納する
+                        //Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetHeaderField("Cc:"), "", GetPriority(pop.Header));
+                        Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", GetPriority(pop.Header));
+                        collectionMail[RECEIVE].Add(mail);
+
+                        // 受信メールの数を増加する
+                        mailCount++;
+
+                        // メール受信時にPOP3サーバ上のメール削除のチェックがある時はPOP3サーバからメールを削除する
+                        if (Mail.deleteMail == true)
+                        {
+                            pop.Delete(no);
+                        }
+
+                        // メールの受信件数を更新する
+                        Invoke(progressMailUpdate, mailCount);
+
+                        // スレッドを1秒間待機させる
+                        System.Threading.Thread.Sleep(1000);
+                    }
                 }
-
                 // プログレスバーを非表示に戻す
                 Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
-
-                // POP3から切断する
-                pop.Close();
 
                 // メール受信のメニューとツールボタンを有効化する
                 Invoke(enableButton, 0);
@@ -927,28 +914,29 @@ namespace AkaneMail
                 if (Mail.popBeforeSMTP == true) {
                     try {
                         // POP3のセッションを作成する
-                        nMail.Pop3 pop = new nMail.Pop3();
+                        using (var pop = new nMail.Pop3())
+                        {
+                            // POP3への接続タイムアウト設定をする
+                            nMail.Options.EnableConnectTimeout();
 
-                        // POP3への接続タイムアウト設定をする
-                        nMail.Options.EnableConnectTimeout();
+                            // APOPを使用するときに使うフラグ
+                            pop.APop = Mail.apopFlag;
 
-                        // APOPを使用するときに使うフラグ
-                        pop.APop = Mail.apopFlag;
+                            // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
+                            if (Mail.popOverSSL == true)
+                            {
+                                pop.SSL = nMail.Pop3.SSL3;
+                                pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
+                            }
+                            else
+                            {
+                                // POP3へ接続する
+                                pop.Connect(Mail.popServer, Mail.popPortNumber);
+                            }
 
-                        // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
-                        if(Mail.popOverSSL == true){
-                            pop.SSL = nMail.Pop3.SSL3;
-                            pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
-                        }else{
-                            // POP3へ接続する
-                            pop.Connect(Mail.popServer, Mail.popPortNumber);
+                            // POP3への認証処理を行う
+                            pop.Authenticate(Mail.userName, Mail.passWord);
                         }
-
-                        // POP3への認証処理を行う
-                        pop.Authenticate(Mail.userName, Mail.passWord);
-
-                        // 何もせずに切断する
-                        pop.Close();
                     }
                     catch (nMail.nMailException nex) {
                         // ステータスバーに状況表示する
@@ -971,62 +959,67 @@ namespace AkaneMail
                 }
 
                 // SMTPのセッションを作成する
-                nMail.Smtp smtp = new nMail.Smtp(Mail.smtpServer);
-                smtp.Port = Mail.smtpPortNumber;
+                using (var smtp = new nMail.Smtp(Mail.smtpServer))
+                {
+                    smtp.Port = Mail.smtpPortNumber;
 
-                // SMTP認証フラグが有効の時はSMTP認証を行う
-                if(Mail.smtpAuth == true){
-                    // SMTPサーバに接続
-                    smtp.Connect();
-                    // SMTP認証を行う
-                    smtp.Authenticate(Mail.userName, Mail.passWord, nMail.Smtp.AuthPlain | nMail.Smtp.AuthCramMd5);
-                }
+                    // SMTP認証フラグが有効の時はSMTP認証を行う
+                    if (Mail.smtpAuth == true)
+                    {
+                        // SMTPサーバに接続
+                        smtp.Connect();
+                        // SMTP認証を行う
+                        smtp.Authenticate(Mail.userName, Mail.passWord, nMail.Smtp.AuthPlain | nMail.Smtp.AuthCramMd5);
+                    }
 
-                foreach (Mail mail in collectionMail[SEND]) {
-                    if (mail.notReadYet == true) {
-                        // CCが存在するとき
-                        if (mail.cc != "") {
-                            // CCの宛先を設定する
-                            smtp.Cc = mail.cc;
+                    foreach (Mail mail in collectionMail[SEND])
+                    {
+                        if (mail.notReadYet == true)
+                        {
+                            // CCが存在するとき
+                            if (mail.cc != "")
+                            {
+                                // CCの宛先を設定する
+                                smtp.Cc = mail.cc;
+                            }
+
+                            // BCCが存在するとき
+                            if (mail.bcc != "")
+                            {
+                                // BCCの宛先を設定する
+                                smtp.Bcc = mail.bcc;
+                            }
+
+                            // 添付ファイルを指定している場合
+                            if (mail.attach != "")
+                            {
+                                smtp.FileName = mail.attach;
+                            }
+
+                            // 追加ヘッダをつける
+                            smtp.Header = "\r\nPriority: " + mail.priority + "\r\nX-Mailer: Akane 32bit Windows Mailer Version " + Application.ProductVersion;
+
+                            // 差出人のアドレスを編集する
+                            string fromAddress = Mail.fromName + " <" + Mail.mailAddress + ">";
+
+                            // 送信する
+                            smtp.SendMail(mail.address, fromAddress, mail.subject, mail.body);
+
+                            // 送信日時を設定する
+                            mail.date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+
+                            // 送信済みに変更する
+                            mail.notReadYet = false;
+
+                            // メールの送信件数を更新する
+                            send_no++;
+                            Invoke(progressMailUpdate, send_no);
+
+                            // スレッドを1秒間待機させる
+                            System.Threading.Thread.Sleep(1000);
                         }
-
-                        // BCCが存在するとき
-                        if (mail.bcc != "") {
-                            // BCCの宛先を設定する
-                            smtp.Bcc = mail.bcc;
-                        }
-
-                        // 添付ファイルを指定している場合
-                        if (mail.attach != "") {
-                            smtp.FileName = mail.attach;
-                        }
-
-                        // 追加ヘッダをつける
-                        smtp.Header = "\r\nPriority: " + mail.priority + "\r\nX-Mailer: Akane 32bit Windows Mailer Version " + Application.ProductVersion;
-
-                        // 差出人のアドレスを編集する
-                        string fromAddress = Mail.fromName + " <" + Mail.mailAddress + ">";
-
-                        // 送信する
-                        smtp.SendMail(mail.address, fromAddress, mail.subject, mail.body);
-
-                        // 送信日時を設定する
-                        mail.date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
-
-                        // 送信済みに変更する
-                        mail.notReadYet = false;
-
-                        // メールの送信件数を更新する
-                        send_no++;
-                        Invoke(progressMailUpdate, send_no);
-
-                        // スレッドを1秒間待機させる
-                        System.Threading.Thread.Sleep(1000);
                     }
                 }
-
-                // SMTPから切断する
-                smtp.Close();
 
                 // プログレスバーを非表示に戻す
                 Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
@@ -2086,12 +2079,9 @@ namespace AkaneMail
             UpdateListView();
 
             // ListViewItemComparerの作成と設定
-            listViewItemSorter = new ListViewItemComparer();
-            listViewItemSorter.ColumnModes = new ListViewItemComparer.ComparerMode[] { ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.DateTime, ListViewItemComparer.ComparerMode.Integer };
-
             // 受信or送信日時の降順で並べる
-            listViewItemSorter.Column = 2;
-            listViewItemSorter.Order = SortOrder.Descending;
+            listViewItemSorter = new ListViewItemComparer() { Column = 2, Order = SortOrder.Descending };
+            listViewItemSorter.ColumnModes = new ListViewItemComparer.ComparerMode[] { ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.DateTime, ListViewItemComparer.ComparerMode.Integer };
 
             // ListViewItemSorterを指定する
             listView1.ListViewItemSorter = listViewItemSorter;
