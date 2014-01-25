@@ -28,19 +28,19 @@ namespace AkaneMail
         public static bool minimizeTaskTray;    // 最小化時のタスクトレイフラグ
 
         // インスタンスフィールド(メールの情報)
-        public string address;              // 差出人(宛先)アドレス
-        public string header;               // メールヘッダ
-        public string subject;              // メールの件名
-        public string body;                 // メール本文
-        public string attach;               // 添付ファイル
-        public string date;                 // 受信(送信)日時
-        public string size;                 // メールサイズ
-        public string uidl;                 // UIDL
-        public bool notReadYet;             // 未読・未送信フラグ
-        public string cc;                   // CCアドレス
-        public string bcc;                  // BCCアドレス
-        public string priority;             // 優先度(None/Low/Normal/High)
-        public string convert;              // バージョン識別用
+        public string address { get; set; }              // 差出人(宛先)アドレス
+        public string header { get; set; }               // メールヘッダ
+        public string subject { get; set; }              // メールの件名
+        public string body { get; set; }                 // メール本文
+        public string attach { get; set; }               // 添付ファイル
+        public string date { get; set; }                 // 受信(送信)日時
+        public string size { get; set; }                 // メールサイズ
+        public string uidl { get; set; }                 // UIDL
+        public bool notReadYet { get; set; }             // 未読・未送信フラグ
+        public string cc { get; set; }                   // CCアドレス
+        public string bcc { get; set; }                  // BCCアドレス
+        public string priority { get; set; }             // 優先度(None/Low/Normal/High)
+        public string convert { get; set; }              // バージョン識別用
 
         // コンストラクタ
         public Mail(string address, string header, string subject, string body, string attach, string date, string size, string uidl, bool notReadYet, string convert, string cc, string bcc, string priority)
@@ -58,6 +58,14 @@ namespace AkaneMail
             this.bcc = bcc;
             this.priority = priority;
             this.convert = convert;
+        }
+
+        /// <summary>
+        /// 差出人の名前とメールアドレスの組み合わせを取得します。
+        /// </summary>
+        public static string FromAddress
+        {
+            get { return fromName + "<" + mailAddress + ">"; }
         }
 
     }
