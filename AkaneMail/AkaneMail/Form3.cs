@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 
 namespace AkaneMail
 {
@@ -45,52 +46,34 @@ namespace AkaneMail
         /// </summary>
         public int listTag { get; set; }
 
+        private readonly Dictionary<string, string> mailPriority = new Dictionary<string, string>()
+        {
+            { "高い", "Priority: urgent" },
+            { "普通", "Priority: normal" },
+            { "低い", "Priority: non-urgent" }
+        };
+
         /// <summary>
         /// 送信箱に格納するときのメールサイズ取得
-        /// </summary>>
+        /// </summary>
         /// <returns>メールサイズの文字列</returns>
         public string GetMailSize()
         {
-            // メールサイズを格納する変数
-            long _GetMailSize = 0;
-            double attachSize = 0;
-            string priority = "";
-
             string addr = Mail.fromName + " <" + Mail.mailAddress + ">";
-            int addr_size = System.Text.Encoding.UTF8.GetBytes(addr).Length;
-            int to_size = System.Text.Encoding.UTF8.GetBytes(textAddress.Text).Length;
-            int sub_size = System.Text.Encoding.UTF8.GetBytes(textSubject.Text).Length;
-            int body_size = System.Text.Encoding.UTF8.GetBytes(textBody.Text).Length;
-            int cc_size = System.Text.Encoding.UTF8.GetBytes(textCc.Text).Length;
-            int bcc_size = System.Text.Encoding.UTF8.GetBytes(textBcc.Text).Length;
+            string priority = mailPriority[comboPriority.Text];
 
-            // 優先度の設定をする
-            if(comboPriority.Text == "高い"){
-                priority = "Priority: urgent";
-            }
-            else if(comboPriority.Text == "普通"){
-                priority = "Priority: normal";
-            }
-            else{
-                priority = "Priority: non-urgent";
-            }
-
-            int priority_size = System.Text.Encoding.UTF8.GetBytes(priority).Length;
-
+            double attachSize = 0;
             // 添付ファイルがあるとき
-            if(attachName != ""){
-                // 添付ファイルリストを分割して一覧にする
-                string[] attachFileNameList = attachName.Split(',');
-                for(int no = 0; no < attachFileNameList.Length; no++){
-                    FileInfo fl = new FileInfo(attachFileNameList[no]);
-                    attachSize = attachSize + (fl.Length * 1.33);
-                }
+            if (attachName != "")
+            {
+                attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
             }
 
-            // 合計を取得する
-            _GetMailSize = addr_size + to_size + cc_size + bcc_size + priority_size + sub_size + body_size + (long)attachSize;
+            var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }.Select(t => t.Text).ToArray();
+            var moretext = new[] { addr, priority };
+            int sizes = formtexts.Concat(moretext).Sum(b => System.Text.Encoding.UTF8.GetBytes(b).Length);
 
-            return _GetMailSize.ToString();
+            return (sizes + (long)attachSize).ToString();
         }
 
         public Form3()
@@ -132,7 +115,6 @@ namespace AkaneMail
         private void menuFileDirectSend_Click(object sender, EventArgs e)
         {
             string size = "";
-            string attachList = "";
             string priority = "";
 
             // アドレスまたは本文が未入力のとき
@@ -170,35 +152,22 @@ namespace AkaneMail
             }
 
             // 添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count >= 1) {
-                for (int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++) {
-                    // 添付ファイルが存在しないとき
-                    if (buttonAttachList.DropDownItems[cnt].Text.Contains("は削除されています。")) {
-                        // そのメニューを削除する
-                        buttonAttachList.DropDownItems.RemoveAt(cnt);
-                    }
-                }
+            if (buttonAttachList.DropDownItems.Count >= 1)
+            {
+                var blanks = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).
+                    Where(i => buttonAttachList.DropDownItems[i].Text.Contains("は削除されています。")).ToArray();
+                Array.ForEach(blanks, i => buttonAttachList.DropDownItems.RemoveAt(i));
 
                 // メニューが空になった時は添付リストの表示を非表示にする
-                if (buttonAttachList.DropDownItems.Count == 0) {
-                    buttonAttachList.Visible = false;
-                }
+                buttonAttachList.Visible = (buttonAttachList.DropDownItems.Count == 0);
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count >= 1){
-                for(int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++){
-                    // 添付ファイルが1個の場合(添付ファイルが複数ある場合の１回目)
-                    if(cnt == 0){
-                        attachList = buttonAttachList.DropDownItems[cnt].Text;
-                    }
-                    else{
-                        // 2個以上の添付ファイルがある場合、カンマ区切りで
-                        attachList = attachList + "," + buttonAttachList.DropDownItems[cnt].Text;
-                    }
-                }
+            if (buttonAttachList.DropDownItems.Count > 0)
+            {
+                var attaches = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).Select(i => buttonAttachList.DropDownItems[i].Text);
                 // 添付ファイル名のリストを変数に渡す
-                attachName = attachList;
+                attachName = string.Join(",", attaches.ToArray());
             }
 
             // 送信メールサイズを取得する
@@ -419,7 +388,8 @@ namespace AkaneMail
             string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
             // 編集フラグがOffのとき
-            if(isEdit == false){
+            if (isEdit == false)
+            {
                 // 送信メールサイズを取得する
                 size = GetMailSize();
 
@@ -427,20 +397,21 @@ namespace AkaneMail
                 Mail newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attachName, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
                 sList.Add(newMail);
             }
-            else{
+            else
+            {
                 // 選択したメールの内容を書き換える
                 // 送信リストに入れている情報を書き換える
                 size = GetMailSize();
-                ((Mail)sList[listTag]).subject = textSubject.Text;
-                ((Mail)sList[listTag]).address = textAddress.Text;
-                ((Mail)sList[listTag]).body = textBody.Text;
-                ((Mail)sList[listTag]).attach = attachName;
-                ((Mail)sList[listTag]).date = date;
-                ((Mail)sList[listTag]).size = size;
-                ((Mail)sList[listTag]).notReadYet = true;
-                ((Mail)sList[listTag]).cc = textCc.Text;
-                ((Mail)sList[listTag]).bcc = textBcc.Text;
-                ((Mail)sList[listTag]).priority = priority;
+                sList[listTag].subject = textSubject.Text;
+                sList[listTag].address = textAddress.Text;
+                sList[listTag].body = textBody.Text;
+                sList[listTag].attach = attachName;
+                sList[listTag].date = date;
+                sList[listTag].size = size;
+                sList[listTag].notReadYet = true;
+                sList[listTag].cc = textCc.Text;
+                sList[listTag].bcc = textBcc.Text;
+                sList[listTag].priority = priority;
 
                 // Becky!と同じように更新後はテキストも変更
                 pForm.textBody.Text = textBody.Text;
