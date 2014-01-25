@@ -85,23 +85,11 @@ namespace AkaneMail
                 textSoundFileName.Text = Mail.popSoundName;
                 checkBrowser.Checked = Mail.bodyIEShow;
 
-                if(checkAutoGetMail.Checked == true){
-                    updownGetmailInterval.Enabled = true;
-                    label7.Enabled = true;
-                }
-                else{
-                    updownGetmailInterval.Enabled = false;
-                    label7.Enabled = false;
-                }
+                updownGetmailInterval.Enabled = checkAutoGetMail.Checked;
+                label7.Enabled = checkAutoGetMail.Checked;
 
-                if(checkSoundPlay.Checked == true){
-                    textSoundFileName.Enabled = true;
-                    buttonBrowse.Enabled = true;
-                }
-                else{
-                    textSoundFileName.Enabled = false;
-                    buttonBrowse.Enabled = false;
-                }
+                textSoundFileName.Enabled = checkSoundPlay.Checked;
+                buttonBrowse.Enabled = checkSoundPlay.Checked;
             }
             // フォーム読み込み完了
             loadFromFlag = false;
@@ -109,26 +97,14 @@ namespace AkaneMail
 
         private void checkAutGetMail_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkAutoGetMail.Checked == true){
-                updownGetmailInterval.Enabled = true;
-                label7.Enabled = true;
-            }
-            else{
-                updownGetmailInterval.Enabled = false;
-                label7.Enabled = false;
-            }
+            updownGetmailInterval.Enabled = checkAutoGetMail.Checked;
+            label7.Enabled = checkAutoGetMail.Checked;
         }
 
         private void checkSoundPlay_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkSoundPlay.Checked == true){
-                textSoundFileName.Enabled = true;
-                buttonBrowse.Enabled = true;
-            }
-            else{
-                textSoundFileName.Enabled = false;
-                buttonBrowse.Enabled = false;
-            }
+            textSoundFileName.Enabled = checkSoundPlay.Checked;
+            buttonBrowse.Enabled = checkSoundPlay.Checked;
         }
 
         private void buttonBrowse_Click(object sender, EventArgs e)
