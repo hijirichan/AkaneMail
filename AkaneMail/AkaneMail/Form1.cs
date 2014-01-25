@@ -7,7 +7,6 @@ using System.Text;
 using System.Net.Mail;
 using System.Media;
 using System.IO;
-using System.Collections;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -19,7 +18,7 @@ namespace AkaneMail
     public partial class Form1 : Form
     {
         // メールを格納する配列
-        public ArrayList[] collectionMail = new ArrayList[3];
+        public List<Mail>[] collectionMail = new List<Mail>[3];
 
         // メールを識別する定数
         public const int RECEIVE = 0;   // 受信メール
@@ -104,7 +103,7 @@ namespace AkaneMail
         /// <summary>
         /// ListViewの項目の並び替えに使用するクラス
         /// </summary>
-        public class ListViewItemComparer : IComparer
+        public class ListViewItemComparer : System.Collections.IComparer
         {
             /// <summary>
             /// 比較する方法
@@ -238,9 +237,9 @@ namespace AkaneMail
             Application.Idle += new EventHandler(Application_Idle);
 
             // 配列を作成する
-            collectionMail[RECEIVE] = new ArrayList();
-            collectionMail[SEND] = new ArrayList();
-            collectionMail[DELETE] = new ArrayList();
+            collectionMail[RECEIVE] = new List<Mail>();
+            collectionMail[SEND] = new List<Mail>();
+            collectionMail[DELETE] = new List<Mail>();
         }
 
         /// <summary>
@@ -259,7 +258,7 @@ namespace AkaneMail
         /// </summary>
         public void UpdateListView()
         {
-            ArrayList list = null;
+            List<Mail> list = null;
             int i = 0;
 
             // リストビューの描画を止める
@@ -1505,8 +1504,8 @@ namespace AkaneMail
 
                 // キーの並べ替え
                 Array.Sort(nIndices);
-                ArrayList sList = collectionMail[RECEIVE];
-                ArrayList dList = collectionMail[DELETE];
+                List<Mail> sList = collectionMail[RECEIVE];
+                List<Mail> dList = collectionMail[DELETE];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1539,8 +1538,8 @@ namespace AkaneMail
 
                 // キーの並べ替え
                 Array.Sort(nIndices);
-                ArrayList sList = collectionMail[SEND];
-                ArrayList dList = collectionMail[DELETE];
+                List<Mail> sList = collectionMail[SEND];
+                List<Mail> dList = collectionMail[DELETE];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1574,7 +1573,7 @@ namespace AkaneMail
 
                     // キーの並べ替え
                     Array.Sort(nIndices);
-                    ArrayList dList = collectionMail[DELETE];
+                    List<Mail> dList = collectionMail[DELETE];
 
                     while (nLen > 0) {
                         // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1669,7 +1668,7 @@ namespace AkaneMail
 
                 // キーの並べ替え
                 Array.Sort(nIndices);
-                ArrayList sList = collectionMail[RECEIVE];
+                List<Mail> sList = collectionMail[RECEIVE];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1702,7 +1701,7 @@ namespace AkaneMail
 
                 // キーの並べ替え
                 Array.Sort(nIndices);
-                ArrayList sList = collectionMail[SEND];
+                List<Mail> sList = collectionMail[SEND];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1735,7 +1734,7 @@ namespace AkaneMail
 
                 // キーの並べ替え
                 Array.Sort(nIndices);
-                ArrayList sList = collectionMail[DELETE];
+                List<Mail> sList = collectionMail[DELETE];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得

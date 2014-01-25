@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
-using System.Collections;
 using System.Windows.Forms;
 using System.IO;
 
@@ -16,8 +15,7 @@ namespace AkaneMail
         public string[] attachFileNameList;
         findDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
 
-        private ArrayList _sList = null;
-        private Form1 _pForm = null;
+        private List<Mail> _sList = null;
         private bool _isDirty = false;
         private bool _isEdit = false;
         private int _listTag = 0;
@@ -25,47 +23,27 @@ namespace AkaneMail
         /// <summary>
         /// 親フォームクラス
         /// </summary>
-        public Form1 pForm
-        {
-            set { _pForm = value; }
-            get { return _pForm; }
-        }
+        public Form1 pForm { set; get; }
 
         /// <summary>
         /// 送信箱の配列
         /// </summary>
-        public ArrayList sList
-        {
-            set { _sList = value; }
-            get { return _sList; }
-        }
+        public List<Mail> sList { get; set; }
 
         /// <summary>
         /// テキスト変更フラグ
         /// </summary>
-        public bool isDirty
-        {
-            set { _isDirty = value; }
-            get { return _isDirty; }
-        }
+        public bool isDirty{ get; set; }
 
         /// <summary>
         /// 編集モードフラグ
         /// </summary>
-        public bool isEdit
-        {
-            set { _isEdit = value; }
-            get { return _isEdit; }
-        }
+        public bool isEdit { get; set; }
 
         /// <summary>
         /// メールデータの格納位置
         /// </summary>
-        public int listTag
-        {
-            set { _listTag = value; }
-            get { return _listTag; }
-        }
+        public int listTag { get; set; }
 
         /// <summary>
         /// 送信箱に格納するときのメールサイズ取得
