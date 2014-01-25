@@ -1342,6 +1342,30 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// リストビューのフォーカスをリセットします。
+        /// </summary>
+        /// <param name="listView">対象のリストビュー</param>
+        private void ReforcusListView(ListView listView)
+        {
+            // ListViewItemSorterを解除する
+            listView.ListViewItemSorter = null;
+
+            // ツリービューとリストビューの表示を更新する
+            UpdateTreeView();
+            UpdateListView();
+
+            // ListViewItemSorterを指定する
+            listView1.ListViewItemSorter = listViewItemSorter;
+
+            // フォーカスを当て直す
+            listView.Items[currentRow].Selected = true;
+            listView.SelectedItems[0].EnsureVisible();
+            listView.Select();
+            listView.Focus();
+        }
+
+
+        /// <summary>
         ///  選択されたメールを取得します。
         /// </summary>
         /// <param name="index">インデックス</param>
@@ -1361,6 +1385,43 @@ namespace AkaneMail
                     throw new ArgumentException(columnText + "は有効な値ではありません。");
                     
             }
+        }
+
+        /// <summary>
+        /// 入力欄をクリアします。
+        /// </summary>
+        private void ClearInput()
+        {
+            // IEコンポが表示されていないとき
+            if (this.browserBody.Visible == false)
+            {
+                // テキストボックスを空値にする
+                this.textBody.Text = "";
+            }
+            else
+            {
+                // IEコンポを閉じてテキストボックスを表示させる
+                this.browserBody.Visible = false;
+                this.textBody.Text = "";
+                this.textBody.Visible = true;
+            }
+
+            // 添付リストが表示されているとき
+            if (buttonAttachList.Visible == true)
+            {
+                buttonAttachList.DropDownItems.Clear();
+                buttonAttachList.Visible = false;
+            }
+
+            // ListViewItemSorterを解除する
+            listView1.ListViewItemSorter = null;
+
+            // ツリービューとリストビューの表示を更新する
+            UpdateTreeView();
+            UpdateListView();
+
+            // ListViewItemSorterを指定する
+            listView1.ListViewItemSorter = listViewItemSorter;
         }
 
         #region "Event Listeners"
@@ -1618,32 +1679,7 @@ namespace AkaneMail
                 }
             }
 
-            // IEコンポが表示されていないとき
-            if (this.browserBody.Visible == false) {
-                // テキストボックスを空値にする
-                this.textBody.Text = "";
-            } else {
-                // IEコンポを閉じてテキストボックスを表示させる
-                this.browserBody.Visible = false;
-                this.textBody.Text = "";
-                this.textBody.Visible = true;
-            }
-
-            // 添付リストが表示されているとき
-            if (buttonAttachList.Visible == true) {
-                buttonAttachList.DropDownItems.Clear();
-                buttonAttachList.Visible = false;
-            }
-
-            // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
-
-            // ツリービューとリストビューの表示を更新する
-            UpdateTreeView();
-            UpdateListView();
-
-            // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            ClearInput();
 
             // リストが空になったのを判定するフラグ
             bool bEmptyList = false;
@@ -1778,22 +1814,7 @@ namespace AkaneMail
                 }
             }
 
-            // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
-
-            // ツリービューとリストビューの表示を更新する
-            UpdateTreeView();
-            UpdateListView();
-
-            // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
-
-            // フォーカスを当て直す
-            listView1.Items[currentRow].Selected = true;
-            listView1.Items[currentRow].Focused = true;
-            listView1.SelectedItems[0].EnsureVisible();
-            listView1.Select();
-            listView1.Focus();
+            ReforcusListView(listView1);
 
             // データ変更フラグをtrueにする
             dataDirtyFlag = true;
@@ -1830,22 +1851,7 @@ namespace AkaneMail
             if(listView1.Columns[0].Text == "差出人" || listView1.Columns[0].Text == "差出人または宛先"){
                 mail.notReadYet = false;
 
-                // ListViewItemSorterを解除する
-                listView1.ListViewItemSorter = null;
-
-                // ツリービューとリストビューの表示を更新する
-                UpdateTreeView();
-                UpdateListView();
-
-                // ListViewItemSorterを指定する
-                listView1.ListViewItemSorter = listViewItemSorter;
-
-                // フォーカスを当て直す
-                listView1.Items[currentRow].Selected = true;
-                listView1.Items[currentRow].Focused = true;
-                listView1.SelectedItems[0].EnsureVisible();
-                listView1.Select();
-                listView1.Focus();
+                ReforcusListView(listView1);
 
                 // データ変更フラグをtrueにする
                 dataDirtyFlag = true;
@@ -2621,6 +2627,8 @@ namespace AkaneMail
             }
         }
 
+        
+
         private void menuFileClearTrush_Click(object sender, EventArgs e)
         {
             // ごみ箱の配列を空っぽにする
@@ -2629,32 +2637,7 @@ namespace AkaneMail
                     collectionMail[DELETE].RemoveAt(i);
                 }
 
-                // IEコンポが表示されていないとき
-                if (this.browserBody.Visible == false) {
-                    // テキストボックスを空値にする
-                    this.textBody.Text = "";
-                } else {
-                    // IEコンポを閉じてテキストボックスを表示させる
-                    this.browserBody.Visible = false;
-                    this.textBody.Text = "";
-                    this.textBody.Visible = true;
-                }
-
-                // 添付リストが表示されているとき
-                if (buttonAttachList.Visible == true) {
-                    buttonAttachList.DropDownItems.Clear();
-                    buttonAttachList.Visible = false;
-                }
-
-                // ListViewItemSorterを解除する
-                listView1.ListViewItemSorter = null;
-
-                // ツリービューとリストビューの表示を更新する
-                UpdateTreeView();
-                UpdateListView();
-
-                // ListViewItemSorterを指定する
-                listView1.ListViewItemSorter = listViewItemSorter;
+                ClearInput();
 
                 // データ変更フラグをtrueにする
                 dataDirtyFlag = true;
