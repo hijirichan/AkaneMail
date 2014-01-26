@@ -218,99 +218,73 @@ namespace AkaneMail
             }
         }
 
-        private void menuEditUndo_Click(object sender, EventArgs e)
+        private void DoInActiveTextBox(Action<TextBox> action)
         {
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
+            if (ctrl is SplitContainer)
+            {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).CanUndo){
-                        ((TextBox)ctrl).Undo();
-                    }
-                }
+                if (ctrl is TextBox) { action(ctrl as TextBox); }
             }
+        }
+
+        private void menuEditUndo_Click(object sender, EventArgs e)
+        {
+            DoInActiveTextBox(ctrl => {
+                if (ctrl.CanUndo) { ctrl.Undo(); }
+            });
         }
 
         private void menuEditCut_Click(object sender, EventArgs e)
         {
-            Control ctrl = this.ActiveControl;
-
-            // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).SelectionLength > 0){
-                        ((TextBox)ctrl).Cut();
-                    }
-                }
-            }
+            DoInActiveTextBox(ctrl =>
+            {
+                if (ctrl.SelectionLength > 0) { ctrl.Cut(); }
+            });
         }
 
         private void menuEditCopy_Click(object sender, EventArgs e)
         {
-            Control ctrl = this.ActiveControl;
-
-            // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).SelectionLength > 0){
-                        ((TextBox)ctrl).Copy();
-                    }
-                }
-            }
+            DoInActiveTextBox(ctrl =>
+            {
+                if (ctrl.SelectionLength > 0) { ctrl.Copy(); }
+            });
         }
 
         private void menuEditPaste_Click(object sender, EventArgs e)
         {
-            Control ctrl = this.ActiveControl;
-
-            // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(Clipboard.ContainsData(DataFormats.Text)){
-                        ((TextBox)ctrl).Paste();
-                    }
-                }
-            }
+            DoInActiveTextBox(ctrl =>
+            {
+                if (Clipboard.ContainsData(DataFormats.Text)) { ctrl.Paste(); }
+            });
         }
 
         private void menuEditAllSelect_Click(object sender, EventArgs e)
         {
-            Control ctrl = this.ActiveControl;
-
-            // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length){
-                        // テキストボックスの文字列全選択を解除する
-                        ((TextBox)ctrl).SelectionLength = 0;
-                    }
-                    else{
-                        // それ以外のときはテキストの前選択をおこなう
-                        ((TextBox)ctrl).SelectAll();
-                    }
+            DoInActiveTextBox(ctrl =>
+            {
+                if (((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length)
+                {
+                    // テキストボックスの文字列全選択を解除する
+                    ((TextBox)ctrl).SelectionLength = 0;
                 }
-            }
+                else
+                {
+                    // それ以外のときはテキストの前選択をおこなう
+                    ((TextBox)ctrl).SelectAll();
+                }
+            });
+            
         }
 
         private void menuEditDelete_Click(object sender, EventArgs e)
         {
-            Control ctrl = this.ActiveControl;
-
-            // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).SelectionLength > 0){
-                        ((TextBox)ctrl).SelectedText = "";
-                    }
-                }
-            }
+            DoInActiveTextBox(ctrl =>
+            {
+                if (ctrl.SelectionLength > 0) { ctrl.SelectedText = ""; }
+            });
         }
 
         private void menuFileSend_Click(object sender, EventArgs e)
