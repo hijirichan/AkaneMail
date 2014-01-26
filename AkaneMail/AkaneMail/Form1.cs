@@ -11,7 +11,6 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Linq;
 using nMail;
 using ACryptLib;
 

@@ -210,24 +210,23 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if (ctrl is SplitContainer){
+            if (ctrl is SplitContainer)
+            {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
-                    if(((TextBox)ctrl).CanUndo){
+                if (ctrl is TextBox)
+                {
+                    if (((TextBox)ctrl).CanUndo)
+                    {
                         ((TextBox)ctrl).Undo();
                     }
                 }
-
-        private void menuEditUndo_Click(object sender, EventArgs e)
-        {
-            DoInActiveTextBox(ctrl => {
-                if (ctrl.CanUndo) { ctrl.Undo(); }
-            });
             }
+        }
 
         private void menuEditUndo_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl => {
+            DoInActiveTextBox(ctrl =>
+            {
                 if (ctrl.CanUndo) { ctrl.Undo(); }
             });
         }
