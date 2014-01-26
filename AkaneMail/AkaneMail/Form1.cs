@@ -1446,10 +1446,10 @@ namespace AkaneMail
             Form3 NewMailForm = new Form3();
 
             // 親フォームをForm1に設定する
-            NewMailForm.pForm = this;
+            NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.sList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[SEND];
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -1828,15 +1828,15 @@ namespace AkaneMail
                 Form3 EditMailForm = new Form3();
 
                 // 親フォームをForm1に設定する
-                EditMailForm.pForm = this;
+                EditMailForm.MainForm = this;
 
                 // 親フォームにタイトルを設定する
                 EditMailForm.Text = mail.subject + " - Ak@Ne!";
 
                 // 送信箱の配列をForm3に渡す
-                EditMailForm.sList = collectionMail[SEND];
-                EditMailForm.listTag = (int)item.Tag;
-                EditMailForm.isEdit = true;
+                EditMailForm.SendList = collectionMail[SEND];
+                EditMailForm.ListTag = (int)item.Tag;
+                EditMailForm.IsEdit = true;
 
                 // 宛先、件名、本文をForm3に渡す
                 EditMailForm.textAddress.Text = mail.address;
@@ -2145,10 +2145,10 @@ namespace AkaneMail
             }
 
             // 親フォームをForm1に設定する
-            NewMailForm.pForm = this;
+            NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.sList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[SEND];
 
             // 返信のための宛先・件名を設定する
             NewMailForm.textAddress.Text = mail.address;
@@ -2896,10 +2896,10 @@ namespace AkaneMail
             }
 
             // 親フォームをForm1に設定する
-            NewMailForm.pForm = this;
+            NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.sList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[SEND];
 
             // 転送のために件名を設定する(件名は空白にする)
             NewMailForm.textAddress.Text = "";
