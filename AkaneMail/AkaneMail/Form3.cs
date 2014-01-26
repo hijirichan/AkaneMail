@@ -139,7 +139,7 @@ namespace AkaneMail
             }
 
             // 添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count >= 1)
+            if (buttonAttachList.DropDownItems.Count > 0)
             {
                 var blanks = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).
                     Where(i => buttonAttachList.DropDownItems[i].Text.Contains("は削除されています。")).ToArray();

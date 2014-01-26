@@ -291,12 +291,10 @@ namespace AkaneMail
             var items = list.Select((mail, index) =>
             {
                 ListViewItem item = new ListViewItem(mail.address);
-                if (mail.subject != "")
-                {
+                if (mail.subject != "") {
                     item.SubItems.Add(mail.subject);
                 }
-                else
-                {
+                else {
                     item.SubItems.Add("(no subject)");
                 }
                 item.SubItems.Add(mail.date);
@@ -307,18 +305,15 @@ namespace AkaneMail
                 item.Name = index.ToString();
 
                 // 未読(未送信)の場合は、フォントを太字にする
-                if (mail.notReadYet == true)
-                {
+                if (mail.notReadYet) {
                     item.Font = new Font(this.Font, FontStyle.Bold);
                 }
 
                 // 重要度が高い場合は、フォントを太字にする
-                if (mail.priority == "urgent")
-                {
+                if (mail.priority == "urgent") {
                     item.ForeColor = Color.Tomato;
                 }
-                else if (mail.priority == "non-urgent")
-                {
+                else if (mail.priority == "non-urgent") {
                     item.ForeColor = Color.LightBlue;
                 }
                 return item;
@@ -535,14 +530,11 @@ namespace AkaneMail
             try {
                 // ファイルストリームをストリームライタに関連付ける
                 // StreamWriter writer = new StreamWriter(stream, Encoding.Default);
-                using (var writer = new StreamWriter(Application.StartupPath + @"\Mail.dat", false, Encoding.UTF8))
-                {
+                using (var writer = new StreamWriter(Application.StartupPath + @"\Mail.dat", false, Encoding.UTF8)) {
                     // メールの件数とデータを書き込む
-                    foreach (var mails in collectionMail)
-                    {
+                    foreach (var mails in collectionMail) {
                         writer.WriteLine(mails.Count);
-                        foreach (var mail in mails)
-                        {
+                        foreach (var mail in mails) {
                             writer.WriteLine(mail.address);
                             writer.WriteLine(mail.subject);
                             writer.Write(mail.header);
@@ -707,7 +699,7 @@ namespace AkaneMail
                     pop.APop = Mail.apopFlag;
 
                     // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
-                    if (Mail.popOverSSL == true)
+                    if (Mail.popOverSSL)
                     {
                         pop.SSL = nMail.Pop3.SSL3;
                         pop.Connect(Mail.popServer, nMail.Pop3.StandardSslPortNo);
@@ -722,7 +714,7 @@ namespace AkaneMail
                     pop.Authenticate(Mail.userName, Mail.passWord);
 
                     // POP3サーバ上に1件以上のメールが存在するとき
-                    if (pop.Count >= 1)
+                    if (pop.Count > 0)
                     {
                         // ステータスバーに状況表示する
                         labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
@@ -804,7 +796,7 @@ namespace AkaneMail
                         mailCount++;
 
                         // メール受信時にPOP3サーバ上のメール削除のチェックがある時はPOP3サーバからメールを削除する
-                        if (Mail.deleteMail == true)
+                        if (Mail.deleteMail)
                         {
                             pop.Delete(no);
                         }
@@ -912,7 +904,8 @@ namespace AkaneMail
 
                 // POP before SMTPが有効の場合
                 if (Mail.popBeforeSMTP == true) {
-                    try {
+                    try
+                    {
                         // POP3のセッションを作成する
                         using (var pop = new nMail.Pop3())
                         {
@@ -938,7 +931,8 @@ namespace AkaneMail
                             pop.Authenticate(Mail.userName, Mail.passWord);
                         }
                     }
-                    catch (nMail.nMailException nex) {
+                    catch (nMail.nMailException nex)
+                    {
                         // ステータスバーに状況表示する
                         labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
@@ -947,7 +941,8 @@ namespace AkaneMail
 
                         return;
                     }
-                    catch (Exception exp) {
+                    catch (Exception exp)
+                    {
                         // ステータスバーに状況表示する
                         labelMessage.Text = "エラーメッセージ:" + exp.Message;
 
@@ -1342,7 +1337,6 @@ namespace AkaneMail
             listView.Focus();
         }
 
-
         /// <summary>
         ///  選択されたメールを取得します。
         /// </summary>
@@ -1371,7 +1365,7 @@ namespace AkaneMail
         private void ClearInput()
         {
             // IEコンポが表示されていないとき
-            if (this.browserBody.Visible == false)
+            if (!this.browserBody.Visible)
             {
                 // テキストボックスを空値にする
                 this.textBody.Text = "";
@@ -1385,7 +1379,7 @@ namespace AkaneMail
             }
 
             // 添付リストが表示されているとき
-            if (buttonAttachList.Visible == true)
+            if (buttonAttachList.Visible)
             {
                 buttonAttachList.DropDownItems.Clear();
                 buttonAttachList.Visible = false;
@@ -2575,8 +2569,6 @@ namespace AkaneMail
                 }
             }
         }
-
-        
 
         private void menuFileClearTrush_Click(object sender, EventArgs e)
         {
