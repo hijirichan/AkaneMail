@@ -289,7 +289,7 @@ namespace AkaneMail
                 return;
             }
 
-            foreach (Mail mail in list){
+            var items = list.Select((mail, index) => {
                 ListViewItem item = new ListViewItem(mail.address);
                 if(mail.subject != ""){
                     item.SubItems.Add(mail.subject);
@@ -953,7 +953,7 @@ namespace AkaneMail
                 // SMTPのセッションを作成する
                 using (var smtp = new nMail.Smtp(Mail.smtpServer))
                 {
-                smtp.Port = Mail.smtpPortNumber;
+                    smtp.Port = Mail.smtpPortNumber;
 
                 // SMTP認証フラグが有効の時はSMTP認証を行う
                     if (Mail.smtpAuth == true)
@@ -962,7 +962,7 @@ namespace AkaneMail
                     smtp.Connect();
                     // SMTP認証を行う
                     smtp.Authenticate(Mail.userName, Mail.passWord, Smtp.AuthPlain | Smtp.AuthCramMd5);
-                }
+                    }
 
                     foreach (Mail mail in collectionMail[SEND])
                     {
@@ -1010,7 +1010,7 @@ namespace AkaneMail
                         // スレッドを1秒間待機させる
                         System.Threading.Thread.Sleep(1000);
                     }
-                }
+                    }
                 }
 
                 // プログレスバーを非表示に戻す
@@ -1176,9 +1176,6 @@ namespace AkaneMail
                 default:
                     throw new ArgumentException(columnText + "は有効な値ではありません。");
             }
-                }
-
-            return _priority;
         }
 
         /// <summary>
@@ -1202,28 +1199,6 @@ namespace AkaneMail
             listView.SelectedItems[0].EnsureVisible();
             listView.Select();
             listView.Focus();
-        }
-
-        /// <summary>
-        ///  選択されたメールを取得します。
-        /// </summary>
-        /// <param name="index">インデックス</param>
-        /// <param name="columnText">選択されているカラムの文字列</param>
-        /// <returns></returns>
-        private Mail GetSelectedMail(object index, string columnText)
-        {
-            switch (columnText)
-            {
-                case "差出人":
-                    return collectionMail[RECEIVE][(int)index];
-                case "宛先":
-                    return collectionMail[SEND][(int)index];
-                case "差出人または宛先":
-                    return collectionMail[DELETE][(int)index];
-                default:
-                    throw new ArgumentException(columnText + "は有効な値ではありません。");
-                    
-            }
         }
 
         /// <summary>

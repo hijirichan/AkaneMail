@@ -223,13 +223,5 @@ namespace AkaneMail
             return htmlBody;
         }
 
-        /// <summary>
-        /// 差出人の名前とメールアドレスの組み合わせを取得します。
-        /// </summary>
-        public static string FromAddress
-        {
-            get { return fromName + "<" + mailAddress + ">"; }
-        }
-
     }
 }
