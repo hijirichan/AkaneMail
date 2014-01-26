@@ -49,7 +49,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.checkAutoGetMail = new System.Windows.Forms.CheckBox();
             this.updownGetmailInterval = new System.Windows.Forms.NumericUpDown();
-            this.label7 = new System.Windows.Forms.Label();
+            this.labelIntervalRecieve = new System.Windows.Forms.Label();
             this.checkSoundPlay = new System.Windows.Forms.CheckBox();
             this.buttonBrowse = new System.Windows.Forms.Button();
             this.textSoundFileName = new System.Windows.Forms.TextBox();
@@ -258,15 +258,15 @@
             0,
             0});
             // 
-            // label7
+            // labelIntervalRecieve
             // 
-            this.label7.AutoSize = true;
-            this.label7.Enabled = false;
-            this.label7.Location = new System.Drawing.Point(269, 268);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(93, 12);
-            this.label7.TabIndex = 19;
-            this.label7.Text = "分間隔に受信する";
+            this.labelIntervalRecieve.AutoSize = true;
+            this.labelIntervalRecieve.Enabled = false;
+            this.labelIntervalRecieve.Location = new System.Drawing.Point(269, 268);
+            this.labelIntervalRecieve.Name = "labelIntervalRecieve";
+            this.labelIntervalRecieve.Size = new System.Drawing.Size(93, 12);
+            this.labelIntervalRecieve.TabIndex = 19;
+            this.labelIntervalRecieve.Text = "分間隔に受信する";
             // 
             // checkSoundPlay
             // 
@@ -355,7 +355,7 @@
             this.Controls.Add(this.textSoundFileName);
             this.Controls.Add(this.buttonBrowse);
             this.Controls.Add(this.checkSoundPlay);
-            this.Controls.Add(this.label7);
+            this.Controls.Add(this.labelIntervalRecieve);
             this.Controls.Add(this.updownGetmailInterval);
             this.Controls.Add(this.checkAutoGetMail);
             this.Controls.Add(this.textFromName);
@@ -383,7 +383,7 @@
             this.Name = "Form2";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "設定";
+            this.Text = "環境設定";
             this.Load += new System.EventHandler(this.Form2_Load);
             ((System.ComponentModel.ISupportInitialize)(this.updownGetmailInterval)).EndInit();
             this.ResumeLayout(false);
@@ -414,7 +414,7 @@
         private System.Windows.Forms.Label label6;
         public System.Windows.Forms.CheckBox checkAutoGetMail;
         private System.Windows.Forms.NumericUpDown updownGetmailInterval;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label labelIntervalRecieve;
         private System.Windows.Forms.CheckBox checkSoundPlay;
         private System.Windows.Forms.Button buttonBrowse;
         private System.Windows.Forms.TextBox textSoundFileName;

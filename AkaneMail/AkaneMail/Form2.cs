@@ -86,11 +86,11 @@ namespace AkaneMail
                 checkBrowser.Checked = Mail.bodyIEShow;
 
                 updownGetmailInterval.Enabled = checkAutoGetMail.Checked;
-                label7.Enabled = checkAutoGetMail.Checked;
+                labelIntervalRecieve.Enabled = checkAutoGetMail.Checked;
 
                 textSoundFileName.Enabled = checkSoundPlay.Checked;
                 buttonBrowse.Enabled = checkSoundPlay.Checked;
-            }
+                }
             // フォーム読み込み完了
             loadFromFlag = false;
         }
@@ -98,7 +98,7 @@ namespace AkaneMail
         private void checkAutGetMail_CheckedChanged(object sender, EventArgs e)
         {
             updownGetmailInterval.Enabled = checkAutoGetMail.Checked;
-            label7.Enabled = checkAutoGetMail.Checked;
+            labelIntervalRecieve.Enabled = checkAutoGetMail.Checked;
         }
 
         private void checkSoundPlay_CheckedChanged(object sender, EventArgs e)
