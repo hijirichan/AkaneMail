@@ -131,15 +131,7 @@ namespace AkaneMail
             }
 
             // 優先度の設定をする
-            if(comboPriority.Text == "高い"){
-                priority = "urgent";
-            }
-            else if(comboPriority.Text == "普通"){
-                priority = "normal";
-            }
-            else{
-                priority = "non-urgent";
-            }
+            priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if(!textBody.Text.EndsWith("\r\n")){
@@ -260,18 +252,18 @@ namespace AkaneMail
         {
             DoInActiveTextBox(ctrl =>
             {
-                if (((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length)
+                if (ctrl.SelectionLength == ctrl.Text.Length)
                 {
                     // テキストボックスの文字列全選択を解除する
-                    ((TextBox)ctrl).SelectionLength = 0;
+                    ctrl.SelectionLength = 0;
                 }
                 else
                 {
-                    // それ以外のときはテキストの前選択をおこなう
-                    ((TextBox)ctrl).SelectAll();
+                    // それ以外のときはテキストの全選択をおこなう
+                    ctrl.SelectAll();
                 }
             });
-            
+
         }
 
         private void menuEditDelete_Click(object sender, EventArgs e)
@@ -394,19 +386,7 @@ namespace AkaneMail
             AboutForm.ShowDialog();
         }
 
-        private void textAddress_TextChanged(object sender, EventArgs e)
-        {
-            // isDirtyをtrueにする
-            isDirty = true;
-        }
-
-        private void textSubject_TextChanged(object sender, EventArgs e)
-        {
-            // isDirtyをtrueにする
-            isDirty = true;
-        }
-
-        private void textBody_TextChanged(object sender, EventArgs e)
+        private void TextEdited(object sender, EventArgs e)
         {
             // isDirtyをtrueにする
             isDirty = true;
