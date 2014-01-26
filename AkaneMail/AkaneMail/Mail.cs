@@ -143,10 +143,9 @@ namespace AkaneMail
             }
             else if (header.Contains("Priority:")){
                 priority = pop.GetHeaderField("Priority:", header);
-
-                // 重要度が空値の時はnormalを入れる
-                if(priority.Length == 0){
-                    _priority = "normal";
+                // 重要度の文字列の長さが0以上のときは取得した重要度を入れる
+                if(priority.Length > 0){
+                    _priority = priority;
                 }
             }
             return _priority;

@@ -43,9 +43,9 @@ namespace AkaneMail
 
         private readonly Dictionary<string, string> mailPriority = new Dictionary<string, string>()
         {
-            { "高い", "Priority: urgent" },
-            { "普通", "Priority: normal" },
-            { "低い", "Priority: non-urgent" }
+            { "高い", "urgent" },
+            { "普通", "normal" },
+            { "低い", "non-urgent" }
         };
 
         /// <summary>
@@ -56,14 +56,15 @@ namespace AkaneMail
         {
             string addr = Mail.FromAddress;
             string priority = mailPriority[comboPriority.Text];
-
             double attachSize = 0;
+
             // 添付ファイルがあるとき
             if (attachName != "")
             {
                 attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
             }
 
+            // メールサイズの合計を取得する
             var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }.Select(t => t.Text).ToArray();
             var moretext = new[] { addr, priority };
             int sizes = formtexts.Concat(moretext).Sum(b => System.Text.Encoding.UTF8.GetBytes(b).Length);
@@ -131,15 +132,7 @@ namespace AkaneMail
             }
 
             // 優先度の設定をする
-            if(comboPriority.Text == "高い"){
-                priority = "urgent";
-            }
-            else if(comboPriority.Text == "普通"){
-                priority = "normal";
-            }
-            else{
-                priority = "non-urgent";
-            }
+            priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if(!textBody.Text.EndsWith("\r\n")){
@@ -147,8 +140,7 @@ namespace AkaneMail
             }
 
             // 添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count >= 1)
-            {
+            if(buttonAttachList.DropDownItems.Count >= 1){
                 var blanks = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).
                     Where(i => buttonAttachList.DropDownItems[i].Text.Contains("は削除されています。")).ToArray();
                 Array.ForEach(blanks, i => buttonAttachList.DropDownItems.RemoveAt(i));
@@ -158,9 +150,9 @@ namespace AkaneMail
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count > 0)
-            {
+            if(buttonAttachList.DropDownItems.Count > 0){
                 var attaches = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).Select(i => buttonAttachList.DropDownItems[i].Text);
+
                 // 添付ファイル名のリストを変数に渡す
                 attachName = string.Join(",", attaches.ToArray());
             }
@@ -218,8 +210,7 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if (ctrl is SplitContainer)
-            {
+            if (ctrl is SplitContainer){
                 ctrl = (ctrl as SplitContainer).ActiveControl;
                 if (ctrl is TextBox) { action(ctrl as TextBox); }
             }
@@ -260,13 +251,11 @@ namespace AkaneMail
         {
             DoInActiveTextBox(ctrl =>
             {
-                if (((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length)
-                {
+                if(((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length){
                     // テキストボックスの文字列全選択を解除する
                     ((TextBox)ctrl).SelectionLength = 0;
                 }
-                else
-                {
+                else{
                     // それ以外のときはテキストの前選択をおこなう
                     ((TextBox)ctrl).SelectAll();
                 }
@@ -309,7 +298,7 @@ namespace AkaneMail
             priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
-            if (!textBody.Text.EndsWith("\r\n")) {
+            if(!textBody.Text.EndsWith("\r\n")){
                 textBody.Text += "\r\n";
             }
 
@@ -328,7 +317,7 @@ namespace AkaneMail
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count >= 1) {
+            if(buttonAttachList.DropDownItems.Count >= 1){
                 var attachList = string.Join(",", buttonAttachList.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text).ToArray());
                 // 添付ファイル名のリストを変数に渡す
                 attachName = attachList;
