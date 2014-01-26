@@ -601,9 +601,9 @@ namespace AkaneMail
             Invoke((MethodInvoker)delegate()
             {
                 // メールの受信件数を更新する
+                progressMail.Value = current;
                 progressMail.Minimum = min;
                 progressMail.Maximum = max;
-                progressMail.Value = current;
             }, current);
         }
 
