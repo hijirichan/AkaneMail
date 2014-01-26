@@ -15,7 +15,7 @@ using ACryptLib;
 
 namespace AkaneMail
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, IProgressPresenter
     {
         // メールを格納する配列
         public List<Mail>[] collectionMail = new List<Mail>[3];
@@ -85,7 +85,7 @@ namespace AkaneMail
         }
 
         // デリゲートの宣言
-        delegate void ProgressMailInitDlg(int value);
+        delegate void ProgressMailInitDlg(int min, int max);
         delegate void ProgressMailUpdateDlg(int value);
         delegate void ProgressMailDisableDlg();
         delegate void EnableButtonDlg(int flag);
@@ -502,7 +502,7 @@ namespace AkaneMail
                             // ヘッダが存在するとき
                             if(header.Length > 0){
                                 // ヘッダから重要度を取得する
-                                priority = GetPriority(header);
+                                priority = Mail.ParsePriority(header);
                             }
 
                             // 変換フラグを取得する(旧バージョンからのデータ移行)
@@ -581,14 +581,39 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// IProgressPresenter.initProgressの実装
+        /// </summary>
+        public bool initProgress(int min, int max)
+        {
+            Invoke(new ProgressMailInitDlg(ProgressMailInit), min, max);
+            return true;
+        }
+
+        /// <summary>
+        /// IProgressPresenter.updateProgressの実装
+        /// </summary>
+        public void updateProgress(int min, int max, int current)
+        {
+            Invoke(new ProgressMailUpdateDlg(ProgressMailUpdate), current);
+        }
+
+        /// <summary>
+        /// IProgressPresenter.hideProgressの実装
+        /// </summary>
+        public void hideProgress()
+        {
+            Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+        }
+
+        /// <summary>
         /// メール送信・受信用プログレスバーの初期化
         /// </summary>
-        private void ProgressMailInit(int value)
+        private void ProgressMailInit(int min, int max)
         {
             // プログレスバーを表示して最大値を未受信メール件数に設定する
             progressMail.Visible = true;
-            progressMail.Minimum = 0;
-            progressMail.Maximum = value;
+            progressMail.Minimum = min;
+            progressMail.Maximum = max;
         }
 
         /// <summary>
@@ -697,8 +722,6 @@ namespace AkaneMail
             int receivedCount = 0;          // 受信済みメール件数
             int mailCount = 0;              // 未受信メール件数
 
-            ProgressMailInitDlg progressMailInit = new ProgressMailInitDlg(ProgressMailInit);
-            ProgressMailUpdateDlg progressMailUpdate = new ProgressMailUpdateDlg(ProgressMailUpdate);
             UpdateViewDlg updateView = new UpdateViewDlg(UpdateView);
             FlashWindowOnDlg flashWindow = new FlashWindowOnDlg(FlashWindowOn);
             EnableButtonDlg enableButton = new EnableButtonDlg(EnableButton);
@@ -781,7 +804,7 @@ namespace AkaneMail
                     pop.Close();
 
                     // プログレスバーを非表示に戻す
-                    Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                    hideProgress();
 
                     // メール受信のメニューとツールボタンを有効化する
                     Invoke(enableButton, 0);
@@ -791,7 +814,7 @@ namespace AkaneMail
 
                 // プログレスバーを表示して最大値を未受信メール件数に設定する
                 int mailCountMax = pop.Count - receivedCount;
-                Invoke(progressMailInit, mailCountMax);
+                initProgress(0, mailCountMax);
 
                 // 未受信のメールを取得するためカウントを1増加させる
                 receivedCount++;
@@ -815,7 +838,7 @@ namespace AkaneMail
 
                     // メールの情報を格納する
                     //Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetHeaderField("Cc:"), "", GetPriority(pop.Header));
-                    Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", GetPriority(pop.Header));
+                    Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", Mail.ParsePriority(pop.Header));
                     collectionMail[RECEIVE].Add(mail);
 
                     // 受信メールの数を増加する
@@ -827,14 +850,14 @@ namespace AkaneMail
                     }
 
                     // メールの受信件数を更新する
-                    Invoke(progressMailUpdate, mailCount);
+                    updateProgress(0, mailCountMax, mailCount);
 
                     // スレッドを1秒間待機させる
                     System.Threading.Thread.Sleep(1000);
                 }
 
                 // プログレスバーを非表示に戻す
-                Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                hideProgress();
 
                 // POP3から切断する
                 pop.Close();
@@ -905,8 +928,6 @@ namespace AkaneMail
         /// </summary>
         private void SendMail()
         {
-            ProgressMailInitDlg progressMailInit = new ProgressMailInitDlg(ProgressMailInit);
-            ProgressMailUpdateDlg progressMailUpdate = new ProgressMailUpdateDlg(ProgressMailUpdate);
             UpdateViewDlg updateView = new UpdateViewDlg(UpdateView);
             EnableButtonDlg enableButton = new EnableButtonDlg(EnableButton);
 
@@ -932,7 +953,7 @@ namespace AkaneMail
                 labelMessage.Text = "メール送信中";
 
                 // プログレスバーを表示して最大値を未送信メール件数に設定する
-                Invoke(progressMailInit, max_no);
+                initProgress(0, max_no);
 
                 // POP before SMTPが有効の場合
                 if (Mail.popBeforeSMTP == true) {
@@ -1029,7 +1050,7 @@ namespace AkaneMail
 
                         // メールの送信件数を更新する
                         send_no++;
-                        Invoke(progressMailUpdate, send_no);
+                        updateProgress(0, max_no, send_no);
 
                         // スレッドを1秒間待機させる
                         System.Threading.Thread.Sleep(1000);
@@ -1040,7 +1061,7 @@ namespace AkaneMail
                 smtp.Close();
 
                 // プログレスバーを非表示に戻す
-                Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                hideProgress();
 
                 // ボタンとメニューを有効化する
                 Invoke(enableButton, 1);
@@ -1271,70 +1292,6 @@ namespace AkaneMail
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
                 return;
             }
-        }
-
-        /// <summary>
-        /// 重要度取得
-        /// </summary>
-        /// <param name="header">ヘッダ</param>
-        /// <returns>重要度(urgent/normal/non-urgent)</returns>
-        private string GetPriority(string header)
-        {
-            string _priority = "normal";
-            string priority = "";
-
-            nMail.Attachment attach = new nMail.Attachment();
-
-            // ヘッダにX-Priorityがあるとき
-            if(header.Contains("X-Priority:")){
-                priority = attach.GetHeaderField("X-Priority:", header);
-
-                if(priority == "1" || priority == "2"){
-                    _priority = "urgent";
-                }
-                else if(priority == "3"){
-                    _priority = "normal";
-                }
-                else if(priority == "4" || priority == "5"){
-                    _priority = "non-urgent";
-                }
-            }
-            else if(header.Contains("X-MsMail-Priotiry:")){
-                priority = attach.GetHeaderField("X-MsMail-Priotiry:", header);
-
-                if(priority.ToLower() == "High"){
-                    _priority = "urgent";
-                }
-                else if(priority.ToLower() == "Normal"){
-                    _priority = "normal";
-                }
-                else if(priority.ToLower() == "low"){
-                    _priority = "non-urgent";
-                }
-            }
-            else if(header.Contains("Importance:")){
-                priority = attach.GetHeaderField("Importance:", header);
-
-                if(priority.ToLower() == "high"){
-                    _priority = "urgent";
-                }
-                else if(priority.ToLower() == "normal"){
-                    _priority = "normal";
-                }
-                else if(priority.ToLower() == "low"){
-                    _priority = "non-urgent";
-                }
-            }
-            else if(header.Contains("Priority:")){
-                _priority = attach.GetHeaderField("Priority:", header);
-
-                // 重要度が空値の時はnormalを入れる
-                if(_priority.Length == 0){
-                    _priority = "normal";
-                }
-            }
-
-            return _priority;
         }
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)

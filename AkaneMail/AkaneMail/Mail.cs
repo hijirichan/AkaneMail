@@ -60,5 +60,83 @@ namespace AkaneMail
             this.convert = convert;
         }
 
+
+        /// <summary>
+        /// 重要度取得
+        /// </summary>
+        /// <param name="header">ヘッダ</param>
+        /// <returns>重要度(urgent/normal/non-urgent)</returns>
+        public static string ParsePriority(string header)
+        {
+            string _priority = "normal";
+            string priority = "";
+
+            nMail.Attachment attach = new nMail.Attachment();
+
+            // ヘッダにX-Priorityがあるとき
+            if (header.Contains("X-Priority:"))
+            {
+                priority = attach.GetHeaderField("X-Priority:", header);
+
+                if (priority == "1" || priority == "2")
+                {
+                    _priority = "urgent";
+                }
+                else if (priority == "3")
+                {
+                    _priority = "normal";
+                }
+                else if (priority == "4" || priority == "5")
+                {
+                    _priority = "non-urgent";
+                }
+            }
+            else if (header.Contains("X-MsMail-Priotiry:"))
+            {
+                priority = attach.GetHeaderField("X-MsMail-Priotiry:", header);
+
+                if (priority.ToLower() == "High")
+                {
+                    _priority = "urgent";
+                }
+                else if (priority.ToLower() == "Normal")
+                {
+                    _priority = "normal";
+                }
+                else if (priority.ToLower() == "low")
+                {
+                    _priority = "non-urgent";
+                }
+            }
+            else if (header.Contains("Importance:"))
+            {
+                priority = attach.GetHeaderField("Importance:", header);
+
+                if (priority.ToLower() == "high")
+                {
+                    _priority = "urgent";
+                }
+                else if (priority.ToLower() == "normal")
+                {
+                    _priority = "normal";
+                }
+                else if (priority.ToLower() == "low")
+                {
+                    _priority = "non-urgent";
+                }
+            }
+            else if (header.Contains("Priority:"))
+            {
+                _priority = attach.GetHeaderField("Priority:", header);
+
+                // 重要度が空値の時はnormalを入れる
+                if (_priority.Length == 0)
+                {
+                    _priority = "normal";
+                }
+            }
+
+            return _priority;
+        }
     }
 }

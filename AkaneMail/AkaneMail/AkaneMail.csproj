@@ -79,6 +79,7 @@
     <Compile Include="Form4.Designer.cs">
       <DependentUpon>Form4.cs</DependentUpon>
     </Compile>
+    <Compile Include="IProgressPresenter.cs" />
     <Compile Include="Mail.cs" />
     <Compile Include="nMail.cs" />
     <Compile Include="Program.cs" />
