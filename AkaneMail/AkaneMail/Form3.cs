@@ -16,11 +16,6 @@ namespace AkaneMail
         public string[] attachFileNameList;
         findDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
 
-        private List<Mail> _sList = null;
-        private bool _isDirty = false;
-        private bool _isEdit = false;
-        private int _listTag = 0;
-
         /// <summary>
         /// 親フォームクラス
         /// </summary>
@@ -34,7 +29,7 @@ namespace AkaneMail
         /// <summary>
         /// テキスト変更フラグ
         /// </summary>
-        public bool isDirty{ get; set; }
+        public bool isDirty { get; set; }
 
         /// <summary>
         /// 編集モードフラグ
