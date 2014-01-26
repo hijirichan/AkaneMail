@@ -85,9 +85,6 @@ namespace AkaneMail
         }
 
         // デリゲートの宣言
-        delegate void ProgressMailInitDlg(int min, int max);
-        delegate void ProgressMailUpdateDlg(int value);
-        delegate void ProgressMailDisableDlg();
         delegate void EnableButtonDlg(int flag);
         delegate void UpdateViewDlg(int flag);
         delegate void FlashWindowOnDlg();
@@ -585,7 +582,14 @@ namespace AkaneMail
         /// </summary>
         public bool initProgress(int min, int max)
         {
-            Invoke(new ProgressMailInitDlg(ProgressMailInit), min, max);
+            Invoke((MethodInvoker)delegate()
+            {
+                // プログレスバーを表示して最大値を未受信メール件数に設定する
+                progressMail.Visible = true;
+                progressMail.Minimum = min;
+                progressMail.Maximum = max;
+                progressMail.Value = 0;
+            }, min, max);
             return true;
         }
 
@@ -594,7 +598,13 @@ namespace AkaneMail
         /// </summary>
         public void updateProgress(int min, int max, int current)
         {
-            Invoke(new ProgressMailUpdateDlg(ProgressMailUpdate), current);
+            Invoke((MethodInvoker)delegate()
+            {
+                // メールの受信件数を更新する
+                progressMail.Minimum = min;
+                progressMail.Maximum = max;
+                progressMail.Value = current;
+            }, current);
         }
 
         /// <summary>
@@ -602,40 +612,16 @@ namespace AkaneMail
         /// </summary>
         public void hideProgress()
         {
-            Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+            Invoke((MethodInvoker)delegate()
+            {
+                // プログレスバーを非表示にする
+                progressMail.Visible = false;
+                progressMail.Value = 0;
+                progressMail.Minimum = 0;
+                progressMail.Maximum = 0;
+            });
         }
 
-        /// <summary>
-        /// メール送信・受信用プログレスバーの初期化
-        /// </summary>
-        private void ProgressMailInit(int min, int max)
-        {
-            // プログレスバーを表示して最大値を未受信メール件数に設定する
-            progressMail.Visible = true;
-            progressMail.Minimum = min;
-            progressMail.Maximum = max;
-        }
-
-        /// <summary>
-        /// メール送信・受信件数の更新
-        /// </summary>
-        private void ProgressMailUpdate(int value)
-        {
-            // メールの受信件数を更新する
-            progressMail.Value = value;
-        }
-
-        /// <summary>
-        /// メール送信・受信用プログレスバーの非表示
-        /// </summary>
-        private void ProgressMailDisable()
-        {
-            // プログレスバーを非表示にする
-            progressMail.Visible = false;
-            progressMail.Value = 0;
-            progressMail.Minimum = 0;
-            progressMail.Maximum = 0;
-        }
 
         /// <summary>
         /// FlashWindow()の実行
