@@ -1009,7 +1009,7 @@ namespace AkaneMail
                         smtp.Header = "\r\nPriority: " + mail.priority + "\r\nX-Mailer: Akane Mail Version " + Application.ProductVersion;
 
                         // 差出人のアドレスを編集する
-                        string fromAddress = Mail.fromName + " <" + Mail.mailAddress + ">";
+                        string fromAddress = Mail.FromAddress;
 
                         // 送信する
                         smtp.SendMail(mail.address, fromAddress, mail.subject, mail.body);
@@ -1154,7 +1154,7 @@ namespace AkaneMail
                 smtp.Header = "\r\nPriority: " + priority + "\r\nX-Mailer: Akane Mail Version " + Application.ProductVersion;
 
                 // 差出人のアドレスを編集する
-                string fromAddress = Mail.fromName + " <" + Mail.mailAddress + ">";
+                string fromAddress = Mail.FromAddress;
 
                 // 送信する
                 smtp.SendMail(address, fromAddress, subject, body);

@@ -136,7 +136,7 @@ namespace AkaneMail
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if(!textBody.Text.EndsWith("\r\n")){
-                textBody.Text = textBody.Text + "\r\n";
+                textBody.Text += "\r\n";
             }
 
             // 添付ファイルが1個以上ある場合
@@ -152,7 +152,6 @@ namespace AkaneMail
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
             if(buttonAttachList.DropDownItems.Count > 0){
                 var attaches = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).Select(i => buttonAttachList.DropDownItems[i].Text);
-
                 // 添付ファイル名のリストを変数に渡す
                 attachName = string.Join(",", attaches.ToArray());
             }
