@@ -16,11 +16,6 @@ namespace AkaneMail
         public string[] attachFileNameList;
         findDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
 
-        private List<Mail> _sList = null;
-        private bool _isDirty = false;
-        private bool _isEdit = false;
-        private int _listTag = 0;
-
         /// <summary>
         /// 親フォームクラス
         /// </summary>
@@ -34,7 +29,7 @@ namespace AkaneMail
         /// <summary>
         /// テキスト変更フラグ
         /// </summary>
-        public bool isDirty{ get; set; }
+        public bool isDirty { get; set; }
 
         /// <summary>
         /// 編集モードフラグ
@@ -67,7 +62,7 @@ namespace AkaneMail
             if (attachName != "")
             {
                 attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
-            }
+                }
 
             var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }.Select(t => t.Text).ToArray();
             var moretext = new[] { addr, priority };
@@ -160,7 +155,7 @@ namespace AkaneMail
 
                 // メニューが空になった時は添付リストの表示を非表示にする
                 buttonAttachList.Visible = (buttonAttachList.DropDownItems.Count == 0);
-            }
+                }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
             if (buttonAttachList.DropDownItems.Count > 0)
@@ -227,15 +222,15 @@ namespace AkaneMail
             {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
                 if (ctrl is TextBox) { action(ctrl as TextBox); }
-            }
-        }
+                    }
+                }
 
         private void menuEditUndo_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl => {
                 if (ctrl.CanUndo) { ctrl.Undo(); }
             });
-        }
+            }
 
         private void menuEditCut_Click(object sender, EventArgs e)
         {
@@ -243,7 +238,7 @@ namespace AkaneMail
             {
                 if (ctrl.SelectionLength > 0) { ctrl.Cut(); }
             });
-        }
+                    }
 
         private void menuEditCopy_Click(object sender, EventArgs e)
         {
@@ -251,7 +246,7 @@ namespace AkaneMail
             {
                 if (ctrl.SelectionLength > 0) { ctrl.Copy(); }
             });
-        }
+                    }
 
         private void menuEditPaste_Click(object sender, EventArgs e)
         {
@@ -259,7 +254,7 @@ namespace AkaneMail
             {
                 if (Clipboard.ContainsData(DataFormats.Text)) { ctrl.Paste(); }
             });
-        }
+                    }
 
         private void menuEditAllSelect_Click(object sender, EventArgs e)
         {
@@ -267,14 +262,14 @@ namespace AkaneMail
             {
                 if (((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length)
                 {
-                    // テキストボックスの文字列全選択を解除する
-                    ((TextBox)ctrl).SelectionLength = 0;
-                }
+                        // テキストボックスの文字列全選択を解除する
+                        ((TextBox)ctrl).SelectionLength = 0;
+                    }
                 else
                 {
-                    // それ以外のときはテキストの前選択をおこなう
-                    ((TextBox)ctrl).SelectAll();
-                }
+                        // それ以外のときはテキストの前選択をおこなう
+                        ((TextBox)ctrl).SelectAll();
+                    }
             });
             
         }
@@ -426,7 +421,7 @@ namespace AkaneMail
                 {
                     message = "送信メールの編集途中ですが、閉じてよろしいですか？\nウィンドウを閉じると編集前の内容に戻ります。";
                     title = "編集中";
-                }
+                    }
                 else
                 {
                     message = "メールの作成途中ですが、閉じてよろしいですか？\nウィンドウを閉じると作成中のメールは保存されません。";
@@ -434,10 +429,10 @@ namespace AkaneMail
                 }
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
                 {
-                    // ウィンドウを閉じるのをキャンセル
-                    e.Cancel = true;
+                        // ウィンドウを閉じるのをキャンセル
+                        e.Cancel = true;
+                    }
                 }
-            }
             // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
         }
@@ -517,7 +512,7 @@ namespace AkaneMail
                     var isctrlSelected = ((TextBox)ctrl).SelectionLength > 0;
                     this.buttonCut.Enabled = isctrlSelected;
                     this.buttonCopy.Enabled = isctrlSelected;
-               }
+                }
             }
 
             this.buttonPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
