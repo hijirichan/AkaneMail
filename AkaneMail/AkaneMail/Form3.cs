@@ -56,13 +56,13 @@ namespace AkaneMail
         {
             string addr = Mail.FromAddress;
             string priority = mailPriority[comboPriority.Text];
-            double attachSize = 0;
 
+            double attachSize = 0;
             // 添付ファイルがあるとき
             if (attachName != "")
             {
                 attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
-            }
+                }
 
             // メールサイズの合計を取得する
             var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }.Select(t => t.Text).ToArray();
@@ -140,13 +140,14 @@ namespace AkaneMail
             }
 
             // 添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count >= 1){
+            if (buttonAttachList.DropDownItems.Count > 0)
+            {
                 var blanks = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).
                     Where(i => buttonAttachList.DropDownItems[i].Text.Contains("は削除されています。")).ToArray();
                 Array.ForEach(blanks, i => buttonAttachList.DropDownItems.RemoveAt(i));
 
                 // メニューが空になった時は添付リストの表示を非表示にする
-                buttonAttachList.Visible = (buttonAttachList.DropDownItems.Count == 0);
+                buttonAttachList.Visible = buttonAttachList.DropDownItems.Count == 0;
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
@@ -209,15 +210,23 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if (ctrl is SplitContainer){
+            if (ctrl is SplitContainer)
+            {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if (ctrl is TextBox) { action(ctrl as TextBox); }
+                if (ctrl is TextBox)
+                {
+                    if (((TextBox)ctrl).CanUndo)
+                    {
+                        ((TextBox)ctrl).Undo();
+                    }
+                }
             }
         }
 
         private void menuEditUndo_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl => {
+            DoInActiveTextBox(ctrl =>
+            {
                 if (ctrl.CanUndo) { ctrl.Undo(); }
             });
         }
@@ -251,7 +260,7 @@ namespace AkaneMail
             DoInActiveTextBox(ctrl =>
             {
                 if(((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length){
-                    // テキストボックスの文字列全選択を解除する
+                        // テキストボックスの文字列全選択を解除する
                     ((TextBox)ctrl).SelectionLength = 0;
                 }
                 else{
@@ -260,7 +269,7 @@ namespace AkaneMail
                 }
             });
             
-        }
+                }
 
         private void menuEditDelete_Click(object sender, EventArgs e)
         {
@@ -316,7 +325,7 @@ namespace AkaneMail
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count >= 1){
+            if(buttonAttachList.DropDownItems.Count > 0){
                 var attachList = string.Join(",", buttonAttachList.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text).ToArray());
                 // 添付ファイル名のリストを変数に渡す
                 attachName = attachList;
@@ -334,7 +343,8 @@ namespace AkaneMail
                 Mail newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attachName, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
                 SendList.Add(newMail);
             }
-            else{
+            else
+            {
                 // 選択したメールの内容を書き換える
                 // 送信リストに入れている情報を書き換える
                 size = GetMailSize();
@@ -380,19 +390,7 @@ namespace AkaneMail
             AboutForm.ShowDialog();
         }
 
-        private void textAddress_TextChanged(object sender, EventArgs e)
-        {
-            // isDirtyをtrueにする
-            IsDirty = true;
-        }
-
-        private void textSubject_TextChanged(object sender, EventArgs e)
-        {
-            // isDirtyをtrueにする
-            IsDirty = true;
-        }
-
-        private void textBody_TextChanged(object sender, EventArgs e)
+        private void TextEdited(object sender, EventArgs e)
         {
             // isDirtyをtrueにする
             IsDirty = true;
@@ -412,10 +410,10 @@ namespace AkaneMail
                     title = "新規作成";
                 }
                 if(MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No){
-                    // ウィンドウを閉じるのをキャンセル
-                    e.Cancel = true;
+                        // ウィンドウを閉じるのをキャンセル
+                        e.Cancel = true;
+                    }
                 }
-            }
             // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
         }
@@ -495,7 +493,7 @@ namespace AkaneMail
                     var isctrlSelected = ((TextBox)ctrl).SelectionLength > 0;
                     this.buttonCut.Enabled = isctrlSelected;
                     this.buttonCopy.Enabled = isctrlSelected;
-               }
+                }
             }
 
             this.buttonPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
