@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace AkaneMail
 {
-    public partial class Form3 : Form
+    public partial class MailEditorForm : Form
     {
         public string attachName;
         public string[] attachFileNameList;
@@ -19,7 +19,7 @@ namespace AkaneMail
         /// <summary>
         /// 親フォームクラス
         /// </summary>
-        public Form1 MainForm { set; get; }
+        public MainForm MainForm { set; get; }
 
         /// <summary>
         /// 送信箱の配列
@@ -71,7 +71,7 @@ namespace AkaneMail
             return (sizes + (long)attachSize).ToString();
         }
 
-        public Form3()
+        public MailEditorForm()
         {
             // Appliction.Idleを登録する
             Application.Idle += new EventHandler(Application_Idle);
@@ -381,7 +381,7 @@ namespace AkaneMail
         private void menuHelpAbout_Click(object sender, EventArgs e)
         {
             // バージョン情報を表示する
-            Form4 AboutForm = new Form4();
+            AboutForm AboutForm = new AboutForm();
             AboutForm.ShowDialog();
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace AkaneMail
 {
-    partial class Form2
+    partial class SettingForm
     {
         /// <summary>
         /// 必要なデザイナ変数です。

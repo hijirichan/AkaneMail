@@ -8,12 +8,12 @@ using System.Windows.Forms;
 
 namespace AkaneMail
 {
-    public partial class Form4 : Form
+    public partial class AboutForm : Form
     {
         // アドレスを直書きから変数に変更
         string strHomeUrl = "http://www.angel-teatime.com/";
 
-        public Form4()
+        public AboutForm()
         {
             InitializeComponent();
         }

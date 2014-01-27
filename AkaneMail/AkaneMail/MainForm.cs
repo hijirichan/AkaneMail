@@ -16,7 +16,7 @@ using ACryptLib;
 
 namespace AkaneMail
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         // メールを格納する配列
         public List<Mail>[] collectionMail = new List<Mail>[3];
@@ -220,7 +220,7 @@ namespace AkaneMail
             }
         }
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
 
@@ -1283,7 +1283,7 @@ namespace AkaneMail
 
         private void menuToolSetEnv_Click(object sender, EventArgs e)
         {
-            Form2 Form2 = new Form2();
+            SettingForm Form2 = new SettingForm();
 
             if(timer2.Enabled == true){
                 timer2.Enabled = false;
@@ -1318,7 +1318,7 @@ namespace AkaneMail
 
         private void menuMailNew_Click(object sender, EventArgs e)
         {
-            Form3 NewMailForm = new Form3();
+            MailEditorForm NewMailForm = new MailEditorForm();
 
             // 親フォームをForm1に設定する
             NewMailForm.MainForm = this;
@@ -1621,7 +1621,7 @@ namespace AkaneMail
             }
             else if(listView1.Columns[0].Text == "宛先"){
                 // 1番目のカラムが宛先のときは編集画面を表示する
-                Form3 EditMailForm = new Form3();
+                MailEditorForm EditMailForm = new MailEditorForm();
 
                 // 親フォームをForm1に設定する
                 EditMailForm.MainForm = this;
@@ -1920,7 +1920,7 @@ namespace AkaneMail
         private void menuMailReturnMail_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            Form3 NewMailForm = new Form3();
+            MailEditorForm NewMailForm = new MailEditorForm();
             ListViewItem item = listView1.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
@@ -2397,7 +2397,7 @@ namespace AkaneMail
         private void menuHelpAbout_Click(object sender, EventArgs e)
         {
             // バージョン情報を表示する
-            Form4 AboutForm = new Form4();
+            AboutForm AboutForm = new AboutForm();
             AboutForm.ShowDialog();
         }
 
@@ -2599,7 +2599,7 @@ namespace AkaneMail
 
             Icon appIcon;
             Mail mail = null;
-            Form3 NewMailForm = new Form3();
+            MailEditorForm NewMailForm = new MailEditorForm();
             ListViewItem item = listView1.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
