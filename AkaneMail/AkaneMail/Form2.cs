@@ -90,7 +90,7 @@ namespace AkaneMail
 
                 textSoundFileName.Enabled = checkSoundPlay.Checked;
                 buttonBrowse.Enabled = checkSoundPlay.Checked;
-                }
+            }
             // フォーム読み込み完了
             loadFromFlag = false;
         }

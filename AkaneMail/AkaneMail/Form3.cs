@@ -59,10 +59,9 @@ namespace AkaneMail
 
             double attachSize = 0;
             // 添付ファイルがあるとき
-            if (attachName != "")
-            {
+            if(attachName != ""){
                 attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
-                }
+            }
 
             // メールサイズの合計を取得する
             var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }.Select(t => t.Text).ToArray();
@@ -210,13 +209,10 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if (ctrl is SplitContainer)
-            {
+            if(ctrl is SplitContainer){
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if (ctrl is TextBox)
-                {
-                    if (((TextBox)ctrl).CanUndo)
-                    {
+                if (ctrl is TextBox){
+                    if(((TextBox)ctrl).CanUndo){
                         ((TextBox)ctrl).Undo();
                     }
                 }
@@ -268,8 +264,7 @@ namespace AkaneMail
                     ((TextBox)ctrl).SelectAll();
                 }
             });
-            
-                }
+        }
 
         private void menuEditDelete_Click(object sender, EventArgs e)
         {
