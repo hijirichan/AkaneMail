@@ -672,6 +672,144 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// 設定ファイルからアプリケーション設定を読み出す
+        /// </summary>
+        public void LoadSettings()
+        {
+            // 環境設定保存クラスを作成する
+            initMail = new initClass();
+
+            // アカウント情報(初期値)を設定する
+            Mail.fromName = "";
+            Mail.mailAddress = "";
+            Mail.userName = "";
+            Mail.passWord = "";
+            Mail.smtpServer = "";
+            Mail.popServer = "";
+            Mail.popPortNumber = 110;
+            Mail.smtpPortNumber = 25;
+            Mail.apopFlag = false;
+            Mail.deleteMail = false;
+            Mail.popBeforeSMTP = false;
+            Mail.popOverSSL = false;
+            Mail.smtpAuth = false;
+            Mail.autoMailFlag = false;
+            Mail.getMailInterval = 10;
+            Mail.popSoundName = "";
+            Mail.bodyIEShow = false;
+            Mail.minimizeTaskTray = false;
+
+            // 環境設定ファイルが存在する場合は環境設定情報を読み込んでアカウント情報に設定する
+            if (File.Exists(Application.StartupPath + @"\AkaneMail.xml"))
+            {
+                System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
+                FileStream fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Open);
+                initMail = (initClass)serializer.Deserialize(fs);
+                fs.Close();
+                Mail.fromName = initMail.m_fromName;
+                Mail.mailAddress = initMail.m_mailAddress;
+                Mail.userName = initMail.m_userName;
+
+                // パスワードの復号化を行う
+                try
+                {
+                    Mail.passWord = ACrypt.DecryptPasswordString(initMail.m_passWord);
+                }
+                catch (Exception)
+                {
+                    // 新規インストール以外の初回起動時には必ずここに入る
+                    Mail.passWord = initMail.m_passWord;
+                }
+
+                Mail.smtpServer = initMail.m_smtpServer;
+                Mail.popServer = initMail.m_popServer;
+                Mail.smtpPortNumber = initMail.m_smtpPortNo;
+                Mail.popPortNumber = initMail.m_popPortNo;
+                Mail.apopFlag = initMail.m_apopFlag;
+                Mail.deleteMail = initMail.m_deleteMail;
+                Mail.popBeforeSMTP = initMail.m_popBeforeSMTP;
+                Mail.popOverSSL = initMail.m_popOverSSL;
+                Mail.smtpAuth = initMail.m_smtpAuth;
+                Mail.autoMailFlag = initMail.m_autoMailFlag;
+                Mail.getMailInterval = initMail.m_getMailInterval;
+                Mail.popSoundFlag = initMail.m_popSoundFlag;
+                Mail.popSoundName = initMail.m_popSoundName;
+                Mail.bodyIEShow = initMail.m_bodyIEShow;
+                Mail.minimizeTaskTray = initMail.m_minimizeTaskTray;
+
+                // 画面の表示が通常のとき 
+                if (initMail.m_windowStat == FormWindowState.Normal)
+                {
+                    // 過去のバージョンから環境設定ファイルを流用した初期起動以外はこの中に入る
+                    if (initMail.m_windowLeft != 0 && initMail.m_windowTop != 0 && initMail.m_windowWidth != 0 && initMail.m_windowHeight != 0)
+                    {
+                        this.Left = initMail.m_windowLeft;
+                        this.Top = initMail.m_windowTop;
+                        this.Width = initMail.m_windowWidth;
+                        this.Height = initMail.m_windowHeight;
+                    }
+                }
+                else
+                {
+                    // 最大化または最小化の時はウィンドウ状態を設定する
+                    this.WindowState = initMail.m_windowStat;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// アプリケーション設定を設定ファイルに書き出す
+        /// </summary>
+        public void SaveSettings()
+        {
+            // 環境設定保存クラスを作成する
+            initMail = new initClass();
+
+            // 環境設定ファイルへアカウント情報を保存する
+            initMail.m_fromName = Mail.fromName;
+            initMail.m_mailAddress = Mail.mailAddress;
+            initMail.m_userName = Mail.userName;
+
+            // パスワードの暗号化を行う
+            try
+            {
+                initMail.m_passWord = ACrypt.EncryptPasswordString(Mail.passWord);
+            }
+            catch (Exception)
+            {
+                // 例外発生時は旧バージョンと同じ動作
+                initMail.m_passWord = Mail.passWord;
+            }
+
+            initMail.m_smtpServer = Mail.smtpServer;
+            initMail.m_popServer = Mail.popServer;
+            initMail.m_smtpPortNo = Mail.smtpPortNumber;
+            initMail.m_popPortNo = Mail.popPortNumber;
+            initMail.m_apopFlag = Mail.apopFlag;
+            initMail.m_deleteMail = Mail.deleteMail;
+            initMail.m_popBeforeSMTP = Mail.popBeforeSMTP;
+            initMail.m_popOverSSL = Mail.popOverSSL;
+            initMail.m_smtpAuth = Mail.smtpAuth;
+            initMail.m_autoMailFlag = Mail.autoMailFlag;
+            initMail.m_getMailInterval = Mail.getMailInterval;
+            initMail.m_popSoundFlag = Mail.popSoundFlag;
+            initMail.m_popSoundName = Mail.popSoundName;
+            initMail.m_bodyIEShow = Mail.bodyIEShow;
+            initMail.m_minimizeTaskTray = Mail.minimizeTaskTray;
+            initMail.m_windowLeft = this.Left;
+            initMail.m_windowTop = this.Top;
+            initMail.m_windowWidth = this.Width;
+            initMail.m_windowHeight = this.Height;
+            initMail.m_windowStat = this.WindowState;
+
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
+            FileStream fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Create);
+            serializer.Serialize(fs, initMail);
+            fs.Close();
+        }
+
+        /// <summary>
         /// POP3サーバからメールを受信する
         /// </summary>
         private void RecieveMail()
@@ -1699,48 +1837,8 @@ namespace AkaneMail
                 t.Join();
             }
 
-            // 環境設定保存クラスを作成する
-            initMail = new initClass();
-
-            // 環境設定ファイルへアカウント情報を保存する
-            initMail.m_fromName = Mail.fromName;
-            initMail.m_mailAddress = Mail.mailAddress;
-            initMail.m_userName = Mail.userName;
-            
-            // パスワードの暗号化を行う
-            try {
-                initMail.m_passWord = ACrypt.EncryptPasswordString(Mail.passWord);
-            }
-            catch (Exception) {
-                // 例外発生時は旧バージョンと同じ動作
-                initMail.m_passWord = Mail.passWord;
-            }
-
-            initMail.m_smtpServer = Mail.smtpServer;
-            initMail.m_popServer = Mail.popServer;
-            initMail.m_smtpPortNo = Mail.smtpPortNumber;
-            initMail.m_popPortNo = Mail.popPortNumber;
-            initMail.m_apopFlag = Mail.apopFlag;
-            initMail.m_deleteMail = Mail.deleteMail;
-            initMail.m_popBeforeSMTP = Mail.popBeforeSMTP;
-            initMail.m_popOverSSL = Mail.popOverSSL;
-            initMail.m_smtpAuth = Mail.smtpAuth;
-            initMail.m_autoMailFlag = Mail.autoMailFlag;
-            initMail.m_getMailInterval = Mail.getMailInterval;
-            initMail.m_popSoundFlag = Mail.popSoundFlag;
-            initMail.m_popSoundName = Mail.popSoundName;
-            initMail.m_bodyIEShow = Mail.bodyIEShow;
-            initMail.m_minimizeTaskTray = Mail.minimizeTaskTray;
-            initMail.m_windowLeft = this.Left;
-            initMail.m_windowTop = this.Top;
-            initMail.m_windowWidth = this.Width;
-            initMail.m_windowHeight = this.Height;
-            initMail.m_windowStat = this.WindowState;
-
-            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
-            FileStream fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Create);
-            serializer.Serialize(fs, initMail);
-            fs.Close();
+            // 環境設定の書き出し
+            SaveSettings();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -1763,79 +1861,8 @@ namespace AkaneMail
             // それを防ぐために一時的にフォームを非表示にする。
             this.Hide();
 
-            // 環境設定保存クラスを作成する
-            initMail = new initClass();
-
-            // アカウント情報(初期値)を設定する
-            Mail.fromName = "";
-            Mail.mailAddress = "";
-            Mail.userName = "";
-            Mail.passWord = "";
-            Mail.smtpServer = "";
-            Mail.popServer = "";
-            Mail.popPortNumber = 110;
-            Mail.smtpPortNumber = 25;
-            Mail.apopFlag = false;
-            Mail.deleteMail = false;
-            Mail.popBeforeSMTP = false;
-            Mail.popOverSSL = false;
-            Mail.smtpAuth = false;
-            Mail.autoMailFlag = false;
-            Mail.getMailInterval = 10;
-            Mail.popSoundName = "";
-            Mail.bodyIEShow = false;
-            Mail.minimizeTaskTray = false;
-
-            // 環境設定ファイルが存在する場合は環境設定情報を読み込んでアカウント情報に設定する
-            if(File.Exists(Application.StartupPath + @"\AkaneMail.xml")){
-                System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
-                FileStream fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Open);
-                initMail = (initClass)serializer.Deserialize(fs);
-                fs.Close();
-                Mail.fromName = initMail.m_fromName;
-                Mail.mailAddress = initMail.m_mailAddress;
-                Mail.userName = initMail.m_userName;
-
-                // パスワードの復号化を行う
-                try{
-                    Mail.passWord = ACrypt.DecryptPasswordString(initMail.m_passWord);
-                }
-                catch(Exception){
-                    // 新規インストール以外の初回起動時には必ずここに入る
-                    Mail.passWord = initMail.m_passWord;
-                }
-
-                Mail.smtpServer = initMail.m_smtpServer;
-                Mail.popServer = initMail.m_popServer;
-                Mail.smtpPortNumber = initMail.m_smtpPortNo;
-                Mail.popPortNumber = initMail.m_popPortNo;
-                Mail.apopFlag = initMail.m_apopFlag;
-                Mail.deleteMail = initMail.m_deleteMail;
-                Mail.popBeforeSMTP = initMail.m_popBeforeSMTP;
-                Mail.popOverSSL = initMail.m_popOverSSL;
-                Mail.smtpAuth = initMail.m_smtpAuth;
-                Mail.autoMailFlag = initMail.m_autoMailFlag;
-                Mail.getMailInterval = initMail.m_getMailInterval;
-                Mail.popSoundFlag = initMail.m_popSoundFlag;
-                Mail.popSoundName = initMail.m_popSoundName;
-                Mail.bodyIEShow = initMail.m_bodyIEShow;
-                Mail.minimizeTaskTray = initMail.m_minimizeTaskTray;
-
-                // 画面の表示が通常のとき 
-                if(initMail.m_windowStat == FormWindowState.Normal){
-                    // 過去のバージョンから環境設定ファイルを流用した初期起動以外はこの中に入る
-                    if(initMail.m_windowLeft != 0 && initMail.m_windowTop != 0 && initMail.m_windowWidth != 0 && initMail.m_windowHeight != 0){
-                        this.Left = initMail.m_windowLeft;
-                        this.Top = initMail.m_windowTop;
-                        this.Width = initMail.m_windowWidth;
-                        this.Height = initMail.m_windowHeight;
-                    }
-                }
-                else{
-                    // 最大化または最小化の時はウィンドウ状態を設定する
-                    this.WindowState = initMail.m_windowStat;
-                }
-            }
+            // 環境設定の読み込み
+            LoadSettings();
 
             try
             {
