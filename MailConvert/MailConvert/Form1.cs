@@ -48,7 +48,8 @@ namespace MailConvert
                     if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                         if (radioConvTypeA.Checked) {
                             DataConvertA(openFileDialog1.FileName);
-                        } else {
+                        }
+                        else {
                             DataConvertB(openFileDialog1.FileName);
                         }
                     }
@@ -57,9 +58,11 @@ namespace MailConvert
             catch (Exception exp) {
                 if (exp.Message.Contains("nMail")) {
                     MessageBox.Show("nMail.dllが変換ツールと同じ場所に存在しません。\nnMail.dllを配置しているフォルダで実行してください。", "Ak@Ne! Mail Convertor", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                } else if(exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
+                }
+                else if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
                     MessageBox.Show("64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合\nこのエラーが表示されます。\n\nお手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更して実行\nしてください。", "Ak@Ne! Mail Convertor", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                } else {
+                }
+                else {
                     MessageBox.Show("予期せぬエラーが発生しました。\n" + exp.Message, "Ak@Ne! Mail Convertor", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
@@ -83,32 +86,41 @@ namespace MailConvert
 
                 if (priority == "1" || priority == "2") {
                     _priority = "urgent";
-                } else if (priority == "3") {
+                }
+                else if (priority == "3") {
                     _priority = "normal";
-                } else if (priority == "4" || priority == "5") {
+                }
+                else if (priority == "4" || priority == "5") {
                     _priority = "non-urgent";
                 }
-            } else if (header.Contains("X-MsMail-Priotiry:")) {
+            }
+            else if (header.Contains("X-MsMail-Priotiry:")) {
                 priority = attach.GetHeaderField("X-MsMail-Priotiry:", header);
 
                 if (priority.ToLower() == "High") {
                     _priority = "urgent";
-                } else if (priority.ToLower() == "Normal") {
+                }
+                else if (priority.ToLower() == "Normal") {
                     _priority = "normal";
-                } else if (priority.ToLower() == "low") {
+                }
+                else if (priority.ToLower() == "low") {
                     _priority = "non-urgent";
                 }
-            } else if (header.Contains("Importance:")) {
+            }
+            else if (header.Contains("Importance:")) {
                 priority = attach.GetHeaderField("Importance:", header);
 
                 if (priority.ToLower() == "high") {
                     _priority = "urgent";
-                } else if (priority.ToLower() == "normal") {
+                }
+                else if (priority.ToLower() == "normal") {
                     _priority = "normal";
-                } else if (priority.ToLower() == "low") {
+                }
+                else if (priority.ToLower() == "low") {
                     _priority = "non-urgent";
                 }
-            } else if (header.Contains("Priority:")) {
+            }
+            else if (header.Contains("Priority:")) {
                 _priority = attach.GetHeaderField("Priority:", header);
             }
 
@@ -164,7 +176,7 @@ namespace MailConvert
                     string hd = reader.ReadLine();
 
                     // ヘッダがurgent、normal、non-urgentのとき
-                    if(hd.Contains("urgent") == true || hd.Contains("normal") == true || hd.Contains("non-urgent") == true){
+                    if (hd.Contains("urgent") == true || hd.Contains("normal") == true || hd.Contains("non-urgent") == true) {
                         reader.Close();
                         stream_r.Close();
                         File.Delete(file_name_bak);
@@ -224,16 +236,16 @@ namespace MailConvert
                     string date = reader.ReadLine();
 
                     // sizeの値が空値(送信メール)のとき
-                    if(date == "未送信"){
+                    if (date == "未送信") {
                         // 文字列に現在時刻を格納する
                         date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
                     }
 
                     // メールサイズを取得する(送信メールは0を格納する)
                     string size = reader.ReadLine();
-                    
+
                     // sizeの値が空値(送信メール)のとき
-                    if(size == ""){
+                    if (size == "") {
                         // 文字列で0を格納する
                         size = "0";
                     }
@@ -267,9 +279,9 @@ namespace MailConvert
             StreamWriter writer = new StreamWriter(stream_w, Encoding.UTF8);
 
             // メールの件数とデータを書き込む
-            for(int i = 0; i < collectionMail.Length; i++){
+            for (int i = 0; i < collectionMail.Length; i++) {
                 writer.WriteLine(collectionMail[i].Count.ToString());
-                foreach(Mail mail in collectionMail[i]){
+                foreach (Mail mail in collectionMail[i]) {
                     writer.WriteLine(mail.address);
                     writer.WriteLine(mail.subject);
                     writer.Write(mail.header);

@@ -29,7 +29,7 @@ namespace AkaneMail
         /// <summary>
         /// テキスト変更フラグ
         /// </summary>
-        public bool IsDirty{ get; set; }
+        public bool IsDirty { get; set; }
 
         /// <summary>
         /// 編集モードフラグ
@@ -59,7 +59,7 @@ namespace AkaneMail
 
             double attachSize = 0;
             // 添付ファイルがあるとき
-            if(attachName != ""){
+            if (attachName != "") {
                 attachSize = attachName.Split(',').Sum(f => new FileInfo(f).Length * 1.33);
             }
 
@@ -98,7 +98,7 @@ namespace AkaneMail
             attachName = "";
 
             // 新規作成のとき(編集の場合はForm1から制御する)
-            if(IsEdit == false){
+            if (IsEdit == false) {
                 // 重要度をNormal(普通)に設定する
                 comboPriority.SelectedIndex = 1;
             }
@@ -113,20 +113,20 @@ namespace AkaneMail
             string priority = "";
 
             // アドレスまたは本文が未入力のとき
-            if(textAddress.Text == "" || textBody.Text == ""){
-                if(textAddress.Text == ""){
+            if (textAddress.Text == "" || textBody.Text == "") {
+                if (textAddress.Text == "") {
                     // アドレス未入力エラーメッセージを表示する
                     MessageBox.Show("宛先が入力されていません。", "直接送信", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                else if(textBody.Text == ""){
+                else if (textBody.Text == "") {
                     // 本文未入力エラーメッセージを表示する
                     MessageBox.Show("本文が入力されていません。", "直接送信", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 return;
             }
-            
+
             // 件名がないときは件名に(無題)を設定する
-            if(textSubject.Text == ""){
+            if (textSubject.Text == "") {
                 textSubject.Text = "(無題)";
             }
 
@@ -134,13 +134,12 @@ namespace AkaneMail
             priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
-            if(!textBody.Text.EndsWith("\r\n")){
+            if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
             }
 
             // 添付ファイルが1個以上ある場合
-            if (buttonAttachList.DropDownItems.Count > 0)
-            {
+            if (buttonAttachList.DropDownItems.Count > 0) {
                 var blanks = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).
                     Where(i => buttonAttachList.DropDownItems[i].Text.Contains("は削除されています。")).ToArray();
                 Array.ForEach(blanks, i => buttonAttachList.DropDownItems.RemoveAt(i));
@@ -150,7 +149,7 @@ namespace AkaneMail
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count > 0){
+            if (buttonAttachList.DropDownItems.Count > 0) {
                 var attaches = Enumerable.Range(0, buttonAttachList.DropDownItems.Count).Select(i => buttonAttachList.DropDownItems[i].Text);
                 // 添付ファイル名のリストを変数に渡す
                 attachName = string.Join(",", attaches.ToArray());
@@ -180,11 +179,11 @@ namespace AkaneMail
             // 編集モードをfalseにする
             IsEdit = false;
             IsDirty = false;
-            
+
             // データ変更フラグをtrueにする
             MainForm.dataDirtyFlag = true;
 
-            this.Close(); 
+            this.Close();
         }
 
         private void menuFileAttach_Click(object sender, EventArgs e)
@@ -192,8 +191,8 @@ namespace AkaneMail
             Icon appIcon;
 
             // ファイルを開くダイアログを表示する
-            if(openFileDialog1.ShowDialog() == DialogResult.OK){
-                if(openFileDialog1.FileName != ""){
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+                if (openFileDialog1.FileName != "") {
                     buttonAttachList.Visible = true;
                     labelMessage.Text = openFileDialog1.FileName + "をメールに添付しました。";
                     appIcon = System.Drawing.Icon.ExtractAssociatedIcon(openFileDialog1.FileName);
@@ -209,10 +208,10 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
+            if (ctrl is SplitContainer) {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if (ctrl is TextBox){
-                    if(((TextBox)ctrl).CanUndo){
+                if (ctrl is TextBox) {
+                    if (((TextBox)ctrl).CanUndo) {
                         ((TextBox)ctrl).Undo();
                     }
                 }
@@ -255,11 +254,11 @@ namespace AkaneMail
         {
             DoInActiveTextBox(ctrl =>
             {
-                if(((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length){
-                        // テキストボックスの文字列全選択を解除する
+                if (((TextBox)ctrl).SelectionLength == ((TextBox)ctrl).Text.Length) {
+                    // テキストボックスの文字列全選択を解除する
                     ((TextBox)ctrl).SelectionLength = 0;
                 }
-                else{
+                else {
                     // それ以外のときはテキストの前選択をおこなう
                     ((TextBox)ctrl).SelectAll();
                 }
@@ -280,12 +279,12 @@ namespace AkaneMail
             string priority = "";
 
             // アドレスまたは本文が未入力のとき
-            if(textAddress.Text == "" || textBody.Text == ""){
-                if(textAddress.Text == ""){
+            if (textAddress.Text == "" || textBody.Text == "") {
+                if (textAddress.Text == "") {
                     // アドレス未入力エラーメッセージを表示する
                     MessageBox.Show("宛先が入力されていません。", "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                else if(textBody.Text == ""){
+                else if (textBody.Text == "") {
                     // 本文未入力エラーメッセージを表示する
                     MessageBox.Show("本文が入力されていません。", "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -293,7 +292,7 @@ namespace AkaneMail
             }
 
             // 件名がないときは件名に(無題)を設定する
-            if(textSubject.Text == ""){
+            if (textSubject.Text == "") {
                 textSubject.Text = "(無題)";
             }
 
@@ -301,15 +300,15 @@ namespace AkaneMail
             priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
-            if(!textBody.Text.EndsWith("\r\n")){
+            if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
             }
 
             // 添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count >= 1){
+            if (buttonAttachList.DropDownItems.Count >= 1) {
                 for (int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++) {
                     // 添付ファイルが存在しないとき
-                    if(buttonAttachList.DropDownItems[cnt].Text.Contains("は削除されています。")){
+                    if (buttonAttachList.DropDownItems[cnt].Text.Contains("は削除されています。")) {
                         // そのメニューを削除する
                         buttonAttachList.DropDownItems.RemoveAt(cnt);
                     }
@@ -320,7 +319,7 @@ namespace AkaneMail
             }
 
             // 削除アイテムチェック後に添付ファイルが1個以上ある場合
-            if(buttonAttachList.DropDownItems.Count > 0){
+            if (buttonAttachList.DropDownItems.Count > 0) {
                 var attachList = string.Join(",", buttonAttachList.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text).ToArray());
                 // 添付ファイル名のリストを変数に渡す
                 attachName = attachList;
@@ -330,7 +329,7 @@ namespace AkaneMail
             string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
             // 編集フラグがOffのとき
-            if(!IsEdit){
+            if (!IsEdit) {
                 // 送信メールサイズを取得する
                 size = GetMailSize();
 
@@ -338,8 +337,7 @@ namespace AkaneMail
                 Mail newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attachName, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
                 SendList.Add(newMail);
             }
-            else
-            {
+            else {
                 // 選択したメールの内容を書き換える
                 // 送信リストに入れている情報を書き換える
                 size = GetMailSize();
@@ -394,21 +392,21 @@ namespace AkaneMail
         private void Form3_FormClosing(object sender, FormClosingEventArgs e)
         {
             // isDirtyフラグがtrueのとき
-            if(IsDirty){
+            if (IsDirty) {
                 string message = "", title = "";
-                if(IsEdit){
+                if (IsEdit) {
                     message = "送信メールの編集途中ですが、閉じてよろしいですか？\nウィンドウを閉じると編集前の内容に戻ります。";
                     title = "編集中";
                 }
-                else{
+                else {
                     message = "メールの作成途中ですが、閉じてよろしいですか？\nウィンドウを閉じると作成中のメールは保存されません。";
                     title = "新規作成";
                 }
-                if(MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No){
-                        // ウィンドウを閉じるのをキャンセル
-                        e.Cancel = true;
-                    }
+                if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No) {
+                    // ウィンドウを閉じるのをキャンセル
+                    e.Cancel = true;
                 }
+            }
             // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
         }
@@ -416,7 +414,7 @@ namespace AkaneMail
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             // 添付するファイルパスをを削除するのかを確認
-            if(MessageBox.Show(e.ClickedItem.Text + "を削除しますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes){
+            if (MessageBox.Show(e.ClickedItem.Text + "を削除しますか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 // 選択した添付ファイルメニューを削除する
                 buttonAttachList.DropDownItems.Remove(e.ClickedItem);
                 // 添付ファイルの数が0になったらリストを閉じる
@@ -430,7 +428,7 @@ namespace AkaneMail
         private void menuEditFind_Click(object sender, EventArgs e)
         {
             // 二重起動を防止
-            if(findDlg == null || findDlg.IsDisposed){
+            if (findDlg == null || findDlg.IsDisposed) {
                 // 検索ダイアログボックス用フォームのインスタンスを生成
                 findDlg = new findDialog(dialogMode.Find, textBody);
                 // 検索ダイアログボックスを表示
@@ -441,7 +439,7 @@ namespace AkaneMail
         private void menuEditReplace_Click(object sender, EventArgs e)
         {
             // 二重起動を防止
-            if(findDlg == null || findDlg.IsDisposed){
+            if (findDlg == null || findDlg.IsDisposed) {
                 // 置換ダイアログボックス用フォームのインスタンスを生成
                 findDlg = new findDialog(dialogMode.Replace, textBody);
                 // 置換ダイアログボックスを表示
@@ -454,9 +452,9 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer){
+            if (ctrl is SplitContainer) {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
+                if (ctrl is TextBox) {
                     this.menuEditUndo.Enabled = ((TextBox)ctrl).CanUndo;
 
                     // 検索対象は本文入力のみ
@@ -482,9 +480,9 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if(ctrl is SplitContainer) {
+            if (ctrl is SplitContainer) {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
-                if(ctrl is TextBox){
+                if (ctrl is TextBox) {
                     var isctrlSelected = ((TextBox)ctrl).SelectionLength > 0;
                     this.buttonCut.Enabled = isctrlSelected;
                     this.buttonCopy.Enabled = isctrlSelected;
@@ -496,12 +494,12 @@ namespace AkaneMail
 
         private void Form3_DragEnter(object sender, DragEventArgs e)
         {
-            if(e.Data.GetDataPresent(DataFormats.FileDrop)){
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 // ドラッグ中のファイルやディレクトリの取得
                 string[] drags = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                foreach(string d in drags){
-                    if(!System.IO.File.Exists(d)){
+                foreach (string d in drags) {
+                    if (!System.IO.File.Exists(d)) {
                         // ファイル以外であればイベント・ハンドラを抜ける
                         return;
                     }
@@ -515,8 +513,8 @@ namespace AkaneMail
             Icon appIcon;
 
             // 添付ファイルが1個以上ある場合はそのメニューを削除する
-            if(buttonAttachList.DropDownItems.Count >= 1){
-                for(int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++){
+            if (buttonAttachList.DropDownItems.Count >= 1) {
+                for (int cnt = 0; cnt < buttonAttachList.DropDownItems.Count; cnt++) {
                     buttonAttachList.DropDownItems.RemoveAt(cnt);
                 }
             }
@@ -526,7 +524,7 @@ namespace AkaneMail
             // ドラッグ＆ドロップされたファイルを添付ファイルリストに追加する
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-            foreach(string fname in files){
+            foreach (string fname in files) {
                 appIcon = System.Drawing.Icon.ExtractAssociatedIcon(fname);
                 buttonAttachList.DropDownItems.Add(fname, appIcon.ToBitmap());
             }

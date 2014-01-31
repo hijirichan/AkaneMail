@@ -212,7 +212,8 @@ namespace ACryptLib
             if (bytes.Length <= newSize) {
                 for (int i = 0; i < bytes.Length; i++)
                     newBytes[i] = bytes[i];
-            } else {
+            }
+            else {
                 int pos = 0;
                 for (int i = 0; i < bytes.Length; i++) {
                     newBytes[pos++] ^= bytes[i];

@@ -129,26 +129,31 @@ namespace AkaneMail
                     if (MessageBox.Show(this, msgboxString, dialogTitle,
                             MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                         ResetFindPosition();
-                    } else {
+                    }
+                    else {
                         this.Close();
                         this.Dispose();
                     }
-                } else {   // 検索の開始位置が[現在位置から]の場合は先頭から検索しなおすかいちおう確認
+                }
+                else {   // 検索の開始位置が[現在位置から]の場合は先頭から検索しなおすかいちおう確認
                     if (currentPosRadio.Checked) {
                         string msgbox_string = "現在位置から" + MSGBOX_FINDED_STRING;
                         if (MessageBox.Show(this, msgbox_string, dialogTitle,
                           MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                             ResetFindPosition();
-                        } else {
+                        }
+                        else {
                             this.Close();
                             this.Dispose();
                         }
-                    } else {
+                    }
+                    else {
                         MessageBox.Show(this, msbox_NothingWord, dialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
                 return false;
-            } else {
+            }
+            else {
                 // 見つかった文字を選択
                 _textBox.Select(findPoint, findStringLength);
 
@@ -200,7 +205,8 @@ namespace AkaneMail
                 if (_mode == dialogMode.Find) {
                     dialogTitle = DIALOGTITLE_FIND;
                     ReplacePanel.Visible = false;
-                } else {
+                }
+                else {
                     dialogTitle = DIALOGTITLE_REPLACE;
                     ReplacePanel.Visible = true;
                 }

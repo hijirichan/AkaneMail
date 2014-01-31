@@ -40,7 +40,7 @@ namespace AkaneMail
             Mail.popSoundName = textSoundFileName.Text;
             Mail.bodyIEShow = checkBrowser.Checked;
             Mail.minimizeTaskTray = checkMinimizeTaskTray.Checked;
-            
+
             this.Close();
 
         }
@@ -56,7 +56,7 @@ namespace AkaneMail
             loadFromFlag = true;
 
             // アカウント情報を表示する
-            if(Mail.mailAddress != null && Mail.userName != null && Mail.passWord != null && Mail.smtpServer != null && Mail.popServer != null){
+            if (Mail.mailAddress != null && Mail.userName != null && Mail.passWord != null && Mail.smtpServer != null && Mail.popServer != null) {
                 textFromName.Text = Mail.fromName;
                 textUserAddress.Text = Mail.mailAddress;
                 textUserName.Text = Mail.userName;
@@ -74,10 +74,10 @@ namespace AkaneMail
                 checkMinimizeTaskTray.Checked = Mail.minimizeTaskTray;
 
                 // 旧バージョンのコンフィグ用対策
-                if(Mail.getMailInterval != 0){
+                if (Mail.getMailInterval != 0) {
                     updownGetmailInterval.Value = Mail.getMailInterval;
                 }
-                else{
+                else {
                     updownGetmailInterval.Value = 10;
                 }
 
@@ -110,8 +110,8 @@ namespace AkaneMail
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
             // ファイルを開くダイアログを表示する
-            if(openFileDialog1.ShowDialog() == DialogResult.OK){
-                if(openFileDialog1.FileName != ""){
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+                if (openFileDialog1.FileName != "") {
                     textSoundFileName.Text = openFileDialog1.FileName;
                 }
             }
@@ -120,7 +120,7 @@ namespace AkaneMail
         private void checkBrowser_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBrowser.Checked == true && loadFromFlag == false) {
-                if(MessageBox.Show("この機能を有効にするとIEの機能でHTMLメールを表示します。\nウイルスを実行してしまう可能性がありますが、有効にしますか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel){
+                if (MessageBox.Show("この機能を有効にするとIEの機能でHTMLメールを表示します。\nウイルスを実行してしまう可能性がありますが、有効にしますか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) {
                     checkBrowser.Checked = false;
                 }
             }
