@@ -119,8 +119,8 @@ namespace AkaneMail
 
         private void checkBrowser_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBrowser.Checked == true && loadFromFlag == false) {
-                if (MessageBox.Show("この機能を有効にするとIEの機能でHTMLメールを表示します。\nウイルスを実行してしまう可能性がありますが、有効にしますか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel) {
+            if (checkBrowser.Checked && !loadFromFlag) {
+                if(MessageBox.Show("この機能を有効にするとIEの機能でHTMLメールを表示します。\nウイルスを実行してしまう可能性がありますが、有効にしますか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.Cancel){
                     checkBrowser.Checked = false;
                 }
             }
