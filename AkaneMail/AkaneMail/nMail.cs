@@ -1291,7 +1291,7 @@ namespace nMail
 		/// <see cref="nMailException.Message"/>にエラーメッセージ、
 		/// <see cref="nMailException.ErrorCode"/>にエラーコードが入ります。
 		/// </exception>
-		public string GetUidl(int no)
+		public void GetUidl(int no)
 		{
 			if(_socket == (IntPtr)ErrorSocket) {
 				throw new InvalidOperationException();
@@ -1303,7 +1303,6 @@ namespace nMail
 			{
 				throw new nMailException("GetUidl: " + Options.ErrorMessage, _err);
 			}
-            return Uidl.ToString();
 		}
 		/// <summary>
 		/// メールヘッダから指定のフィールドの内容を取得します。
