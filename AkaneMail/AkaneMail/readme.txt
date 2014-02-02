@@ -2,15 +2,15 @@ Ak@Ne! Version 1.2.1
 作者:Angelic Sotware(作成者：砂倉瑞希)
 種別:フリーウェア
 
-対応OS：WindowsXP/2003/2008/Vista/7(.NET Framework 4.0以降に対応している環境)
-※Windows8での動作検証が出来ていないためWindows8は動作保障外となります。
+対応OS：WindowsXP/2003/2008/Vista/7/8(.NET Framework 4.0以降に対応している環境)
+※Windows RTはCPUの互換性がないため動作しません。
 
 メモリ：256MB以上を推奨(全環境)
 ハードディスク：1MB以上(USBメモリ運用が可能なように設定をファイルにしています。)
 
 ■概要
 
-  POP3/APOP対応メールソフトです。
+  POP3/APOP/POP3 over SSL/TLS/SMTP_AUTH対応メールソフトです。
   Mail Viewerの改善点を追加し、さらに新たな機能を追加する予定です。
 
 
@@ -71,6 +71,8 @@ Ak@Ne! Version 1.2.1
     [APOPを有効にする]                       … APOP機能を有効にします。
     [メール受信時にメールを削除する]         … メールを受信したときにPOP3サーバからメールを削除します。
     [POP before SMTPを有効にする]            … POP before SMTP機能を有効にします。
+    [POP3 over SSL/TLSを有効にする]          … POP3 over SSL/TLS機能を有効にします。
+    [SMTP認証を有効にする]                   … SMTP_AUTH機能を有効にします。(ただし現在はPOP3とユーザ名とパスワードが同じ時のみ利用できます。)
     [自動受信を有効にする]                   … 1～120分間隔で自動的にメールを受信する機能を有効にします。
     [着信音を鳴らす]                         … メール受信時に着信音(WAVファイル)を鳴らす機能を有効にします。
     [HTMLメールをIEコンポーネントで表示する] … HTMLメール表示時にInternet Explorerの部品でメールを表示します。
@@ -280,4 +282,5 @@ Ak@Ne! Version 1.2.1
 開発者：Angelic Software(作成者：砂倉瑞希)
 メール：floremilfia@hotmail.com
 URL   ：http://www.angel-teatime.com/
+        http://github.com/hijirichan/AkaneMail
 

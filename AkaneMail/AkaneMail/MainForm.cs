@@ -324,7 +324,9 @@ namespace AkaneMail
             listView1.Items.AddRange(items.ToArray());
             listView1.EndUpdate();
         }
+
         private static object lockobj = new object();
+
         /// <summary>
         /// メールデータの読み込み
         /// </summary>
@@ -1304,66 +1306,52 @@ namespace AkaneMail
             listView1.ListViewItemSorter = listViewItemSorter;
         }
 
+        /// <summary>
+        /// リストビューのカラム説明を設定
+        /// </summary>
+        /// <param name="col1">1カラム目の設定</param>
+        /// <param name="col2">2カラム目の設定</param>
+        /// <param name="col3">3カラム目の設定</param>
+        /// <param name="col4">4カラム目の設定</param>
+        private void SetListViewColumns(string col1, string col2, string col3, string col4)
+        {
+            listView1.Columns[0].Text = col1;
+            listView1.Columns[1].Text = col2;
+            listView1.Columns[2].Text = col3;
+            listView1.Columns[3].Text = col4;
+        }
+
         #region "Event Listeners"
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Index == 0) {
-                // 受信メールが選択された場合
-                if (e.Node.Text == "メールボックス") {
-                    listView1.Columns[0].Text = "名前";
-                    listView1.Columns[1].Text = "メールアドレス";
-                    listView1.Columns[2].Text = "最終データ更新日";
-                    listView1.Columns[3].Text = "サイズ";
+            // ノードに付けたタグからリストビューのカラムを変更
+            switch (e.Node.Tag.ToString()) {
+                case "MailBoxRoot":
+                    // メールボックスが選択された場合
+                    SetListViewColumns("名前", "メールアドレス", "最終データ更新日", "データサイズ");
                     labelMessage.Text = "メールボックス";
-                }
-                else {
-                    listView1.Columns[0].Text = "差出人";
-                    listView1.Columns[1].Text = "件名";
-                    listView1.Columns[2].Text = "受信日時";
-                    listView1.Columns[3].Text = "サイズ";
+                    break;
+                case "ReceiveMailBox":
+                    // 受信メールが選択された場合
+                    SetListViewColumns("差出人", "件名", "受信日時", "サイズ");
                     labelMessage.Text = "受信メール";
-                }
-            }
-            else if (e.Node.Index == 1) {
-                // 受信メールが選択された場合
-                listView1.Columns[0].Text = "宛先";
-                listView1.Columns[1].Text = "件名";
-                listView1.Columns[2].Text = "送信日時";
-                listView1.Columns[3].Text = "サイズ";
-                labelMessage.Text = "送信メール";
-            }
-            else if (e.Node.Index == 2) {
-                // 受信メールが選択された場合
-                listView1.Columns[0].Text = "差出人または宛先";
-                listView1.Columns[1].Text = "件名";
-                listView1.Columns[2].Text = "受信日時または送信日時";
-                listView1.Columns[3].Text = "サイズ";
-                labelMessage.Text = "ごみ箱";
+                    break;
+                case "SendMailBox":
+                    // 送信メールが選択された場合
+                    SetListViewColumns("宛先", "件名", "送信日時", "サイズ");;
+                    labelMessage.Text = "送信メール";
+                    break;
+                case "DeleteMailBox":
+                    // ごみ箱が選択された場合
+                    SetListViewColumns("差出人または宛先", "件名", "受信日時または送信日時", "サイズ");
+                    labelMessage.Text = "ごみ箱";
+                    break;
+                default:
+                    break;
             }
 
-            // テキストボックスを空値にする
-            this.textBody.Text = "";
-            // IEコンポが表示されているとき
-            if (this.browserBody.Visible) {
-                // IEコンポを閉じてテキストボックスを表示させる
-                this.browserBody.Visible = false;
-                this.textBody.Visible = true;
-            }
-
-            // 添付リストが表示されているとき
-            if (buttonAttachList.Visible) {
-                buttonAttachList.DropDownItems.Clear();
-                buttonAttachList.Visible = false;
-            }
-
-            // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
-
-            // リストビューを更新する
-            UpdateListView();
-
-            // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            // 画面設定をクリアする。
+            ClearInput();
         }
 
         private void menuFileExit_Click(object sender, EventArgs e)

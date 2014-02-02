@@ -2,7 +2,7 @@ Akane Mail Version 1.2.1
 ========
 
 Licence     : Modified BSD Licence  
-Platform    : WindowsXP(SP3), WindowsVista(SP2), Windows7(SP1), Windows Server2003/2008  
+Platform    : WindowsXP(SP3), WindowsVista(SP2), Windows7(SP1), Windows8(8.1), Windows Server2003/2008  
 Discription : This application is a Windows e-mail client software that supports POP3/APOP.  
 
 ***** 注意 *****
