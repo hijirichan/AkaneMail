@@ -2393,7 +2393,7 @@ namespace AkaneMail
             }
 
             // メールが既読で、メールボックス以外で何かが選択されているとき
-            menuNotReadYet.Enabled = !(checkNotYetReadMail && listView1.SelectedItems.Count == 0 && listView1.Columns[0].Text == "名前");
+            menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
 
             // 送信メールを選択したとき
             if (listView1.Columns[0].Text == "宛先") {
