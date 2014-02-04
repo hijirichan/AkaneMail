@@ -211,9 +211,7 @@ namespace AkaneMail
             if (ctrl is SplitContainer) {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
                 if (ctrl is TextBox) {
-                    if (((TextBox)ctrl).CanUndo) {
-                        ((TextBox)ctrl).Undo();
-                    }
+                    action((TextBox)ctrl);
                 }
             }
         }
