@@ -1575,6 +1575,44 @@ namespace AkaneMail
             { "差出人または宛先", DELETE } 
         };
 
+        /// <summary>
+        /// 未読メールを既読にする
+        /// </summary>
+        private void menuAlreadyRead_Click(object sender, EventArgs e)
+        {
+            var sList = collectionMail[mailbox[listView1.Columns[0].Text]];
+            // 受信メールのとき
+            // 選択アイテムの数を取得
+            int nLen = listView1.SelectedItems.Count;
+
+            // 選択アイテムの数が0のとき
+            if (nLen == 0)
+                return;
+
+            // 選択アイテムのキーを取得
+            var nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
+
+            while (nLen > 0) {
+                nLen--;
+                // 選択アイテムのキーから 選択アイテム群の位置を取得
+                int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
+                ListViewItem item = listView1.SelectedItems[nIndex];
+
+                // 元リストからメールアイテムを取得
+                Mail mail = sList[nIndices[nLen]];
+
+                sList[nIndices[nLen]].notReadYet = item.SubItems[1].Text == mail.subject;
+            }
+
+            ReforcusListView(listView1);
+
+            // データ変更フラグをtrueにする
+            dataDirtyFlag = true;
+        }
+
+        /// <summary>
+        /// 既読メールを未読にする
+        /// </summary>
         private void menuNotReadYet_Click(object sender, EventArgs e)
         {
             var sList = collectionMail[mailbox[listView1.Columns[0].Text]];
@@ -2376,50 +2414,6 @@ namespace AkaneMail
             }
         }
 
-        /// <summary>
-        /// 未読、既読のメニュー切替
-        /// </summary>
-        private void SetNotReadYetMenu()
-        {
-            Mail mail = null;
-            ListViewItem item = null;
-
-            // ListViewから選択した1行の情報をitemに格納する
-            if (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前") {
-                item = listView1.SelectedItems[0];
-                mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
-            }
-
-            // カラムが宛先の時は未送信、送信済のメニューに変更
-            if (listView1.Columns[0].Text == "宛先") {
-                if (mail != null) {
-                    if (mail.notReadYet == false) {
-                        menuNotReadYet.Text = "未送信にする(&N)";
-                    }
-                    else {
-                        menuNotReadYet.Text = "送信済にする(&N)";
-                    }
-                }
-                else {
-                    menuNotReadYet.Text = "未送信にする(&N)";
-                }
-            }
-            else {
-                // カラムが宛先以外の時は未読、既読のメニューに変更
-                if (mail != null) {
-                    if (mail.notReadYet == false) {
-                        menuNotReadYet.Text = "未読にする(&N)";
-                    }
-                    else {
-                        menuNotReadYet.Text = "既読にする(&N)";
-                    }
-                }
-                else {
-                    menuNotReadYet.Text = "未読にする(&N)";
-                }
-            }
-        }
-
         private void menuListView_Opening(object sender, CancelEventArgs e)
         {
             // メールの選択件が1かつメールボックスのとき
@@ -2438,19 +2432,20 @@ namespace AkaneMail
             }
 
             // メールが既読で、メールボックス以外で何かが選択されているとき
-            //menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
+            // menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
+            // menuAlreadyRead.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
             menuNotReadYet.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
-
-            // 未読、既読によってメニューを切り替える
-            SetNotReadYetMenu();
+            menuAlreadyRead.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
 
             // 送信メールを選択したとき
-            /*if (listView1.Columns[0].Text == "宛先") {
-                menuNotReadYet.Text = "未送信にする(&N)";
+            if (listView1.Columns[0].Text == "宛先") {
+                menuAlreadyRead.Text = "送信済にする(&K)";
+                menuNotReadYet.Text = "未送信にする(&U)";
             }
             else {
-                menuNotReadYet.Text = "未読にする(&N)";
-            }*/
+                menuAlreadyRead.Text = "既読にする(&K)";
+                menuNotReadYet.Text = "未読にする(&U)";
+            }
         }
 
         private void menuTreeView_Opening(object sender, CancelEventArgs e)
@@ -2583,6 +2578,5 @@ namespace AkaneMail
             NewMailForm.Show();
         }
         #endregion
-
     }
 }
