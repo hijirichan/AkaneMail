@@ -1574,6 +1574,7 @@ namespace AkaneMail
             { "宛先", SEND }, 
             { "差出人または宛先", DELETE } 
         };
+
         private void menuNotReadYet_Click(object sender, EventArgs e)
         {
             var sList = collectionMail[mailbox[listView1.Columns[0].Text]];
@@ -2375,6 +2376,50 @@ namespace AkaneMail
             }
         }
 
+        /// <summary>
+        /// 未読、既読のメニュー切替
+        /// </summary>
+        private void SetNotReadYetMenu()
+        {
+            Mail mail = null;
+            ListViewItem item = null;
+
+            // ListViewから選択した1行の情報をitemに格納する
+            if (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前") {
+                item = listView1.SelectedItems[0];
+                mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            }
+
+            // カラムが宛先の時は未送信、送信済のメニューに変更
+            if (listView1.Columns[0].Text == "宛先") {
+                if (mail != null) {
+                    if (mail.notReadYet == false) {
+                        menuNotReadYet.Text = "未送信にする(&N)";
+                    }
+                    else {
+                        menuNotReadYet.Text = "送信済にする(&N)";
+                    }
+                }
+                else {
+                    menuNotReadYet.Text = "未送信にする(&N)";
+                }
+            }
+            else {
+                // カラムが宛先以外の時は未読、既読のメニューに変更
+                if (mail != null) {
+                    if (mail.notReadYet == false) {
+                        menuNotReadYet.Text = "未読にする(&N)";
+                    }
+                    else {
+                        menuNotReadYet.Text = "既読にする(&N)";
+                    }
+                }
+                else {
+                    menuNotReadYet.Text = "未読にする(&N)";
+                }
+            }
+        }
+
         private void menuListView_Opening(object sender, CancelEventArgs e)
         {
             // メールの選択件が1かつメールボックスのとき
@@ -2393,15 +2438,19 @@ namespace AkaneMail
             }
 
             // メールが既読で、メールボックス以外で何かが選択されているとき
-            menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
+            //menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
+            menuNotReadYet.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
+
+            // 未読、既読によってメニューを切り替える
+            SetNotReadYetMenu();
 
             // 送信メールを選択したとき
-            if (listView1.Columns[0].Text == "宛先") {
+            /*if (listView1.Columns[0].Text == "宛先") {
                 menuNotReadYet.Text = "未送信にする(&N)";
             }
             else {
                 menuNotReadYet.Text = "未読にする(&N)";
-            }
+            }*/
         }
 
         private void menuTreeView_Opening(object sender, CancelEventArgs e)
