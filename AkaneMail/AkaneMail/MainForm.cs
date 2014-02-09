@@ -1330,21 +1330,27 @@ namespace AkaneMail
                     // メールボックスが選択された場合
                     SetListViewColumns("名前", "メールアドレス", "最終データ更新日", "データサイズ");
                     labelMessage.Text = "メールボックス";
+                    listView1.ContextMenuStrip = null;
                     break;
                 case "ReceiveMailBox":
                     // 受信メールが選択された場合
                     SetListViewColumns("差出人", "件名", "受信日時", "サイズ");
                     labelMessage.Text = "受信メール";
+                    listView1.ContextMenuStrip = menuListView;
                     break;
                 case "SendMailBox":
                     // 送信メールが選択された場合
                     SetListViewColumns("宛先", "件名", "送信日時", "サイズ");;
                     labelMessage.Text = "送信メール";
+                    listView1.ContextMenuStrip = null;
+                    listView1.ContextMenuStrip = menuListView;
                     break;
                 case "DeleteMailBox":
                     // ごみ箱が選択された場合
                     SetListViewColumns("差出人または宛先", "件名", "受信日時または送信日時", "サイズ");
                     labelMessage.Text = "ごみ箱";
+                    listView1.ContextMenuStrip = null;
+                    listView1.ContextMenuStrip = menuListView;
                     break;
                 default:
                     break;
@@ -2209,9 +2215,6 @@ namespace AkaneMail
         private void menuSaveMailFile_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            string fileBody = "";
-            string fileHeader = "";
-
             // ListViewから選択した1行の情報をitemに格納する
             ListViewItem item = listView1.SelectedItems[0];
 
@@ -2229,74 +2232,90 @@ namespace AkaneMail
             // 名前を付けて保存
             if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
                 if (saveFileDialog1.FileName != "") {
-                    try {
-                        // ヘッダから文字コードを取得する(添付付きは取得できない)
-                        string enc = Mail.ParseEncoding(mail.header);
-
-                        // 出力する文字コードがUTF-8ではないとき
-                        if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows")) {
-                            // 出力するヘッダをUTF-8から各文字コードに変換する
-                            Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.header);
-                            fileHeader = Encoding.GetEncoding(enc).GetString(b);
-
-                            // 出力する本文をUTF-8から各文字コードに変換する
-                            b = Encoding.GetEncoding(enc).GetBytes(mail.body);
-                            fileBody = Encoding.GetEncoding(enc).GetString(b);
-                        }
-                        else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
-                            // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
-                            // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
-                            // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
-                            // なるのを防ぐための意図で行われている。
-                            // これをデコードするにはバイト型で格納し、UTF-8でデコードし直せば文字化けのような文字列を
-                            // 可読化することができる。
-
-                            // Byte型構造体に変換する
-                            var bs = mail.body.Select(s => (byte)s).ToArray();
-
-                            // GetStringでバイト型配列をUTF-8の配列にエンコードする
-                            fileBody = Encoding.UTF8.GetString(bs);
-
-                            // fileHeaderにヘッダを格納する
-                            fileHeader = mail.header;
-
-                            // ファイル出力フラグにUTF-8を設定する
-                            enc = "utf-8";
-                        }
-                        else {
-                            // ここに落ちてくるのは基本的に添付ファイルのみ
-                            Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.header);
-                            fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
-
-                            b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
-                            fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
-
-                            // 文字コードをJISに設定する
-                            enc = "iso-2022-jp";
-                        }
-
-                        // ファイル書き込み用のエンコーディングを取得する
-                        Encoding writeEnc = Encoding.GetEncoding(enc);
-
-                        using (var writer = new StreamWriter(saveFileDialog1.FileName, false, writeEnc)) {
-                            // 受信メール(ヘッダが存在する)のとき
-                            if (mail.header.Length > 0) {
-                                writer.Write(fileHeader);
-                                writer.Write("\r\n");
-                            }
-                            else {
-                                // 送信メールのときはヘッダの代わりに送り先と件名を出力
-                                writer.WriteLine("To: " + mail.address);
-                                writer.WriteLine("Subject: " + mail.subject);
-                                writer.Write("\r\n");
-                            }
-                            writer.Write(fileBody);
-                        }
+                    try
+                    {
+                        saveMailFile(mail, saveFileDialog1.FileName);
                     }
                     catch (Exception ex) {
                         MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                 }
+            }
+        }
+
+        private void saveMailFile(Mail mail, string FileToSave)
+        {
+
+            string fileBody = "";
+            string fileHeader = "";
+
+            // ヘッダから文字コードを取得する(添付付きは取得できない)
+            string enc = Mail.ParseEncoding(mail.header);
+
+            // 出力する文字コードがUTF-8ではないとき
+            if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows"))
+            {
+                // 出力するヘッダをUTF-8から各文字コードに変換する
+                Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.header);
+                fileHeader = Encoding.GetEncoding(enc).GetString(b);
+
+                // 出力する本文をUTF-8から各文字コードに変換する
+                b = Encoding.GetEncoding(enc).GetBytes(mail.body);
+                fileBody = Encoding.GetEncoding(enc).GetString(b);
+            }
+            else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit"))
+            {
+                // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
+                // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
+                // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
+                // なるのを防ぐための意図で行われている。
+                // これをデコードするにはバイト型で格納し、UTF-8でデコードし直せば文字化けのような文字列を
+                // 可読化することができる。
+
+                // Byte型構造体に変換する
+                var bs = mail.body.Select(s => (byte)s).ToArray();
+
+                // GetStringでバイト型配列をUTF-8の配列にエンコードする
+                fileBody = Encoding.UTF8.GetString(bs);
+
+                // fileHeaderにヘッダを格納する
+                fileHeader = mail.header;
+
+                // ファイル出力フラグにUTF-8を設定する
+                enc = "utf-8";
+            }
+            else
+            {
+                // ここに落ちてくるのは基本的に添付ファイルのみ
+                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.header);
+                fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+
+                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
+                fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+
+                // 文字コードをJISに設定する
+                enc = "iso-2022-jp";
+            }
+
+            // ファイル書き込み用のエンコーディングを取得する
+            Encoding writeEnc = Encoding.GetEncoding(enc);
+
+            using (var writer = new StreamWriter(FileToSave, false, writeEnc))
+            {
+                // 受信メール(ヘッダが存在する)のとき
+                if (mail.header.Length > 0)
+                {
+                    writer.Write(fileHeader);
+                    writer.Write("\r\n");
+                }
+                else
+                {
+                    // 送信メールのときはヘッダの代わりに送り先と件名を出力
+                    writer.WriteLine("To: " + mail.address);
+                    writer.WriteLine("Subject: " + mail.subject);
+                    writer.Write("\r\n");
+                }
+                writer.Write(fileBody);
             }
         }
 
