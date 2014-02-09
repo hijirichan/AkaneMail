@@ -269,7 +269,7 @@
             // menuToolSetEnv
             // 
             this.menuToolSetEnv.Name = "menuToolSetEnv";
-            this.menuToolSetEnv.Size = new System.Drawing.Size(152, 22);
+            this.menuToolSetEnv.Size = new System.Drawing.Size(142, 22);
             this.menuToolSetEnv.Text = "環境設定(&S)";
             this.menuToolSetEnv.Click += new System.EventHandler(this.menuToolSetEnv_Click);
             // 
