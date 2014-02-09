@@ -1601,7 +1601,7 @@ namespace AkaneMail
                 // 元リストからメールアイテムを取得
                 Mail mail = sList[nIndices[nLen]];
 
-                sList[nIndices[nLen]].notReadYet = item.SubItems[1].Text == mail.subject;
+                sList[nIndices[nLen]].notReadYet = !(item.SubItems[1].Text == mail.subject);
             }
 
             ReforcusListView(listView1);
@@ -2432,8 +2432,6 @@ namespace AkaneMail
             }
 
             // メールが既読で、メールボックス以外で何かが選択されているとき
-            // menuNotReadYet.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
-            // menuAlreadyRead.Enabled = !checkNotYetReadMail && (listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前");
             menuNotReadYet.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
             menuAlreadyRead.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
 
