@@ -11,6 +11,8 @@ namespace AkaneMail
         private List<string> HeaderFields = new List<string>();
         private string MessageBody = "";
 
+        private object SyncObj = new object();
+
         public MessageEncoder(string name)
         {
             this.encoding = Encoding.GetEncoding(name);
@@ -23,63 +25,75 @@ namespace AkaneMail
 
         public string getResult()
         {
-            string result = "";
-            HeaderFields.ForEach(field =>
+            lock (SyncObj)
             {
-                result += field + "\r\n";
-            });
-            result += "\r\n";
-            result += MessageBody;
-            return result;
+                string result = "";
+                HeaderFields.ForEach(field =>
+                {
+                    result += field + "\r\n";
+                });
+                result += "\r\n";
+                result += MessageBody;
+                return result;
+            }
         }
 
         public void addHeader(string MessageHeader)
         {
-            foreach (string Field in MessageHeader.Replace("\r\n", "\n").Split('\n').Where(i => i != ""))
+            lock (SyncObj)
             {
-                if (Field[0] == ' ')
+                foreach (string Field in MessageHeader.Replace("\r\n", "\n").Split('\n').Where(i => i != ""))
                 {
-                    HeaderFields[HeaderFields.Count - 1] += Field;
-                }
-                else
-                {
-                    int pos = Field.IndexOf(':');
-                    string Name = Field.Substring(0, pos);
-                    string Value = Field.Substring(pos + 1).TrimStart();
-                    addHeaderField(Name, Value);
+                    if (Field[0] == ' ')
+                    {
+                        HeaderFields[HeaderFields.Count - 1] += Field;
+                    }
+                    else
+                    {
+                        int pos = Field.IndexOf(':');
+                        string Name = Field.Substring(0, pos);
+                        string Value = Field.Substring(pos + 1).TrimStart();
+                        addHeaderField(Name, Value);
+                    }
                 }
             }
         }
 
         public void addHeaderField(string FieldName, string FieldValue)
         {
-            switch (FieldName.ToLower())
+            lock (SyncObj)
             {
-                case "subject":
-                case "from":
-                case "to":
-                    if (Encoding.GetEncoding("SHIFT_JIS").GetBytes(FieldValue).Length != FieldValue.Length)
-                    {
-                        // 全角文字を含んでいる場合、エンコードする必要がある
-                        // この判定方法は気に入らないので、要修正
-                        HeaderFields.Add(makeEncodedField(FieldName, FieldValue));
-                    }
-                    else
-                    {
-                        // 半角文字の場合
-                        // これでアスキー文字が判定できているか、不明
+                switch (FieldName.ToLower())
+                {
+                    case "subject":
+                    case "from":
+                    case "to":
+                        if (Encoding.GetEncoding("SHIFT_JIS").GetBytes(FieldValue).Length != FieldValue.Length)
+                        {
+                            // 全角文字を含んでいる場合、エンコードする必要がある
+                            // この判定方法は気に入らないので、要修正
+                            HeaderFields.Add(makeEncodedField(FieldName, FieldValue));
+                        }
+                        else
+                        {
+                            // 半角文字の場合
+                            // これでアスキー文字が判定できているか、不明
+                            HeaderFields.Add(makeHeaderField(FieldName, FieldValue));
+                        }
+                        break;
+                    default:
                         HeaderFields.Add(makeHeaderField(FieldName, FieldValue));
-                    }
-                    break;
-                default:
-                    HeaderFields.Add(makeHeaderField(FieldName, FieldValue));
-                    break;
+                        break;
+                }
             }
         }
 
         public void addMessageBody(string MessageBody)
         {
-            this.MessageBody = MessageBody;
+            lock (SyncObj)
+            {
+                this.MessageBody = MessageBody;
+            }
         }
 
         private string makeHeaderField(string FieldName, string FieldValue)
