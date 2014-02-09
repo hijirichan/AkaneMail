@@ -833,7 +833,7 @@ namespace AkaneMail
                         labelMessage.Text = "新着のメッセージはありませんでした。";
 
                         // メール受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, 0);
+                        Invoke(enableButton, 1);
                         return;
                     }
 
@@ -847,7 +847,7 @@ namespace AkaneMail
                         Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
 
                         // メール受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, 0);
+                        Invoke(enableButton, 1);
 
                         return;
                     }
@@ -897,7 +897,7 @@ namespace AkaneMail
                 Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, 0);
+                Invoke(enableButton, 1);
 
                 // 未受信メールが1件以上の場合
                 if (mailCount >= 1) {
@@ -930,7 +930,7 @@ namespace AkaneMail
                     labelMessage.Text = "新着のメッセージはありませんでした。";
 
                     // メール受信のメニューとツールボタンを有効化する
-                    Invoke(enableButton, 0);
+                    Invoke(enableButton, 1);
 
                     return;
                 }
@@ -940,7 +940,7 @@ namespace AkaneMail
                 labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, 0);
+                Invoke(enableButton, 1);
 
                 return;
             }
@@ -949,7 +949,7 @@ namespace AkaneMail
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, 0);
+                Invoke(enableButton, 1);
 
                 return;
             }
