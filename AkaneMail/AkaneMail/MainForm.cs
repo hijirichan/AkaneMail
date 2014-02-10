@@ -1809,6 +1809,137 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// 添付ファイル付きメールの展開
+        /// </summary>
+        /// <param name="mail"></param>
+        private void GetAttachMail(Mail mail)
+        {
+            // 添付ファイル保存対象フォルダを選択する
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) {
+                try {
+                    // 添付ファイルクラスを作成する
+                    nMail.Attachment attach = new nMail.Attachment();
+
+                    // 保存パスを設定する
+                    attach.Path = folderBrowserDialog1.SelectedPath;
+
+                    // 添付ファイル展開用のテンポラリファイルを作成する
+                    string tmpFileName = Path.GetTempFileName();
+                    using (var writer = new StreamWriter(tmpFileName)) {
+                        writer.Write(mail.header);
+                        writer.Write("\r\n");
+                        writer.Write(mail.body);
+                    }
+
+                    // テンポラリファイルを開いて添付ファイルを開く
+                    using (var reader = new StreamReader(tmpFileName)) {
+                        string header = reader.ReadToEnd();
+                        // ヘッダと本文付きの文字列を添付クラスに追加する
+                        attach.Add(header);
+                    }
+                    // 添付ファイルを保存する
+                    attach.Save();
+
+                    MessageBox.Show(attach.Path + "に添付ファイル" + attach.FileName + "を保存しました。", "添付ファイルの取り出し", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (nMailException nex) {
+                    string message = "";
+                    switch (nex.ErrorCode) {
+                        case nMail.Attachment.ErrorFileOpen:
+                            message = "添付ファイルがオープンできません。";
+                            break;
+                        case nMail.Attachment.ErrorInvalidNo:
+                            message = "分割されたメールの順番が正しくないか、該当しないファイルが入っています。";
+                            break;
+                        case nMail.Attachment.ErrorPartial:
+                            message = "分割されたメールが全て揃っていません";
+                            break;
+                        default:
+                            break;
+                    }
+                    MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+            }
+        }
+
+        /// <summary>
+        /// メールファイルの保存
+        /// </summary>
+        /// <param name="mail">メール</param>
+        /// <param name="FileToSave">保存ファイル名</param>
+        private void SaveMailFile(Mail mail, string FileToSave)
+        {
+            string fileBody = "";
+            string fileHeader = "";
+
+            // ヘッダから文字コードを取得する(添付付きは取得できない)
+            string enc = Mail.ParseEncoding(mail.header);
+
+            // 出力する文字コードがUTF-8ではないとき
+            if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows")) {
+                // 出力するヘッダをUTF-8から各文字コードに変換する
+                Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.header);
+                fileHeader = Encoding.GetEncoding(enc).GetString(b);
+
+                // 出力する本文をUTF-8から各文字コードに変換する
+                b = Encoding.GetEncoding(enc).GetBytes(mail.body);
+                fileBody = Encoding.GetEncoding(enc).GetString(b);
+            }
+            else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
+                // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
+                // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
+                // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
+                // なるのを防ぐための意図で行われている。
+                // これをデコードするにはバイト型で格納し、UTF-8でデコードし直せば文字化けのような文字列を
+                // 可読化することができる。
+
+                // Byte型構造体に変換する
+                var bs = mail.body.Select(s => (byte)s).ToArray();
+
+                // GetStringでバイト型配列をUTF-8の配列にエンコードする
+                fileBody = Encoding.UTF8.GetString(bs);
+
+                // fileHeaderにヘッダを格納する
+                fileHeader = mail.header;
+
+                // ファイル出力フラグにUTF-8を設定する
+                enc = "utf-8";
+            }
+            else {
+                // ここに落ちてくるのは基本的に添付ファイルのみ
+                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.header);
+                fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+
+                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
+                fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+
+                // 文字コードをJISに設定する
+                enc = "iso-2022-jp";
+            }
+
+            // ファイル書き込み用のエンコーディングを取得する
+            Encoding writeEnc = Encoding.GetEncoding(enc);
+
+            using (var writer = new StreamWriter(FileToSave, false, writeEnc)) {
+                // 受信メール(ヘッダが存在する)のとき
+                if (mail.header.Length > 0) {
+                    writer.Write(fileHeader);
+                    writer.Write("\r\n");
+                }
+                else {
+                    // 送信メールのときはヘッダの代わりに送り先と件名を出力
+                    writer.WriteLine("To: " + mail.address);
+                    writer.WriteLine("Subject: " + mail.subject);
+                    writer.Write("\r\n");
+                }
+                writer.Write(fileBody);
+            }
+        }
+
+        /// <summary>
         ///  選択されたメールを取得します。
         /// </summary>
         /// <param name="index">インデックス</param>
@@ -1921,14 +2052,12 @@ namespace AkaneMail
                     // 送信メールが選択された場合
                     SetListViewColumns("宛先", "件名", "送信日時", "サイズ"); ;
                     labelMessage.Text = "送信メール";
-                    listView1.ContextMenuStrip = null;
                     listView1.ContextMenuStrip = menuListView;
                     break;
                 case "DeleteMailBox":
                     // ごみ箱が選択された場合
                     SetListViewColumns("差出人または宛先", "件名", "受信日時または送信日時", "サイズ");
                     labelMessage.Text = "ごみ箱";
-                    listView1.ContextMenuStrip = null;
                     listView1.ContextMenuStrip = menuListView;
                     break;
                 default:
@@ -2038,7 +2167,7 @@ namespace AkaneMail
         private void menuAlreadyRead_Click(object sender, EventArgs e)
         {
             var sList = collectionMail[mailbox[listView1.Columns[0].Text]];
-            // 受信メールのとき
+
             // 選択アイテムの数を取得
             int nLen = listView1.SelectedItems.Count;
 
@@ -2073,7 +2202,7 @@ namespace AkaneMail
         private void menuNotReadYet_Click(object sender, EventArgs e)
         {
             var sList = collectionMail[mailbox[listView1.Columns[0].Text]];
-            // 受信メールのとき
+
             // 選択アイテムの数を取得
             int nLen = listView1.SelectedItems.Count;
 
@@ -2303,55 +2432,8 @@ namespace AkaneMail
             // 送信メール以外も展開できるように変更
             mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
 
-            // 添付ファイル保存対象フォルダを選択する
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK) {
-                try {
-                    // 添付ファイルクラスを作成する
-                    nMail.Attachment attach = new nMail.Attachment();
-
-                    // 保存パスを設定する
-                    attach.Path = folderBrowserDialog1.SelectedPath;
-
-                    // 添付ファイル展開用のテンポラリファイルを作成する
-                    string tmpFileName = Path.GetTempFileName();
-                    using (var writer = new StreamWriter(tmpFileName)) {
-                        writer.Write(mail.header);
-                        writer.Write("\r\n");
-                        writer.Write(mail.body);
-                    }
-
-                    // テンポラリファイルを開いて添付ファイルを開く
-                    using (var reader = new StreamReader(tmpFileName)) {
-                        string header = reader.ReadToEnd();
-                        // ヘッダと本文付きの文字列を添付クラスに追加する
-                        attach.Add(header);
-                    }
-                    // 添付ファイルを保存する
-                    attach.Save();
-
-                    MessageBox.Show(attach.Path + "に添付ファイル" + attach.FileName + "を保存しました。", "添付ファイルの取り出し", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                catch (nMailException nex) {
-                    string message = "";
-                    switch (nex.ErrorCode) {
-                        case nMail.Attachment.ErrorFileOpen:
-                            message = "添付ファイルがオープンできません。";
-                            break;
-                        case nMail.Attachment.ErrorInvalidNo:
-                            message = "分割されたメールの順番が正しくないか、該当しないファイルが入っています。";
-                            break;
-                        case nMail.Attachment.ErrorPartial:
-                            message = "分割されたメールが全て揃っていません";
-                            break;
-                        default:
-                            break;
-                    }
-                    MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                }
-                catch (Exception ex) {
-                    MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                }
-            }
+            // 添付ファイルを展開する
+            GetAttachMail(mail);
         }
 
         private void menuSaveMailFile_Click(object sender, EventArgs e)
@@ -2375,81 +2457,12 @@ namespace AkaneMail
             if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
                 if (saveFileDialog1.FileName != "") {
                     try {
-                        saveMailFile(mail, saveFileDialog1.FileName);
+                        SaveMailFile(mail, saveFileDialog1.FileName);
                     }
                     catch (Exception ex) {
                         MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                 }
-            }
-        }
-
-        private void saveMailFile(Mail mail, string FileToSave)
-        {
-            string fileBody = "";
-            string fileHeader = "";
-
-            // ヘッダから文字コードを取得する(添付付きは取得できない)
-            string enc = Mail.ParseEncoding(mail.header);
-
-            // 出力する文字コードがUTF-8ではないとき
-            if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows")) {
-                // 出力するヘッダをUTF-8から各文字コードに変換する
-                Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.header);
-                fileHeader = Encoding.GetEncoding(enc).GetString(b);
-
-                // 出力する本文をUTF-8から各文字コードに変換する
-                b = Encoding.GetEncoding(enc).GetBytes(mail.body);
-                fileBody = Encoding.GetEncoding(enc).GetString(b);
-            }
-            else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
-                // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
-                // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
-                // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
-                // なるのを防ぐための意図で行われている。
-                // これをデコードするにはバイト型で格納し、UTF-8でデコードし直せば文字化けのような文字列を
-                // 可読化することができる。
-
-                // Byte型構造体に変換する
-                var bs = mail.body.Select(s => (byte)s).ToArray();
-
-                // GetStringでバイト型配列をUTF-8の配列にエンコードする
-                fileBody = Encoding.UTF8.GetString(bs);
-
-                // fileHeaderにヘッダを格納する
-                fileHeader = mail.header;
-
-                // ファイル出力フラグにUTF-8を設定する
-                enc = "utf-8";
-            }
-            else {
-                // ここに落ちてくるのは基本的に添付ファイルのみ
-                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.header);
-                fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
-
-                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
-                fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
-
-                // 文字コードをJISに設定する
-                enc = "iso-2022-jp";
-            }
-
-            // ファイル書き込み用のエンコーディングを取得する
-            Encoding writeEnc = Encoding.GetEncoding(enc);
-
-            using (var writer = new StreamWriter(FileToSave, false, writeEnc)) {
-                // 受信メール(ヘッダが存在する)のとき
-                if (mail.header.Length > 0) {
-                    writer.Write(fileHeader);
-                    writer.Write("\r\n");
-                }
-                else {
-                    // 送信メールのときはヘッダの代わりに送り先と件名を出力
-                    writer.WriteLine("To: " + mail.address);
-                    writer.WriteLine("Subject: " + mail.subject);
-                    writer.Write("\r\n");
-                }
-                writer.Write(fileBody);
             }
         }
 
