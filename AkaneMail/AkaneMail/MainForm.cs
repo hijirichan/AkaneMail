@@ -22,13 +22,6 @@ namespace AkaneMail
         // メールを格納する配列
         public List<Mail>[] collectionMail = new List<Mail>[3];
 
-        #region "constants"
-        // メールを識別する定数
-        public const int RECEIVE = 0;   // 受信メール
-        public const int SEND = 1;      // 送信メール
-        public const int DELETE = 2;    // 削除メール
-        #endregion
-
         // ListViewItemSorterに指定するフィールド
         public ListViewItemComparer listViewItemSorter;
 
@@ -229,9 +222,9 @@ namespace AkaneMail
             Application.Idle += new EventHandler(Application_Idle);
 
             // 配列を作成する
-            collectionMail[RECEIVE] = new List<Mail>();
-            collectionMail[SEND] = new List<Mail>();
-            collectionMail[DELETE] = new List<Mail>();
+            collectionMail[(int)MailKind.Receive] = new List<Mail>();
+            collectionMail[(int)MailKind.Send] = new List<Mail>();
+            collectionMail[(int)MailKind.Delete] = new List<Mail>();
         }
 
         /// <summary>
@@ -240,9 +233,9 @@ namespace AkaneMail
         public void UpdateTreeView()
         {
             // メールの件数を設定する
-            treeView1.Nodes[0].Nodes[0].Text = "受信メール (" + collectionMail[RECEIVE].Count + ")";
-            treeView1.Nodes[0].Nodes[1].Text = "送信メール (" + collectionMail[SEND].Count + ")";
-            treeView1.Nodes[0].Nodes[2].Text = "ごみ箱 (" + collectionMail[DELETE].Count + ")";
+            treeView1.Nodes[0].Nodes[0].Text = "受信メール (" + collectionMail[(int)MailKind.Receive].Count + ")";
+            treeView1.Nodes[0].Nodes[1].Text = "送信メール (" + collectionMail[(int)MailKind.Send].Count + ")";
+            treeView1.Nodes[0].Nodes[2].Text = "ごみ箱 (" + collectionMail[(int)MailKind.Delete].Count + ")";
         }
 
         /// <summary>
@@ -260,15 +253,15 @@ namespace AkaneMail
 
             if (listView1.Columns[0].Text == "差出人") {
                 // 受信メールの場合
-                list = collectionMail[RECEIVE];
+                list = collectionMail[(int)MailKind.Receive];
             }
             else if (listView1.Columns[0].Text == "宛先") {
                 // 送信メールの場合
-                list = collectionMail[SEND];
+                list = collectionMail[(int)MailKind.Send];
             }
             else if (listView1.Columns[0].Text == "差出人または宛先") {
                 // 削除メールの場合
-                list = collectionMail[DELETE];
+                list = collectionMail[(int)MailKind.Delete];
             }
             else if (listView1.Columns[0].Text == "名前") {
                 // メールボックスのとき
@@ -1013,7 +1006,7 @@ namespace AkaneMail
             NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.SendList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[(int)MailKind.Send];
 
             // 返信のための宛先・件名を設定する
             NewMailForm.textAddress.Text = mail.address;
@@ -1061,7 +1054,7 @@ namespace AkaneMail
             NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.SendList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[(int)MailKind.Send];
 
             // 転送のために件名を設定する(件名は空白にする)
             NewMailForm.textAddress.Text = "";
@@ -1169,7 +1162,7 @@ namespace AkaneMail
                 EditMailForm.Text = mail.subject + " - Ak@Ne!";
 
                 // 送信箱の配列をForm3に渡す
-                EditMailForm.SendList = collectionMail[SEND];
+                EditMailForm.SendList = collectionMail[(int)MailKind.Send];
                 EditMailForm.ListTag = (int)item.Tag;
                 EditMailForm.IsEdit = true;
 
@@ -1235,8 +1228,8 @@ namespace AkaneMail
                 nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
                 // キーの並べ替え
-                List<Mail> sList = collectionMail[RECEIVE];
-                List<Mail> dList = collectionMail[DELETE];
+                List<Mail> sList = collectionMail[(int)MailKind.Send];
+                List<Mail> dList = collectionMail[(int)MailKind.Delete];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1267,8 +1260,8 @@ namespace AkaneMail
                 nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
                 // キーの並べ替え
-                List<Mail> sList = collectionMail[SEND];
-                List<Mail> dList = collectionMail[DELETE];
+                List<Mail> sList = collectionMail[(int)MailKind.Send];
+                List<Mail> dList = collectionMail[(int)MailKind.Delete];
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1299,7 +1292,7 @@ namespace AkaneMail
 
                     // キーの並べ替え
                     Array.Sort(nIndices);
-                    List<Mail> dList = collectionMail[DELETE];
+                    List<Mail> dList = collectionMail[(int)MailKind.Delete];
 
                     while (nLen > 0) {
                         // 選択アイテムのキーから 選択アイテム群の位置を取得
@@ -1394,7 +1387,7 @@ namespace AkaneMail
                     var countMail = new Task<int>(() =>
                     {
                         var uidls = Enumerable.Range(1, pop.Count).Select(i => { pop.GetUidl(i); return pop.Uidl; });
-                        var locals = collectionMail[RECEIVE].Union(collectionMail[DELETE]);
+                        var locals = collectionMail[(int)MailKind.Receive].Union(collectionMail[(int)MailKind.Delete]);
                         var unreadMails = from u in uidls
                                           join l in locals on u equals l.uidl
                                           select l;
@@ -1454,7 +1447,7 @@ namespace AkaneMail
 
                         // メールの情報を格納する
                         Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", Mail.ParsePriority(pop.Header));
-                        collectionMail[RECEIVE].Add(mail);
+                        collectionMail[(int)MailKind.Receive].Add(mail);
 
                         // 受信メールの数を増加する
                         mailCount++;
@@ -1552,7 +1545,7 @@ namespace AkaneMail
             int send_no = 0;
 
             // 送信可能なメールの数を確認する
-            max_no = collectionMail[SEND].Count(m => m.notReadYet);
+            max_no = collectionMail[(int)MailKind.Send].Count(m => m.notReadYet);
 
             // 送信可能なメールが存在しないとき
             if (max_no == 0) {
@@ -1626,7 +1619,7 @@ namespace AkaneMail
                         smtp.Authenticate(Mail.userName, Mail.passWord, Smtp.AuthPlain | Smtp.AuthCramMd5);
                     }
 
-                    foreach (var mail in collectionMail[SEND]) {
+                    foreach (var mail in collectionMail[(int)MailKind.Send]) {
                         if (mail.notReadYet) {
                             // CCが存在するとき
                             if (mail.cc != "") {
@@ -1949,11 +1942,11 @@ namespace AkaneMail
         {
             switch (columnText) {
                 case "差出人":
-                    return collectionMail[RECEIVE][(int)index];
+                    return collectionMail[(int)MailKind.Receive][(int)index];
                 case "宛先":
-                    return collectionMail[SEND][(int)index];
+                    return collectionMail[(int)MailKind.Send][(int)index];
                 case "差出人または宛先":
-                    return collectionMail[DELETE][(int)index];
+                    return collectionMail[(int)MailKind.Delete][(int)index];
                 default:
                     throw new ArgumentException(columnText + "は有効な値ではありません。");
             }
@@ -2114,7 +2107,7 @@ namespace AkaneMail
             NewMailForm.MainForm = this;
 
             // 送信箱の配列をForm3に渡す
-            NewMailForm.SendList = collectionMail[SEND];
+            NewMailForm.SendList = collectionMail[(int)MailKind.Send];
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -2156,9 +2149,9 @@ namespace AkaneMail
 
         private Dictionary<string, int> mailbox = new Dictionary<string, int> 
         {
-            { "差出人", RECEIVE }, 
-            { "宛先", SEND }, 
-            { "差出人または宛先", DELETE } 
+            { "差出人", (int)MailKind.Receive }, 
+            { "宛先", (int)MailKind.Send }, 
+            { "差出人または宛先", (int)MailKind.Delete } 
         };
 
         /// <summary>
@@ -2470,7 +2463,7 @@ namespace AkaneMail
         {
             // ごみ箱の配列を空っぽにする
             if (MessageBox.Show("ごみ箱の中身をすべて削除します。\nよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                collectionMail[DELETE].Clear();
+                collectionMail[(int)MailKind.Delete].Clear();
 
                 ClearInput();
 
@@ -2562,7 +2555,7 @@ namespace AkaneMail
             menuFileGetAttatch.Enabled = condition && attachMenuFlag;
 
             // 削除メールが0件の場合
-            menuFileClearTrush.Enabled = collectionMail[DELETE].Count != 0;
+            menuFileClearTrush.Enabled = collectionMail[(int)MailKind.Delete].Count != 0;
         }
 
         private void menuMail_DropDownOpening(object sender, EventArgs e)
@@ -2614,7 +2607,7 @@ namespace AkaneMail
 
         private void menuTreeView_Opening(object sender, CancelEventArgs e)
         {
-            menuClearTrush.Enabled = collectionMail[DELETE].Count != 0;
+            menuClearTrush.Enabled = collectionMail[(int)MailKind.Delete].Count != 0;
         }
 
         private void Application_Idle(object sender, EventArgs e)
