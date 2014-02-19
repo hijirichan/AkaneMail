@@ -46,7 +46,7 @@ namespace AkaneMail
                 {
                     if (Field[0] == ' ')
                     {
-                        HeaderFields[HeaderFields.Count - 1] += Field;
+                        HeaderFields[HeaderFields.Count - 1] += "\r\n" +  Field;
                     }
                     else
                     {
