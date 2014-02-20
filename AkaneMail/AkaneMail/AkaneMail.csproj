@@ -56,6 +56,10 @@
     <Compile Include="findDialog.Designer.cs">
       <DependentUpon>findDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="MailBox.cs" />
+    <Compile Include="MailKind.cs" />
+    <Compile Include="MailSaveException.cs" />
+    <Compile Include="MailLoadException.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
