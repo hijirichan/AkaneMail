@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AkaneMail
 {
-  enum MailKind
+  public enum MailKind
   {
     Send,
     Receive,
