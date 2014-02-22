@@ -548,7 +548,7 @@
             // 
             this.openFileDialog1.Filter = "すべてのファイル(*.*)|*.*";
             // 
-            // Form3
+            // MailEditorForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -560,9 +560,9 @@
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form3";
+            this.Name = "MailEditorForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "新規作成 - Ak@Ne!";
+            this.Text = "新規作成 - Akane Mail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3_FormClosing);
             this.Load += new System.EventHandler(this.Form3_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form3_DragDrop);

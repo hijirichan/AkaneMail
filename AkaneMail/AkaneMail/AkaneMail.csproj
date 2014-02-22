@@ -56,6 +56,7 @@
     <Compile Include="findDialog.Designer.cs">
       <DependentUpon>findDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="MailSettings.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

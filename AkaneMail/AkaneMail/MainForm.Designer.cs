@@ -701,7 +701,7 @@
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip3;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "Ak@Ne!";
+            this.notifyIcon1.Text = "Akane Mail";
             this.notifyIcon1.Visible = true;
             // 
             // contextMenuStrip3
@@ -760,7 +760,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Ak@Ne!";
+            this.Text = "Akane Mail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
