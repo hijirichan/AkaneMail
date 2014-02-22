@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountInfo.cs" />
     <Compile Include="findDialog.cs">
       <SubType>Form</SubType>
     </Compile>
