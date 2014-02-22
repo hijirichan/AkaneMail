@@ -223,6 +223,10 @@ namespace AkaneMail
 
         public MainForm()
         {
+            // はじめは最小化した状態にしておく
+            ShowInTaskbar = false;
+            WindowState = FormWindowState.Minimized;
+
             InitializeComponent();
 
             // Appliction.Idleを登録する
@@ -692,10 +696,7 @@ namespace AkaneMail
                         this.Height = initMail.m_windowHeight;
                     }
                 }
-                else {
-                    // 最大化または最小化の時はウィンドウ状態を設定する
-                    this.WindowState = initMail.m_windowStat;
-                }
+                this.WindowState = initMail.m_windowStat;
             }
         }
 
@@ -2367,10 +2368,13 @@ namespace AkaneMail
                 splash.Dispose();
 
             // 一時的に非表示にした画面を表示させる
-            this.Show();
-
+            if (!(Mail.minimizeTaskTray && WindowState == FormWindowState.Minimized)) {
+                ShowInTaskbar = true;
+                this.Show();
+            }
             // メインとなるフォームをアクティブに戻す
             this.Activate();
+
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -2541,6 +2545,7 @@ namespace AkaneMail
 
         private void menuTaskRestoreWindow_Click(object sender, EventArgs e)
         {
+            this.ShowInTaskbar = true;
             // フォームを表示する   
             this.Visible = true;
 
