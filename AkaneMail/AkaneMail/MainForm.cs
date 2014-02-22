@@ -59,36 +59,7 @@ namespace AkaneMail
         #endregion
 
         // 環境保存用のクラスインスタンス
-        private initClass initMail;
-
-        // 環境設定保存のためのクラス
-        public class initClass
-        {
-            public string m_fromName;           // ユーザ(差出人)の名前 
-            public string m_mailAddress;        // ユーザのメールアドレス
-            public string m_userName;           // ユーザ名
-            public string m_passWord;           // POP3のパスワード
-            public string m_popServer;          // POP3サーバ名
-            public string m_smtpServer;         // SMTPサーバ名
-            public int m_popPortNo;             // POP3のポート番号
-            public int m_smtpPortNo;            // SMTPのポート番号
-            public bool m_apopFlag;             // APOPのフラグ
-            public bool m_deleteMail;           // POP受信時メール削除フラグ
-            public bool m_popBeforeSMTP;        // POP before SMTPフラグ
-            public bool m_popOverSSL;           // POP3 over SSL/TLSフラグ
-            public bool m_smtpAuth;             // SMTP認証フラグ
-            public bool m_autoMailFlag;         // メール自動受信フラグ
-            public int m_getMailInterval;       // メール受信間隔
-            public bool m_popSoundFlag;         // メール着信音フラグ
-            public string m_popSoundName;       // メール着信音ファイル名
-            public bool m_bodyIEShow;           // HTMLメール表示フラグ
-            public bool m_minimizeTaskTray;     // 最小化時のタスクトレイフラグ
-            public int m_windowLeft;            // ウィンドウの左上のLeft座標
-            public int m_windowTop;             // ウィンドウの左上のTop座標
-            public int m_windowWidth;           // ウィンドウの幅
-            public int m_windowHeight;          // ウィンドウの高さ
-            public FormWindowState m_windowStat;    // ウィンドウの状態
-        }
+        private MailSettings MailSetting;
 
         // デリゲートの宣言
         delegate void ProgressMailInitDlg(int value);
@@ -358,7 +329,7 @@ namespace AkaneMail
                                         // エラーフラグをtrueに変更する
                                         errorFlag = true;
 
-                                        MessageBox.Show("メール件数とメールデータの数が一致していません。\n件数またはデータレコードをテキストエディタで修正してください。", "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                        MessageBox.Show("メール件数とメールデータの数が一致していません。\n件数またはデータレコードをテキストエディタで修正してください。", "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                                         return;
                                     }
@@ -438,7 +409,7 @@ namespace AkaneMail
                                             // エラーフラグをtrueに変更する
                                             errorFlag = true;
 
-                                            MessageBox.Show("Version 1.10以下のファイルを読み込もうとしています。\nメールデータ変換ツールで変換してから読み込んでください。", "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                            MessageBox.Show("Version 1.10以下のファイルを読み込もうとしています。\nメールデータ変換ツールで変換してから読み込んでください。", "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 
                                             return;
                                         }
@@ -476,7 +447,7 @@ namespace AkaneMail
                         }
                     }
                     catch (Exception exp) {
-                        MessageBox.Show("予期しないエラーが発生しました。\n" + "件名:" + expSubject + "\n" + "エラー詳細 : \n" + exp.Message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        MessageBox.Show("予期しないエラーが発生しました。\n" + "件名:" + expSubject + "\n" + "エラー詳細 : \n" + exp.Message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                 }
             }
@@ -515,7 +486,7 @@ namespace AkaneMail
                     }
                 }
                 catch (Exception exp) {
-                    MessageBox.Show("予期しないエラーが発生しました。\n" + exp.Message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show("予期しないエラーが発生しました。\n" + exp.Message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
         }
@@ -630,7 +601,7 @@ namespace AkaneMail
         public void LoadSettings()
         {
             // 環境設定保存クラスを作成する
-            initMail = new initClass();
+            MailSetting = new MailSettings();
 
             // アカウント情報(初期値)を設定する
             Mail.fromName = "";
@@ -654,49 +625,49 @@ namespace AkaneMail
 
             // 環境設定ファイルが存在する場合は環境設定情報を読み込んでアカウント情報に設定する
             if (File.Exists(Application.StartupPath + @"\AkaneMail.xml")) {
-                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
+                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
                 using (var fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Open)) {
-                    initMail = (initClass)serializer.Deserialize(fs);
+                    MailSetting = (MailSettings)serializer.Deserialize(fs);
                 }
 
                 // アカウント情報
-                Mail.fromName = initMail.m_fromName;
-                Mail.mailAddress = initMail.m_mailAddress;
-                Mail.userName = initMail.m_userName;
-                Mail.passWord = Decrypt(initMail.m_passWord);
+                Mail.fromName = MailSetting.m_fromName;
+                Mail.mailAddress = MailSetting.m_mailAddress;
+                Mail.userName = MailSetting.m_userName;
+                Mail.passWord = Decrypt(MailSetting.m_passWord);
 
                 // 接続情報
-                Mail.smtpServer = initMail.m_smtpServer;
-                Mail.popServer = initMail.m_popServer;
-                Mail.smtpPortNumber = initMail.m_smtpPortNo;
-                Mail.popPortNumber = initMail.m_popPortNo;
-                Mail.apopFlag = initMail.m_apopFlag;
-                Mail.deleteMail = initMail.m_deleteMail;
-                Mail.popBeforeSMTP = initMail.m_popBeforeSMTP;
-                Mail.popOverSSL = initMail.m_popOverSSL;
-                Mail.smtpAuth = initMail.m_smtpAuth;
+                Mail.smtpServer = MailSetting.m_smtpServer;
+                Mail.popServer = MailSetting.m_popServer;
+                Mail.smtpPortNumber = MailSetting.m_smtpPortNo;
+                Mail.popPortNumber = MailSetting.m_popPortNo;
+                Mail.apopFlag = MailSetting.m_apopFlag;
+                Mail.deleteMail = MailSetting.m_deleteMail;
+                Mail.popBeforeSMTP = MailSetting.m_popBeforeSMTP;
+                Mail.popOverSSL = MailSetting.m_popOverSSL;
+                Mail.smtpAuth = MailSetting.m_smtpAuth;
 
                 // 自動受信設定
-                Mail.autoMailFlag = initMail.m_autoMailFlag;
-                Mail.getMailInterval = initMail.m_getMailInterval;
+                Mail.autoMailFlag = MailSetting.m_autoMailFlag;
+                Mail.getMailInterval = MailSetting.m_getMailInterval;
 
                 // 通知設定
-                Mail.popSoundFlag = initMail.m_popSoundFlag;
-                Mail.popSoundName = initMail.m_popSoundName;
-                Mail.bodyIEShow = initMail.m_bodyIEShow;
-                Mail.minimizeTaskTray = initMail.m_minimizeTaskTray;
+                Mail.popSoundFlag = MailSetting.m_popSoundFlag;
+                Mail.popSoundName = MailSetting.m_popSoundName;
+                Mail.bodyIEShow = MailSetting.m_bodyIEShow;
+                Mail.minimizeTaskTray = MailSetting.m_minimizeTaskTray;
 
                 // 画面の表示が通常のとき 
-                if (initMail.m_windowStat == FormWindowState.Normal) {
+                if (MailSetting.m_windowStat == FormWindowState.Normal) {
                     // 過去のバージョンから環境設定ファイルを流用した初期起動以外はこの中に入る
-                    if (initMail.m_windowLeft != 0 && initMail.m_windowTop != 0 && initMail.m_windowWidth != 0 && initMail.m_windowHeight != 0) {
-                        this.Left = initMail.m_windowLeft;
-                        this.Top = initMail.m_windowTop;
-                        this.Width = initMail.m_windowWidth;
-                        this.Height = initMail.m_windowHeight;
+                    if (MailSetting.m_windowLeft != 0 && MailSetting.m_windowTop != 0 && MailSetting.m_windowWidth != 0 && MailSetting.m_windowHeight != 0) {
+                        this.Left = MailSetting.m_windowLeft;
+                        this.Top = MailSetting.m_windowTop;
+                        this.Width = MailSetting.m_windowWidth;
+                        this.Height = MailSetting.m_windowHeight;
                     }
                 }
-                this.WindowState = initMail.m_windowStat;
+                this.WindowState = MailSetting.m_windowStat;
             }
         }
 
@@ -705,7 +676,7 @@ namespace AkaneMail
         /// </summary>
         public void SaveSettings()
         {
-            initMail = new initClass()
+            MailSetting = new MailSettings()
             {
                 // アカウント情報
                 m_fromName = Mail.fromName,
@@ -742,10 +713,10 @@ namespace AkaneMail
                 m_windowStat = this.WindowState
             };
 
-            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(initClass));
+            System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
 
             using (var fs = new FileStream(Application.StartupPath + @"\AkaneMail.xml", FileMode.Create)) {
-                serializer.Serialize(fs, initMail);
+                serializer.Serialize(fs, MailSetting);
             }
         }
 
@@ -1167,7 +1138,7 @@ namespace AkaneMail
                 EditMailForm.MainForm = this;
 
                 // 親フォームにタイトルを設定する
-                EditMailForm.Text = mail.subject + " - Ak@Ne!";
+                EditMailForm.Text = mail.subject + " - Akane Mail";
 
                 // 送信箱の配列をForm3に渡す
                 EditMailForm.SendList = collectionMail[SEND];
@@ -2313,7 +2284,7 @@ namespace AkaneMail
             catch (Exception exp) {
                 // 64bit版OSで同梱の32bit版OS用のnMail.dllを使用して起動したときはエラーになるため差し替えのお願いメッセージを表示する
                 if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
-                    MessageBox.Show("64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合\nこのエラーが表示されます。\n\nお手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更してAk@Ne!を起動\nしてください。", "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合\nこのエラーが表示されます。\n\nお手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更してAkane Mailを起動\nしてください。", "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     // 致命的なnMail.dllのエラーフラグをOn
                     nMailError = true;
                     Application.Exit();
