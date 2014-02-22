@@ -2318,9 +2318,6 @@ namespace AkaneMail
                 timer2.Enabled = true;
             }
 
-            // ツリービューを展開する
-            treeView1.ExpandAll();
-
             // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
@@ -2343,6 +2340,10 @@ namespace AkaneMail
                 ShowInTaskbar = true;
                 this.Show();
             }
+
+            // ツリービューを展開する
+            treeView1.ExpandAll();
+
             // メインとなるフォームをアクティブに戻す
             this.Activate();
 
