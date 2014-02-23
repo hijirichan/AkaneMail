@@ -10,7 +10,8 @@ namespace AkaneMail
     /// <summary>
     /// メールを保存しておく、名前のついたフォルダーを表します。
     /// </summary>
-    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging    {
+    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging
+    {
         private List<Mail> _mails;
 
         private string _name;
@@ -20,7 +21,7 @@ namespace AkaneMail
         /// MailFolder の名前を取得または設定します。
         /// </summary>
         /// <exception cref="InvalidOperationException">リネームは許可されていません。</exception>
-        public string Name 
+        public string Name
         {
             get
             {
@@ -43,7 +44,7 @@ namespace AkaneMail
         /// </summary>
         public int Count { get { return _mails.Count; } }
 
-        public bool CanRename 
+        public bool CanRename
         {
             get { return _canRename; }
             set
@@ -65,6 +66,7 @@ namespace AkaneMail
             if (PropertyChanged != null)
                 PropertyChanged(this, e);
         }
+
         /// <summary>
         /// プロパティ値が変更されようとしているときに発生します。
         /// </summary>
@@ -78,7 +80,7 @@ namespace AkaneMail
         /// <summary>
         /// 指定された名前で MailFolder クラスの新しいインスタンスを初期化します。
         /// </summary>
-        public MailFolder(string name) 
+        public MailFolder(string name)
         {
             _name = name;
             _mails = new List<Mail>();
@@ -158,7 +160,5 @@ namespace AkaneMail
                 throw;
             }
         }
-
-
     }
 }

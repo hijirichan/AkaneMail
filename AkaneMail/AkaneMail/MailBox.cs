@@ -132,7 +132,7 @@ namespace AkaneMail
                     try {
                         // ファイルストリームをストリームリーダに関連付ける
                         using (var reader = new StreamReader(Application.StartupPath + @"\Mail.dat", Encoding.UTF8)) {
-                            var folders = new MailFolder[] { _send, _receive, _trash };
+                            var folders = new MailFolder[] { _receive, _send, _trash };
                             // GetHederFieldとHeaderプロパティを使うためPop3クラスを作成する
                             using (var pop = new Pop3()) {
                                 // データを読み出す
@@ -276,7 +276,7 @@ namespace AkaneMail
                 try {
                     // ファイルストリームをストリームライタに関連付ける
                     using (var writer = new StreamWriter(Application.StartupPath + @"\Mail.dat", false, Encoding.UTF8)) {
-                        var folders = new MailFolder[] { _send, _receive, _trash };
+                        var folders = new MailFolder[] { _receive, _send, _trash };
                         // メールの件数とデータを書き込む
                         foreach (var folder in folders) {
                             writer.WriteLine(folder.Count);
