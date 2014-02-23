@@ -677,7 +677,7 @@ namespace AkaneMail
                         attachMenuFlag = true;
                         // メニューに添付ファイルの名前を追加する
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
-                        foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
+                        foreach (var attachFile in attach.FileNameList/*.Where(a => a != attach.HtmlFile)*/) {
                             appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Application.StartupPath + @"\tmp\" + attachFile);
                             buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
                         }
