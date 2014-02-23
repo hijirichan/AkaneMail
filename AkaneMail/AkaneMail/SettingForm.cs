@@ -21,25 +21,25 @@ namespace AkaneMail
         private void buttonOK_Click(object sender, EventArgs e)
         {
             // アカウント情報を設定する
-            Mail.fromName = textFromName.Text;
-            Mail.mailAddress = textUserAddress.Text;
-            Mail.userName = textUserName.Text;
-            Mail.passWord = textPassword.Text;
-            Mail.smtpServer = textSmtpServer.Text;
-            Mail.smtpPortNumber = int.Parse(textSmtpPortNo.Text);
-            Mail.popServer = textPopServer.Text;
-            Mail.popPortNumber = int.Parse(textPopPortNo.Text);
-            Mail.apopFlag = checkApop.Checked;
-            Mail.deleteMail = checkDeleteMail.Checked;
-            Mail.popBeforeSMTP = checkPopBeforeSmtp.Checked;
-            Mail.popOverSSL = checkPop3OverSSL.Checked;
-            Mail.smtpAuth = checkSmtpAuth.Checked;
-            Mail.autoMailFlag = checkAutoGetMail.Checked;
-            Mail.getMailInterval = Int32.Parse(updownGetmailInterval.Value.ToString());
-            Mail.popSoundFlag = checkSoundPlay.Checked;
-            Mail.popSoundName = textSoundFileName.Text;
-            Mail.bodyIEShow = checkBrowser.Checked;
-            Mail.minimizeTaskTray = checkMinimizeTaskTray.Checked;
+            AccountInfo.fromName = textFromName.Text;
+            AccountInfo.mailAddress = textUserAddress.Text;
+            AccountInfo.userName = textUserName.Text;
+            AccountInfo.passWord = textPassword.Text;
+            AccountInfo.smtpServer = textSmtpServer.Text;
+            AccountInfo.smtpPortNumber = int.Parse(textSmtpPortNo.Text);
+            AccountInfo.popServer = textPopServer.Text;
+            AccountInfo.popPortNumber = int.Parse(textPopPortNo.Text);
+            AccountInfo.apopFlag = checkApop.Checked;
+            AccountInfo.deleteMail = checkDeleteMail.Checked;
+            AccountInfo.popBeforeSMTP = checkPopBeforeSmtp.Checked;
+            AccountInfo.popOverSSL = checkPop3OverSSL.Checked;
+            AccountInfo.smtpAuth = checkSmtpAuth.Checked;
+            AccountInfo.autoMailFlag = checkAutoGetMail.Checked;
+            AccountInfo.getMailInterval = Int32.Parse(updownGetmailInterval.Value.ToString());
+            AccountInfo.popSoundFlag = checkSoundPlay.Checked;
+            AccountInfo.popSoundName = textSoundFileName.Text;
+            AccountInfo.bodyIEShow = checkBrowser.Checked;
+            AccountInfo.minimizeTaskTray = checkMinimizeTaskTray.Checked;
 
             this.Close();
 
@@ -56,34 +56,34 @@ namespace AkaneMail
             loadFromFlag = true;
 
             // アカウント情報を表示する
-            if (Mail.mailAddress != null && Mail.userName != null && Mail.passWord != null && Mail.smtpServer != null && Mail.popServer != null) {
-                textFromName.Text = Mail.fromName;
-                textUserAddress.Text = Mail.mailAddress;
-                textUserName.Text = Mail.userName;
-                textPassword.Text = Mail.passWord;
-                textSmtpServer.Text = Mail.smtpServer;
-                textSmtpPortNo.Text = Mail.smtpPortNumber.ToString();
-                textPopServer.Text = Mail.popServer;
-                textPopPortNo.Text = Mail.popPortNumber.ToString();
-                checkApop.Checked = Mail.apopFlag;
-                checkDeleteMail.Checked = Mail.deleteMail;
-                checkPopBeforeSmtp.Checked = Mail.popBeforeSMTP;
-                checkPop3OverSSL.Checked = Mail.popOverSSL;
-                checkSmtpAuth.Checked = Mail.smtpAuth;
-                checkAutoGetMail.Checked = Mail.autoMailFlag;
-                checkMinimizeTaskTray.Checked = Mail.minimizeTaskTray;
+            if (AccountInfo.mailAddress != null && AccountInfo.userName != null && AccountInfo.passWord != null && AccountInfo.smtpServer != null && AccountInfo.popServer != null) {
+                textFromName.Text = AccountInfo.fromName;
+                textUserAddress.Text = AccountInfo.mailAddress;
+                textUserName.Text = AccountInfo.userName;
+                textPassword.Text = AccountInfo.passWord;
+                textSmtpServer.Text = AccountInfo.smtpServer;
+                textSmtpPortNo.Text = AccountInfo.smtpPortNumber.ToString();
+                textPopServer.Text = AccountInfo.popServer;
+                textPopPortNo.Text = AccountInfo.popPortNumber.ToString();
+                checkApop.Checked = AccountInfo.apopFlag;
+                checkDeleteMail.Checked = AccountInfo.deleteMail;
+                checkPopBeforeSmtp.Checked = AccountInfo.popBeforeSMTP;
+                checkPop3OverSSL.Checked = AccountInfo.popOverSSL;
+                checkSmtpAuth.Checked = AccountInfo.smtpAuth;
+                checkAutoGetMail.Checked = AccountInfo.autoMailFlag;
+                checkMinimizeTaskTray.Checked = AccountInfo.minimizeTaskTray;
 
                 // 旧バージョンのコンフィグ用対策
-                if (Mail.getMailInterval != 0) {
-                    updownGetmailInterval.Value = Mail.getMailInterval;
+                if (AccountInfo.getMailInterval != 0) {
+                    updownGetmailInterval.Value = AccountInfo.getMailInterval;
                 }
                 else {
                     updownGetmailInterval.Value = 10;
                 }
 
-                checkSoundPlay.Checked = Mail.popSoundFlag;
-                textSoundFileName.Text = Mail.popSoundName;
-                checkBrowser.Checked = Mail.bodyIEShow;
+                checkSoundPlay.Checked = AccountInfo.popSoundFlag;
+                textSoundFileName.Text = AccountInfo.popSoundName;
+                checkBrowser.Checked = AccountInfo.bodyIEShow;
 
                 updownGetmailInterval.Enabled = checkAutoGetMail.Checked;
                 labelIntervalRecieve.Enabled = checkAutoGetMail.Checked;

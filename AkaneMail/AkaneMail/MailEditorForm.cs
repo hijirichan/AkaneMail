@@ -54,7 +54,7 @@ namespace AkaneMail
         /// <returns>メールサイズの文字列</returns>
         public string GetMailSize()
         {
-            string addr = Mail.FromAddress;
+            string addr = AccountInfo.FromAddress;
             string priority = mailPriority[comboPriority.Text];
 
             double attachSize = 0;
