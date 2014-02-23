@@ -677,7 +677,7 @@ namespace AkaneMail
                         attachMenuFlag = true;
                         // メニューに添付ファイルの名前を追加する
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
-                        foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
+                        foreach (var attachFile in attach.FileNameList/*.Where(a => a != attach.HtmlFile)*/) {
                             appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Application.StartupPath + @"\tmp\" + attachFile);
                             buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
                         }
@@ -2259,6 +2259,48 @@ namespace AkaneMail
                 }
             }
         }
+
+//      private void saveMailFile(Mail mail, string FileToSave)
+//      {
+//          // ヘッダから文字コードを取得する(添付付きは取得できない)
+//          string enc = Mail.ParseEncoding(mail.header);
+//          string header = mail.header;
+//          string body = mail.body;
+//
+//          if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows"))
+//          {
+//              // 出力する文字コードがUTF-8ではないとき
+//          }
+//          else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
+//              // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
+//              // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
+//              // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
+//              // なるのを防ぐための意図で行われている。
+//              // これをデコードするにはバイト型で格納し、UTF-8でデコードし直せば文字化けのような文字列を
+//              // 可読化することができる。
+//              body = Encoding.UTF8.GetString(body.Select(s => (byte)s).ToArray());
+//          }
+//          else {
+//              // ここに落ちてくるのは基本的に添付ファイルのみ
+//              enc = "iso-2022-jp";
+//          }
+//          MessageEncoder encoder = new MessageEncoder(enc);
+//          encoder.addHeader(header);
+//          encoder.addMessageBody(body);
+//
+//          if (header.Length == 0)
+//          {
+//              // メールヘッダが0バイトの時、送信メールとして扱い、
+//              // 送り先と件名を設定する
+//              encoder.addHeaderField("To", mail.address);
+//              encoder.addHeaderField("Subject", mail.subject);
+//          }
+//
+//          using (var writer = new StreamWriter(FileToSave, false, encoder.getEncoding()))
+//          {
+//              writer.Write(encoder.getResult());
+//          }
+//      }
 
         private void menuFileClearTrush_Click(object sender, EventArgs e)
         {
