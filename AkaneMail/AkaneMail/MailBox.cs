@@ -143,7 +143,7 @@ namespace AkaneMail
                                     }
                                     catch (Exception e) {
                                         var message = "メール件数とメールデータの数が一致していません。\n件数またはデータレコードをテキストエディタで修正してください。";
-                                        MessageBox.Show(message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                        MessageBox.Show(message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                                         throw new MailLoadException(message, e);
                                     }
 
@@ -219,7 +219,7 @@ namespace AkaneMail
                                         // 旧ファイルを読み込んでいるとき
                                         if (priority != "urgent" && priority != "normal" && priority != "non-urgent") {
                                             var message = "Version 1.10以下のファイルを読み込もうとしています。\nメールデータ変換ツールで変換してから読み込んでください。";
-                                            MessageBox.Show(message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                            MessageBox.Show(message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                                             throw new MailLoadException(message);
                                         }
 
@@ -259,7 +259,7 @@ namespace AkaneMail
                         throw;
                     }
                     catch (Exception exp) {
-                        MessageBox.Show("予期しないエラーが発生しました。\n" + "件名:" + expSubject + "\n" + "エラー詳細 : \n" + exp.Message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        MessageBox.Show("予期しないエラーが発生しました。\n" + "件名:" + expSubject + "\n" + "エラー詳細 : \n" + exp.Message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                         throw new MailLoadException("予期しないエラーが発生しました", exp);
                     }
                 }
@@ -301,7 +301,7 @@ namespace AkaneMail
                     }
                 }
                 catch (Exception exp) {
-                    MessageBox.Show("予期しないエラーが発生しました。\n" + exp.Message, "Ak@Ne!", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show("予期しないエラーが発生しました。\n" + exp.Message, "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     throw new MailSaveException("予期しないエラーが発生しました。", exp);
                 }
             }
