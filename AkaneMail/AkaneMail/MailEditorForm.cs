@@ -167,14 +167,14 @@ namespace AkaneMail
             SendList.Add(newMail);
 
             // ListViewItemSorterを解除する
-            MainForm.listView1.ListViewItemSorter = null;
+            MainForm.listMail.ListViewItemSorter = null;
 
             // ツリービューとリストビューの表示を更新する
             MainForm.UpdateTreeView();
             MainForm.UpdateListView();
 
             // ListViewItemSorterを指定する
-            MainForm.listView1.ListViewItemSorter = MainForm.listViewItemSorter;
+            MainForm.listMail.ListViewItemSorter = MainForm.listViewItemSorter;
 
             // 編集モードをfalseにする
             IsEdit = false;
@@ -355,14 +355,14 @@ namespace AkaneMail
             }
 
             // ListViewItemSorterを解除する
-            MainForm.listView1.ListViewItemSorter = null;
+            MainForm.listMail.ListViewItemSorter = null;
 
             // ツリービューとリストビューの表示を更新する
             MainForm.UpdateTreeView();
             MainForm.UpdateListView();
 
             // ListViewItemSorterを指定する
-            MainForm.listView1.ListViewItemSorter = MainForm.listViewItemSorter;
+            MainForm.listMail.ListViewItemSorter = MainForm.listViewItemSorter;
 
             // 編集モードをfalseにする
             IsEdit = false;

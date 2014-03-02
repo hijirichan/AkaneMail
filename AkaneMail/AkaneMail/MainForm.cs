@@ -205,9 +205,9 @@ namespace AkaneMail
         public void UpdateTreeView()
         {
             // メールの件数を設定する
-            treeView1.Nodes[0].Nodes[0].Text = "受信メール (" + mailBox.Receive.Count + ")";
-            treeView1.Nodes[0].Nodes[1].Text = "送信メール (" + mailBox.Send.Count + ")";
-            treeView1.Nodes[0].Nodes[2].Text = "ごみ箱 (" + mailBox.Trash.Count + ")";
+            treeMailBoxFolder.Nodes[0].Nodes[0].Text = "受信メール (" + mailBox.Receive.Count + ")";
+            treeMailBoxFolder.Nodes[0].Nodes[1].Text = "送信メール (" + mailBox.Send.Count + ")";
+            treeMailBoxFolder.Nodes[0].Nodes[2].Text = "ごみ箱 (" + mailBox.Trash.Count + ")";
         }
 
         /// <summary>
@@ -219,24 +219,24 @@ namespace AkaneMail
             MailFolder folder = null;
 
             // リストビューの描画を止める
-            listView1.BeginUpdate();
+            listMail.BeginUpdate();
 
             // リストビューの内容をクリアする
-            listView1.Items.Clear();
+            listMail.Items.Clear();
 
-            if (listView1.Columns[0].Text == "差出人") {
+            if (listMail.Columns[0].Text == "差出人") {
                 // 受信メールの場合
                 folder = mailBox.Receive;
             }
-            else if (listView1.Columns[0].Text == "宛先") {
+            else if (listMail.Columns[0].Text == "宛先") {
                 // 送信メールの場合
                 folder = mailBox.Send;
             }
-            else if (listView1.Columns[0].Text == "差出人または宛先") {
+            else if (listMail.Columns[0].Text == "差出人または宛先") {
                 // 削除メールの場合
                 folder = mailBox.Trash;
             }
-            else if (listView1.Columns[0].Text == "名前") {
+            else if (listMail.Columns[0].Text == "名前") {
                 // メールボックスのとき
                 ListViewItem item = new ListViewItem(AccountInfo.fromName);
                 item.SubItems.Add(AccountInfo.mailAddress);
@@ -250,8 +250,8 @@ namespace AkaneMail
                     item.SubItems.Add("データ未作成");
                     item.SubItems.Add("0");
                 }
-                listView1.Items.Add(item);
-                listView1.EndUpdate();
+                listMail.Items.Add(item);
+                listMail.EndUpdate();
                 return;
             }
 
@@ -287,8 +287,8 @@ namespace AkaneMail
                 }
                 return item;
             });
-            listView1.Items.AddRange(items.ToArray());
-            listView1.EndUpdate();
+            listMail.Items.AddRange(items.ToArray());
+            listMail.EndUpdate();
         }
 
         private static object lockobj = new object();
@@ -342,12 +342,12 @@ namespace AkaneMail
         private void EnableButton(int flag)
         {
             // メール受信のメニューとツールボタンを有効化する
-            menuMailRecieve.Enabled = true;
-            buttonMailRecieve.Enabled = true;
+            menuRecieveMail.Enabled = true;
+            buttonRecieveMail.Enabled = true;
 
             // フラグの値が1のときメール送信のメニューとツールボタンを有効化する
-            menuMailSend.Enabled = flag == 1;
-            buttonMailSend.Enabled = flag == 1;
+            menuSendMail.Enabled = flag == 1;
+            buttonSendMail.Enabled = flag == 1;
         }
 
         /// <summary>
@@ -369,7 +369,7 @@ namespace AkaneMail
             }
 
             // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
+            listMail.ListViewItemSorter = null;
 
             // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
@@ -383,18 +383,18 @@ namespace AkaneMail
             }
 
             // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            listMail.ListViewItemSorter = listViewItemSorter;
 
             // フラグの値が0のとき
             if (flag == 0) {
                 // 受信メールのとき
-                if (listView1.Columns[0].Text == "差出人") {
+                if (listMail.Columns[0].Text == "差出人") {
                     // ListViewの1行目にフォーカスを当て直す
-                    listView1.Items[0].Selected = true;
-                    listView1.Items[0].Focused = true;
-                    listView1.SelectedItems[0].EnsureVisible();
-                    listView1.Select();
-                    listView1.Focus();
+                    listMail.Items[0].Selected = true;
+                    listMail.Items[0].Focused = true;
+                    listMail.SelectedItems[0].EnsureVisible();
+                    listMail.Select();
+                    listMail.Focus();
                 }
             }
         }
@@ -927,15 +927,15 @@ namespace AkaneMail
             Icon appIcon;
 
             // 1番目のカラムの表示が差出人か差出人または宛先のとき
-            if (listView1.Columns[0].Text == "差出人" || listView1.Columns[0].Text == "差出人または宛先") {
+            if (listMail.Columns[0].Text == "差出人" || listMail.Columns[0].Text == "差出人または宛先") {
                 mail.notReadYet = false;
 
-                ReforcusListView(listView1);
+                ReforcusListView(listMail);
 
                 // データ変更フラグをtrueにする
                 dataDirtyFlag = true;
             }
-            else if (listView1.Columns[0].Text == "宛先") {
+            else if (listMail.Columns[0].Text == "宛先") {
                 // 1番目のカラムが宛先のときは編集画面を表示する
                 MailEditorForm EditMailForm = new MailEditorForm();
 
@@ -996,12 +996,12 @@ namespace AkaneMail
         /// </summary>
         private void DeleteMail()
         {
-            int nSel = listView1.SelectedItems[0].Index;
+            int nSel = listMail.SelectedItems[0].Index;
 
-            if (listView1.Columns[0].Text == "差出人") {
+            if (listMail.Columns[0].Text == "差出人") {
                 // 受信メールのとき
                 // 選択アイテムの数を取得
-                int nLen = listView1.SelectedItems.Count;
+                int nLen = listMail.SelectedItems.Count;
 
                 if (nLen == 0)
                     return;
@@ -1009,7 +1009,7 @@ namespace AkaneMail
                 // 選択アイテムのキーを取得
                 var nIndices = new int[nLen];
 
-                nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
+                nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
                 // キーの並べ替え
                 var sList = mailBox.Receive;
@@ -1017,8 +1017,8 @@ namespace AkaneMail
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
-                    int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
-                    ListViewItem item = listView1.SelectedItems[nIndex];
+                    int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
+                    ListViewItem item = listMail.SelectedItems[nIndex];
 
                     // 元リストからメールアイテムを取得
                     Mail mail = sList[nIndices[nLen - 1]];
@@ -1030,10 +1030,10 @@ namespace AkaneMail
                     nLen--;
                 }
             }
-            else if (listView1.Columns[0].Text == "宛先") {
+            else if (listMail.Columns[0].Text == "宛先") {
                 // 送信メールのとき
                 // 選択アイテムの数を取得
-                int nLen = listView1.SelectedItems.Count;
+                int nLen = listMail.SelectedItems.Count;
 
                 if (nLen == 0)
                     return;
@@ -1041,7 +1041,7 @@ namespace AkaneMail
                 // 選択アイテムのキーを取得
                 var nIndices = new int[nLen];
 
-                nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
+                nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
                 // キーの並べ替え
                 var sList = mailBox.Send;
@@ -1049,8 +1049,8 @@ namespace AkaneMail
 
                 while (nLen > 0) {
                     // 選択アイテムのキーから 選択アイテム群の位置を取得
-                    int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
-                    ListViewItem item = listView1.SelectedItems[nIndex];
+                    int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
+                    ListViewItem item = listMail.SelectedItems[nIndex];
 
                     // 元リストからメールアイテムを取得
                     Mail mail = sList[nIndices[nLen - 1]];
@@ -1062,17 +1062,17 @@ namespace AkaneMail
                     nLen--;
                 }
             }
-            else if (listView1.Columns[0].Text == "差出人または宛先") {
+            else if (listMail.Columns[0].Text == "差出人または宛先") {
                 // 削除メールのとき
                 if (MessageBox.Show("選択されたメールは完全に削除されます。\nよろしいですか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK) {
                     // 選択アイテムの数を取得
-                    int nLen = listView1.SelectedItems.Count;
+                    int nLen = listMail.SelectedItems.Count;
 
                     if (nLen == 0)
                         return;
 
                     // 選択アイテムのキーを取得
-                    var nIndices = Enumerable.Range(0, nLen).Select(n => int.Parse(listView1.SelectedItems[n].Name)).ToArray();
+                    var nIndices = Enumerable.Range(0, nLen).Select(n => int.Parse(listMail.SelectedItems[n].Name)).ToArray();
 
                     // キーの並べ替え
                     Array.Sort(nIndices);
@@ -1080,8 +1080,8 @@ namespace AkaneMail
 
                     while (nLen > 0) {
                         // 選択アイテムのキーから 選択アイテム群の位置を取得
-                        int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
-                        ListViewItem item = listView1.SelectedItems[nIndex];
+                        int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
+                        ListViewItem item = listMail.SelectedItems[nIndex];
 
                         // 元リストからメールアイテムを取得
                         Mail mail = dList[nIndices[nLen - 1]];
@@ -1100,10 +1100,10 @@ namespace AkaneMail
             bool isListEmpty = false;
 
             // 選択しているリスト位置が現在のリスト件数以上のとき
-            if (listView1.Items.Count <= nSel) {
+            if (listMail.Items.Count <= nSel) {
                 // 選択しているリスト位置が0でないとき
                 if (nSel != 0) {
-                    nSel = listView1.Items.Count - 1;
+                    nSel = listMail.Items.Count - 1;
                 }
                 else {
                     isListEmpty = true;
@@ -1118,11 +1118,11 @@ namespace AkaneMail
             // リストが空でないとき
             if (!isListEmpty) {
                 // フォーカスをnSelの行に当てる
-                listView1.Items[nSel].Selected = true;
-                listView1.Items[nSel].Focused = true;
-                listView1.SelectedItems[0].EnsureVisible();
-                listView1.Select();
-                listView1.Focus();
+                listMail.Items[nSel].Selected = true;
+                listMail.Items[nSel].Focused = true;
+                listMail.SelectedItems[0].EnsureVisible();
+                listMail.Select();
+                listMail.Focus();
             }
             // データ変更フラグをtrueにする
             dataDirtyFlag = true;
@@ -1750,7 +1750,7 @@ namespace AkaneMail
             UpdateListView();
 
             // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            listMail.ListViewItemSorter = listViewItemSorter;
 
             // フォーカスを当て直す
             listView.Items[currentRow].Selected = true;
@@ -1783,14 +1783,14 @@ namespace AkaneMail
             }
 
             // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
+            listMail.ListViewItemSorter = null;
 
             // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
             // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            listMail.ListViewItemSorter = listViewItemSorter;
         }
 
         /// <summary>
@@ -1802,14 +1802,14 @@ namespace AkaneMail
         /// <param name="col4">4カラム目の設定</param>
         private void SetListViewColumns(string col1, string col2, string col3, string col4)
         {
-            listView1.Columns[0].Text = col1;
-            listView1.Columns[1].Text = col2;
-            listView1.Columns[2].Text = col3;
-            listView1.Columns[3].Text = col4;
+            listMail.Columns[0].Text = col1;
+            listMail.Columns[1].Text = col2;
+            listMail.Columns[2].Text = col3;
+            listMail.Columns[3].Text = col4;
         }
 
         #region "Event Listeners"
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeMailBoxFolder_AfterSelect(object sender, TreeViewEventArgs e)
         {
             // ノードに付けたタグからリストビューのカラムを変更
             switch (e.Node.Tag.ToString()) {
@@ -1817,25 +1817,25 @@ namespace AkaneMail
                     // メールボックスが選択された場合
                     SetListViewColumns("名前", "メールアドレス", "最終データ更新日", "データサイズ");
                     labelMessage.Text = "メールボックス";
-                    listView1.ContextMenuStrip = null;
+                    listMail.ContextMenuStrip = null;
                     break;
                 case "ReceiveMailBox":
                     // 受信メールが選択された場合
                     SetListViewColumns("差出人", "件名", "受信日時", "サイズ");
                     labelMessage.Text = "受信メール";
-                    listView1.ContextMenuStrip = menuListView;
+                    listMail.ContextMenuStrip = menuListView;
                     break;
                 case "SendMailBox":
                     // 送信メールが選択された場合
                     SetListViewColumns("宛先", "件名", "送信日時", "サイズ"); ;
                     labelMessage.Text = "送信メール";
-                    listView1.ContextMenuStrip = menuListView;
+                    listMail.ContextMenuStrip = menuListView;
                     break;
                 case "DeleteMailBox":
                     // ごみ箱が選択された場合
                     SetListViewColumns("差出人または宛先", "件名", "受信日時または送信日時", "サイズ");
                     labelMessage.Text = "ごみ箱";
-                    listView1.ContextMenuStrip = menuListView;
+                    listMail.ContextMenuStrip = menuListView;
                     break;
                 default:
                     break;
@@ -1850,40 +1850,40 @@ namespace AkaneMail
             Application.Exit();
         }
 
-        private void menuToolSetEnv_Click(object sender, EventArgs e)
+        private void menuSetEnv_Click(object sender, EventArgs e)
         {
             SettingForm Form2 = new SettingForm();
 
-            timer2.Enabled = false;
+            timerAutoReceive.Enabled = false;
 
             DialogResult ret = Form2.ShowDialog();
 
             if (ret == DialogResult.OK) {
                 if (Form2.checkAutoGetMail.Checked) {
-                    timer2.Interval = AccountInfo.getMailInterval * 60000;
-                    timer2.Enabled = true;
+                    timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
+                    timerAutoReceive.Enabled = true;
                 }
                 else {
-                    timer2.Enabled = false;
+                    timerAutoReceive.Enabled = false;
                 }
             }
             // ListViewItemSorterを解除する
-            listView1.ListViewItemSorter = null;
+            listMail.ListViewItemSorter = null;
 
             // リストビューを更新する
             UpdateListView();
 
             // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            listMail.ListViewItemSorter = listViewItemSorter;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timerStatusTime_Tick(object sender, EventArgs e)
         {
             // 現在の時刻を表示する
             labelDate.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
         }
 
-        private void menuMailNew_Click(object sender, EventArgs e)
+        private void menuNewMail_Click(object sender, EventArgs e)
         {
             MailEditorForm NewMailForm = new MailEditorForm();
 
@@ -1897,13 +1897,13 @@ namespace AkaneMail
             NewMailForm.Show();
         }
 
-        private void menuMailSend_Click(object sender, EventArgs e)
+        private void menuSendMail_Click(object sender, EventArgs e)
         {
             // メール送信・受信のメニューとツールボタンを無効化する
-            menuMailRecieve.Enabled = false;
-            buttonMailRecieve.Enabled = false;
-            buttonMailRecieve.Enabled = false;
-            buttonMailSend.Enabled = false;
+            menuRecieveMail.Enabled = false;
+            buttonRecieveMail.Enabled = false;
+            buttonRecieveMail.Enabled = false;
+            buttonSendMail.Enabled = false;
 
             // Threadオブジェクトを作成する
             System.Threading.Thread ts = new System.Threading.Thread(new System.Threading.ThreadStart(SendMail));
@@ -1912,11 +1912,11 @@ namespace AkaneMail
             ts.Start();
         }
 
-        private void menuMailRecieve_Click(object sender, EventArgs e)
+        private void menuRecieveMail_Click(object sender, EventArgs e)
         {
             // メール受信のメニューとツールボタンを無効化する
-            menuMailRecieve.Enabled = false;
-            buttonMailRecieve.Enabled = false;
+            menuRecieveMail.Enabled = false;
+            buttonRecieveMail.Enabled = false;
 
             // Threadオブジェクトを作成する
             System.Threading.Thread tr = new System.Threading.Thread(new System.Threading.ThreadStart(RecieveMail));
@@ -1925,7 +1925,7 @@ namespace AkaneMail
             tr.Start();
         }
 
-        private void menuMailDelete_Click(object sender, EventArgs e)
+        private void menuDeleteMail_Click(object sender, EventArgs e)
         {
             // メールを削除
             DeleteMail();
@@ -1934,11 +1934,10 @@ namespace AkaneMail
         // 現在リストビューに表示されているメールボックスを取得。
         private MailFolder GetShowingMailFolder()
         {
-            switch(listView1.Columns[0].Text)
-            {
-                case "差出人": 
+            switch (listMail.Columns[0].Text) {
+                case "差出人":
                     return mailBox.Receive;
-                case "宛先": 
+                case "宛先":
                     return mailBox.Send;
                 case "差出人または宛先":
                     return mailBox.Trash;
@@ -1955,20 +1954,20 @@ namespace AkaneMail
             var sList = GetShowingMailFolder();
 
             // 選択アイテムの数を取得
-            int nLen = listView1.SelectedItems.Count;
+            int nLen = listMail.SelectedItems.Count;
 
             // 選択アイテムの数が0のとき
             if (nLen == 0)
                 return;
 
             // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
+            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
             while (nLen > 0) {
                 nLen--;
                 // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listView1.SelectedItems[nIndex];
+                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
+                ListViewItem item = listMail.SelectedItems[nIndex];
 
                 // 元リストからメールアイテムを取得
                 Mail mail = sList[nIndices[nLen]];
@@ -1976,7 +1975,7 @@ namespace AkaneMail
                 sList[nIndices[nLen]].notReadYet = !(item.SubItems[1].Text == mail.subject);
             }
 
-            ReforcusListView(listView1);
+            ReforcusListView(listMail);
 
             // データ変更フラグをtrueにする
             dataDirtyFlag = true;
@@ -1990,20 +1989,20 @@ namespace AkaneMail
             var sList = GetShowingMailFolder();
 
             // 選択アイテムの数を取得
-            int nLen = listView1.SelectedItems.Count;
+            int nLen = listMail.SelectedItems.Count;
 
             // 選択アイテムの数が0のとき
             if (nLen == 0)
                 return;
 
             // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listView1.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
+            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
 
             while (nLen > 0) {
                 nLen--;
                 // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listView1.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listView1.SelectedItems[nIndex];
+                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
+                ListViewItem item = listMail.SelectedItems[nIndex];
 
                 // 元リストからメールアイテムを取得
                 Mail mail = sList[nIndices[nLen]];
@@ -2011,29 +2010,29 @@ namespace AkaneMail
                 sList[nIndices[nLen]].notReadYet = item.SubItems[1].Text == mail.subject;
             }
 
-            ReforcusListView(listView1);
+            ReforcusListView(listMail);
 
             // データ変更フラグをtrueにする
             dataDirtyFlag = true;
         }
 
-        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        private void listMail_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             // 選択された行を取得する
             currentRow = e.ItemIndex;
         }
 
-        private void listView1_DoubleClick(object sender, EventArgs e)
+        private void listMail_DoubleClick(object sender, EventArgs e)
         {
             Mail mail = null;
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // メールボックスのときは反応しない
-            if (listView1.Columns[0].Text == "名前") {
+            if (listMail.Columns[0].Text == "名前") {
                 return;
             }
 
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // メールの編集
             EditMail(mail, item);
@@ -2115,16 +2114,16 @@ namespace AkaneMail
             }
 
             try {
-            // Threadオブジェクトを作成する
+                // Threadオブジェクトを作成する
                 var t = new System.Threading.Thread(new System.Threading.ThreadStart(mailBox.MailDataLoad));
 
-            splash.ProgressMsg = "メールデータの読み込み作業中です";
+                splash.ProgressMsg = "メールデータの読み込み作業中です";
 
-            // スレッドを開始する
-            t.Start();
+                // スレッドを開始する
+                t.Start();
 
-            // スレッドが終了するまで待機
-            t.Join();
+                // スレッドが終了するまで待機
+                t.Join();
             }
             catch (MailLoadException) {
                 errorFlag = true;
@@ -2133,8 +2132,8 @@ namespace AkaneMail
             // メール自動受信が設定されている場合はタイマーを起動する
             if (AccountInfo.autoMailFlag) {
                 // 取得間隔*60000(60000ミリ秒=1分)をタイマー実行間隔に設定する
-                timer2.Interval = AccountInfo.getMailInterval * 60000;
-                timer2.Enabled = true;
+                timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
+                timerAutoReceive.Enabled = true;
             }
 
             // ツリービューとリストビューの表示を更新する
@@ -2147,7 +2146,7 @@ namespace AkaneMail
             listViewItemSorter.ColumnModes = new ListViewItemComparer.ComparerMode[] { ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.DateTime, ListViewItemComparer.ComparerMode.Integer };
 
             // ListViewItemSorterを指定する
-            listView1.ListViewItemSorter = listViewItemSorter;
+            listMail.ListViewItemSorter = listViewItemSorter;
 
             // スプラッシュ・スクリーンの表示終了
             splash.Close();
@@ -2161,7 +2160,7 @@ namespace AkaneMail
             }
 
             // ツリービューを展開する
-            treeView1.ExpandAll();
+            treeMailBoxFolder.ExpandAll();
 
             // メインとなるフォームをアクティブに戻す
             this.Activate();
@@ -2180,52 +2179,52 @@ namespace AkaneMail
             }
         }
 
-        private void menuMailReturnMail_Click(object sender, EventArgs e)
+        private void menuReplyMail_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
-            if (listView1.SelectedItems.Count == 0) {
+            if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // 表示機能はシンプルなものに変わる
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // 返信メールを作成する
             CreateReturnMail(mail);
         }
 
-        private void listView1_Click(object sender, EventArgs e)
+        private void listMail_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // メールボックスのときは反応しない
-            if (listView1.Columns[0].Text == "名前") {
+            if (listMail.Columns[0].Text == "名前") {
                 return;
             }
 
             // リストビューで選択したメールデータを取得
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // メールを開く
             OpenMail(mail);
         }
 
-        private void menuFileGetAttatch_Click(object sender, EventArgs e)
+        private void menuGetAttatch_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
-            if (listView1.SelectedItems.Count == 0) {
+            if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // 送信メール以外も展開できるように変更
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // 添付ファイルを展開する
             GetAttachMail(mail);
@@ -2235,15 +2234,15 @@ namespace AkaneMail
         {
             Mail mail = null;
             // ListViewから選択した1行の情報をitemに格納する
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
-            if (listView1.SelectedItems.Count == 0) {
+            if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // どの項目でも保存できるように変更
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // ファイル名にメールの件名を入れる
             saveFileDialog1.FileName = mail.subject;
@@ -2261,7 +2260,7 @@ namespace AkaneMail
             }
         }
 
-        private void menuFileClearTrush_Click(object sender, EventArgs e)
+        private void menuClearTrush_Click(object sender, EventArgs e)
         {
             // ごみ箱の配列を空っぽにする
             if (MessageBox.Show("ごみ箱の中身をすべて削除します。\nよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
@@ -2274,7 +2273,7 @@ namespace AkaneMail
             }
         }
 
-        private void menuHelpAbout_Click(object sender, EventArgs e)
+        private void menuAbout_Click(object sender, EventArgs e)
         {
             // バージョン情報を表示する
             AboutForm AboutForm = new AboutForm();
@@ -2283,9 +2282,9 @@ namespace AkaneMail
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
-            var mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // ファイルを開くかの確認をする
             if (MessageBox.Show(e.ClickedItem.Text + "を開きますか？\nファイルによってはウイルスの可能性もあるため\n注意してファイルを開いてください。", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
@@ -2300,22 +2299,22 @@ namespace AkaneMail
             }
         }
 
-        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void listMail_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // メールボックスのときはソートしない
-            if (listView1.Columns[0].Text == "名前")
+            if (listMail.Columns[0].Text == "名前")
                 return;
 
             // クリックされた列を設定
             listViewItemSorter.Column = e.Column;
 
             // 並び替える
-            listView1.Sort();
+            listMail.Sort();
         }
 
-        private void timer2_Tick(object sender, EventArgs e)
+        private void timerAutoReceive_Tick(object sender, EventArgs e)
         {
-            menuMailRecieve_Click(sender, e);
+            menuRecieveMail_Click(sender, e);
         }
 
         private void browserBody_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -2352,53 +2351,53 @@ namespace AkaneMail
         private void menuFile_DropDownOpening(object sender, EventArgs e)
         {
             // メールの選択件が1かつメールボックスのとき
-            var condition = listView1.SelectedItems.Count == 1 && listView1.Columns[0].Text != "名前";
+            var condition = listMail.SelectedItems.Count == 1 && listMail.Columns[0].Text != "名前";
             menuSaveMailFile.Enabled = condition;
-            menuFileGetAttatch.Enabled = condition;
-            menuFileGetAttatch.Enabled = condition && attachMenuFlag;
+            menuGetAttatch.Enabled = condition;
+            menuGetAttatch.Enabled = condition && attachMenuFlag;
 
             // 削除メールが0件の場合
-            menuFileClearTrush.Enabled = mailBox.Trash.Count != 0;
+            menuClearTrush.Enabled = mailBox.Trash.Count != 0;
         }
 
         private void menuMail_DropDownOpening(object sender, EventArgs e)
         {
 
-            if (listView1.Columns[0].Text == "名前") {
-                menuMailDelete.Enabled = false;
-                menuMailReturnMail.Enabled = false;
-                menuMailFowerdMail.Enabled = false;
+            if (listMail.Columns[0].Text == "名前") {
+                menuDeleteMail.Enabled = false;
+                menuReplyMail.Enabled = false;
+                menuFowerdMail.Enabled = false;
             }
             else {
-                menuMailDelete.Enabled = listView1.SelectedItems.Count > 0;
-                menuMailReturnMail.Enabled = listView1.SelectedItems.Count == 1;
-                menuMailFowerdMail.Enabled = listView1.SelectedItems.Count == 1;
+                menuDeleteMail.Enabled = listMail.SelectedItems.Count > 0;
+                menuReplyMail.Enabled = listMail.SelectedItems.Count == 1;
+                menuFowerdMail.Enabled = listMail.SelectedItems.Count == 1;
             }
         }
 
         private void menuListView_Opening(object sender, CancelEventArgs e)
         {
             // メールの選択件が1かつメールボックスのとき
-            var condition = listView1.Columns[0].Text != "名前" && listView1.SelectedItems.Count == 1;
-            menuReturnMail.Enabled = condition;
-            menuFowerdMail.Enabled = condition;
-            menuGetAttach.Enabled = condition && attachMenuFlag;
+            var condition = listMail.Columns[0].Text != "名前" && listMail.SelectedItems.Count == 1;
+            menuContextReplyMail.Enabled = condition;
+            menuContextFowerdMail.Enabled = condition;
+            menuContextGetAttatch.Enabled = condition && attachMenuFlag;
 
             // メールの選択数が0またはメールボックスのとき
-            if (listView1.SelectedItems.Count == 0 || listView1.Columns[0].Text == "名前") {
-                menuDelete.Enabled = false;
+            if (listMail.SelectedItems.Count == 0 || listMail.Columns[0].Text == "名前") {
+                menuContextDeleteMail.Enabled = false;
             }
-            else if (listView1.SelectedItems.Count == 1) {
+            else if (listMail.SelectedItems.Count == 1) {
                 // メールが1件選択されたとき
-                menuDelete.Enabled = true;
+                menuContextDeleteMail.Enabled = true;
             }
 
             // メールが既読で、メールボックス以外で何かが選択されているとき
-            menuNotReadYet.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
-            menuAlreadyRead.Enabled = listView1.SelectedItems.Count > 0 && listView1.Columns[0].Text != "名前";
+            menuNotReadYet.Enabled = listMail.SelectedItems.Count > 0 && listMail.Columns[0].Text != "名前";
+            menuAlreadyRead.Enabled = listMail.SelectedItems.Count > 0 && listMail.Columns[0].Text != "名前";
 
             // 送信メールを選択したとき
-            if (listView1.Columns[0].Text == "宛先") {
+            if (listMail.Columns[0].Text == "宛先") {
                 menuAlreadyRead.Text = "送信済にする(&K)";
                 menuNotReadYet.Text = "未送信にする(&U)";
             }
@@ -2410,22 +2409,22 @@ namespace AkaneMail
 
         private void menuTreeView_Opening(object sender, CancelEventArgs e)
         {
-            menuClearTrush.Enabled = mailBox.Trash.Count != 0;
+            menuContextClearTrush.Enabled = mailBox.Trash.Count != 0;
         }
 
         private void Application_Idle(object sender, EventArgs e)
         {
             // ボタンの有効状態を変更
-            if (listView1.Columns[0].Text == "名前") {
-                buttonMailDelete.Enabled = false;
-                buttonReturnMail.Enabled = false;
+            if (listMail.Columns[0].Text == "名前") {
+                buttonDeleteMail.Enabled = false;
+                buttonReplyMail.Enabled = false;
                 buttonForwardMail.Enabled = false;
 
             }
             else {
-                buttonMailDelete.Enabled = listView1.SelectedItems.Count > 0;
-                buttonReturnMail.Enabled = listView1.SelectedItems.Count == 1;
-                buttonForwardMail.Enabled = listView1.SelectedItems.Count == 1;
+                buttonDeleteMail.Enabled = listMail.SelectedItems.Count > 0;
+                buttonReplyMail.Enabled = listMail.SelectedItems.Count == 1;
+                buttonForwardMail.Enabled = listMail.SelectedItems.Count == 1;
             }
 
             // データ読み込みエラーを起こしたとき
@@ -2435,18 +2434,18 @@ namespace AkaneMail
             }
         }
 
-        private void menuMailFowerdMail_Click(object sender, EventArgs e)
+        private void menuFowerdMail_Click(object sender, EventArgs e)
         {
             Mail mail = null;
-            ListViewItem item = listView1.SelectedItems[0];
+            ListViewItem item = listMail.SelectedItems[0];
 
             // 選択アイテムが0のときは反応にしない
-            if (listView1.SelectedItems.Count == 0) {
+            if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // 表示機能はシンプルなものに変わる
-            mail = GetSelectedMail(item.Tag, listView1.Columns[0].Text);
+            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // 転送メールの作成
             CreateFowerdMail(mail);
