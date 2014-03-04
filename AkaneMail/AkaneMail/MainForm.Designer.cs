@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7});
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3});
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSaveMailFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,7 +44,7 @@
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuClearTrush = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuFileExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuAppExit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMail = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSendMail = new System.Windows.Forms.ToolStripMenuItem();
             this.menuRecieveMail = new System.Windows.Forms.ToolStripMenuItem();
@@ -146,7 +146,7 @@
             this.toolStripSeparator6,
             this.menuClearTrush,
             this.toolStripSeparator5,
-            this.menuFileExit});
+            this.menuAppExit});
             this.menuFile.Name = "menuFile";
             this.menuFile.Size = new System.Drawing.Size(85, 22);
             this.menuFile.Text = "ファイル(&F)";
@@ -183,12 +183,12 @@
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(236, 6);
             // 
-            // menuFileExit
+            // menuAppExit
             // 
-            this.menuFileExit.Name = "menuFileExit";
-            this.menuFileExit.Size = new System.Drawing.Size(239, 22);
-            this.menuFileExit.Text = "アプリケーションの終了(&X)";
-            this.menuFileExit.Click += new System.EventHandler(this.menuFileExit_Click);
+            this.menuAppExit.Name = "menuAppExit";
+            this.menuAppExit.Size = new System.Drawing.Size(239, 22);
+            this.menuAppExit.Text = "アプリケーションの終了(&X)";
+            this.menuAppExit.Click += new System.EventHandler(this.menuAppExit_Click);
             // 
             // menuMail
             // 
@@ -269,7 +269,7 @@
             // menuSetEnv
             // 
             this.menuSetEnv.Name = "menuSetEnv";
-            this.menuSetEnv.Size = new System.Drawing.Size(152, 22);
+            this.menuSetEnv.Size = new System.Drawing.Size(142, 22);
             this.menuSetEnv.Text = "環境設定(&S)";
             this.menuSetEnv.Click += new System.EventHandler(this.menuSetEnv_Click);
             // 
@@ -471,26 +471,26 @@
             this.treeMailBoxFolder.ImageList = this.imageList1;
             this.treeMailBoxFolder.Location = new System.Drawing.Point(0, 0);
             this.treeMailBoxFolder.Name = "treeMailBoxFolder";
-            treeNode5.ImageIndex = 1;
-            treeNode5.Name = "nodeReceive";
-            treeNode5.SelectedImageIndex = 1;
-            treeNode5.Tag = "ReceiveMailBox";
-            treeNode5.Text = "受信メール (0)";
-            treeNode6.ImageIndex = 2;
-            treeNode6.Name = "nodeSend";
-            treeNode6.SelectedImageIndex = 2;
-            treeNode6.Tag = "SendMailBox";
-            treeNode6.Text = "送信メール (0)";
-            treeNode7.ImageIndex = 3;
-            treeNode7.Name = "nodeDelete";
-            treeNode7.SelectedImageIndex = 3;
-            treeNode7.Tag = "DeleteMailBox";
-            treeNode7.Text = "ごみ箱 (0)";
-            treeNode8.Name = "rootMail";
-            treeNode8.Tag = "MailBoxRoot";
-            treeNode8.Text = "メールボックス";
+            treeNode1.ImageIndex = 1;
+            treeNode1.Name = "nodeReceive";
+            treeNode1.SelectedImageIndex = 1;
+            treeNode1.Tag = "ReceiveMailBox";
+            treeNode1.Text = "受信メール (0)";
+            treeNode2.ImageIndex = 2;
+            treeNode2.Name = "nodeSend";
+            treeNode2.SelectedImageIndex = 2;
+            treeNode2.Tag = "SendMailBox";
+            treeNode2.Text = "送信メール (0)";
+            treeNode3.ImageIndex = 3;
+            treeNode3.Name = "nodeDelete";
+            treeNode3.SelectedImageIndex = 3;
+            treeNode3.Tag = "DeleteMailBox";
+            treeNode3.Text = "ごみ箱 (0)";
+            treeNode4.Name = "rootMail";
+            treeNode4.Tag = "MailBoxRoot";
+            treeNode4.Text = "メールボックス";
             this.treeMailBoxFolder.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode8});
+            treeNode4});
             this.treeMailBoxFolder.SelectedImageIndex = 0;
             this.treeMailBoxFolder.Size = new System.Drawing.Size(159, 484);
             this.treeMailBoxFolder.TabIndex = 0;
@@ -744,7 +744,7 @@
             this.menuTaskApplicationExit.Name = "menuTaskApplicationExit";
             this.menuTaskApplicationExit.Size = new System.Drawing.Size(226, 22);
             this.menuTaskApplicationExit.Text = "アプリケーションの終了(&X)";
-            this.menuTaskApplicationExit.Click += new System.EventHandler(this.menuFileExit_Click);
+            this.menuTaskApplicationExit.Click += new System.EventHandler(this.menuAppExit_Click);
             // 
             // MainForm
             // 
@@ -761,10 +761,10 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Akane Mail";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.ClientSizeChanged += new System.EventHandler(this.Form1_ClientSizeChanged);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.ClientSizeChanged += new System.EventHandler(this.MainForm_ClientSizeChanged);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -792,7 +792,7 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem menuFile;
-        private System.Windows.Forms.ToolStripMenuItem menuFileExit;
+        private System.Windows.Forms.ToolStripMenuItem menuAppExit;
         private System.Windows.Forms.ToolStripMenuItem menuMail;
         private System.Windows.Forms.ToolStripMenuItem menuSendMail;
         private System.Windows.Forms.ToolStripMenuItem menuRecieveMail;

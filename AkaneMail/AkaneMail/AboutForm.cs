@@ -23,15 +23,15 @@ namespace AkaneMail
             this.Close();
         }
 
-        private void Form4_Load(object sender, EventArgs e)
+        private void AboutForm_Load(object sender, EventArgs e)
         {
             labelNmailVersion.Text = "nMail.dll Version " + nMail.Options.Version;
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkHomePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             //リンク先に移動したことにする
-            linkLabel1.LinkVisited = true;
+            linkHomePage.LinkVisited = true;
 
             //ブラウザで開く
             System.Diagnostics.Process.Start(strHomeUrl);

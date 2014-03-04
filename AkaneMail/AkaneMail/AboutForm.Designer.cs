@@ -34,7 +34,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.labelNmailVersion = new System.Windows.Forms.Label();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.linkHomePage = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -85,23 +85,23 @@
             this.labelNmailVersion.TabIndex = 5;
             this.labelNmailVersion.Text = "nMail.dll Version 0.00";
             // 
-            // linkLabel1
+            // linkHomePage
             // 
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(50, 78);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(165, 12);
-            this.linkLabel1.TabIndex = 7;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "http://www.angel-teatime.com/";
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            this.linkHomePage.AutoSize = true;
+            this.linkHomePage.Location = new System.Drawing.Point(50, 78);
+            this.linkHomePage.Name = "linkHomePage";
+            this.linkHomePage.Size = new System.Drawing.Size(165, 12);
+            this.linkHomePage.TabIndex = 7;
+            this.linkHomePage.TabStop = true;
+            this.linkHomePage.Text = "http://www.angel-teatime.com/";
+            this.linkHomePage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkHomePage_LinkClicked);
             // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(346, 108);
-            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.linkHomePage);
             this.Controls.Add(this.labelNmailVersion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pictureBox1);
@@ -115,7 +115,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "バージョン情報";
-            this.Load += new System.EventHandler(this.Form4_Load);
+            this.Load += new System.EventHandler(this.AboutForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -129,6 +129,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label labelNmailVersion;
-        private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.LinkLabel linkHomePage;
     }
 }

@@ -1845,7 +1845,7 @@ namespace AkaneMail
             ClearInput();
         }
 
-        private void menuFileExit_Click(object sender, EventArgs e)
+        private void menuAppExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
@@ -2038,7 +2038,7 @@ namespace AkaneMail
             EditMail(mail, item);
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // ファイル展開用のテンポラリフォルダの削除
             if (Directory.Exists(Application.StartupPath + @"\tmp")) {
@@ -2067,7 +2067,7 @@ namespace AkaneMail
 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             // スプラッシュ・スクリーンの表示開始
             SplashScreen splash = new SplashScreen();
@@ -2167,7 +2167,7 @@ namespace AkaneMail
 
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
@@ -2322,7 +2322,7 @@ namespace AkaneMail
             browserBody.AllowNavigation = false;
         }
 
-        private void Form1_ClientSizeChanged(object sender, EventArgs e)
+        private void MainForm_ClientSizeChanged(object sender, EventArgs e)
         {
             // 最小化時にタスクトレイに格納フラグがtrueでウィンドウが最小化されたとき
             if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray) {
