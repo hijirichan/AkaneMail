@@ -50,7 +50,7 @@ namespace AkaneMail
             this.Close();
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private void SettingForm_Load(object sender, EventArgs e)
         {
             // フォームの表示準備中
             loadFromFlag = true;

@@ -79,7 +79,7 @@ namespace AkaneMail
             InitializeComponent();
         }
 
-        private void Form3_Resize(object sender, EventArgs e)
+        private void MailEditorForm_Resize(object sender, EventArgs e)
         {
             textAddress.Width = this.Width - 85;
             textSubject.Width = this.Width - 85;
@@ -87,12 +87,12 @@ namespace AkaneMail
             textBcc.Width = this.Width - 85;
         }
 
-        private void menuFileClose_Click(object sender, EventArgs e)
+        private void menuClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void Form3_Load(object sender, EventArgs e)
+        private void MailEditorForm_Load(object sender, EventArgs e)
         {
             // 添付ファイル名を空値に設定
             attachName = "";
@@ -107,7 +107,7 @@ namespace AkaneMail
             IsDirty = false;
         }
 
-        private void menuFileDirectSend_Click(object sender, EventArgs e)
+        private void menuSendMail_Click(object sender, EventArgs e)
         {
             string size = "";
             string priority = "";
@@ -186,7 +186,7 @@ namespace AkaneMail
             this.Close();
         }
 
-        private void menuFileAttach_Click(object sender, EventArgs e)
+        private void menuSetAttachFile_Click(object sender, EventArgs e)
         {
             Icon appIcon;
 
@@ -216,7 +216,7 @@ namespace AkaneMail
             }
         }
 
-        private void menuEditUndo_Click(object sender, EventArgs e)
+        private void menuUndo_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -224,7 +224,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuEditCut_Click(object sender, EventArgs e)
+        private void menuCut_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -232,7 +232,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuEditCopy_Click(object sender, EventArgs e)
+        private void menuCopy_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -240,7 +240,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuEditPaste_Click(object sender, EventArgs e)
+        private void menuPaste_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -248,7 +248,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuEditAllSelect_Click(object sender, EventArgs e)
+        private void menuSelectAll_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -263,7 +263,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuEditDelete_Click(object sender, EventArgs e)
+        private void menuDelete_Click(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
             {
@@ -271,7 +271,7 @@ namespace AkaneMail
             });
         }
 
-        private void menuFileSend_Click(object sender, EventArgs e)
+        private void menuSendMailBox_Click(object sender, EventArgs e)
         {
             string size = "";
             string priority = "";
@@ -387,7 +387,7 @@ namespace AkaneMail
             IsDirty = true;
         }
 
-        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
+        private void MailEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // isDirtyフラグがtrueのとき
             if (IsDirty) {
@@ -423,7 +423,7 @@ namespace AkaneMail
             }
         }
 
-        private void menuEditFind_Click(object sender, EventArgs e)
+        private void menuFind_Click(object sender, EventArgs e)
         {
             // 二重起動を防止
             if (findDlg == null || findDlg.IsDisposed) {
@@ -434,7 +434,7 @@ namespace AkaneMail
             }
         }
 
-        private void menuEditReplace_Click(object sender, EventArgs e)
+        private void menuReplace_Click(object sender, EventArgs e)
         {
             // 二重起動を防止
             if (findDlg == null || findDlg.IsDisposed) {
@@ -453,24 +453,24 @@ namespace AkaneMail
             if (ctrl is SplitContainer) {
                 ctrl = (ctrl as SplitContainer).ActiveControl;
                 if (ctrl is TextBox) {
-                    this.menuEditUndo.Enabled = ((TextBox)ctrl).CanUndo;
+                    this.menuUndo.Enabled = ((TextBox)ctrl).CanUndo;
 
                     // 検索対象は本文入力のみ
                     var istestBody = ((TextBox)ctrl).Name == "textBody";
-                    menuEditFind.Enabled = istestBody;
-                    menuEditReplace.Enabled = istestBody;
+                    menuFind.Enabled = istestBody;
+                    menuReplace.Enabled = istestBody;
 
-                    this.menuEditAllSelect.Enabled = ((TextBox)ctrl).Text.Length > 0;
+                    this.menuSelectAll.Enabled = ((TextBox)ctrl).Text.Length > 0;
 
                     var isctrlSelected = ((TextBox)ctrl).SelectionLength > 0;
-                    this.menuEditCut.Enabled = isctrlSelected;
-                    this.menuEditCopy.Enabled =isctrlSelected;
-                    this.menuEditDelete.Enabled = isctrlSelected;
+                    this.menuCut.Enabled = isctrlSelected;
+                    this.menuCopy.Enabled =isctrlSelected;
+                    this.menuDelete.Enabled = isctrlSelected;
                 }
             }
 
             // クリップボードの内容確認
-            this.menuEditPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
+            this.menuPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
         }
 
         private void Application_Idle(object sender, EventArgs e)
@@ -490,7 +490,7 @@ namespace AkaneMail
             this.buttonPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
         }
 
-        private void Form3_DragEnter(object sender, DragEventArgs e)
+        private void MailEditorForm_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) {
                 // ドラッグ中のファイルやディレクトリの取得
@@ -506,7 +506,7 @@ namespace AkaneMail
             }
         }
 
-        private void Form3_DragDrop(object sender, DragEventArgs e)
+        private void MailEditorForm_DragDrop(object sender, DragEventArgs e)
         {
             Icon appIcon;
 
