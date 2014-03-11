@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="MailBox.cs" />
     <Compile Include="MailFolder.cs" />
+    <Compile Include="MailPriority.cs" />
     <Compile Include="MailSaveException.cs" />
     <Compile Include="MailLoadException.cs" />
     <Compile Include="MailSettings.cs" />
