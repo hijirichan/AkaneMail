@@ -255,40 +255,41 @@ namespace AkaneMail
                 return;
             }
 
-            var items = folder.Select((mail, index) =>
-            {
-                ListViewItem item = new ListViewItem(mail.address);
-                if (mail.subject != "") {
-                    item.SubItems.Add(mail.subject);
-                }
-                else {
-                    item.SubItems.Add("(no subject)");
-                }
-
-                // メールの受信(送信)日時とメールサイズをリストのサブアイテムに追加する
-                item.SubItems.Add(mail.date);
-                item.SubItems.Add(mail.size);
-
-                // 各項目のタグに要素の番号を格納する
-                item.Tag = index;
-                item.Name = index.ToString();
-
-                // 未読(未送信)の場合は、フォントを太字にする
-                if (mail.notReadYet) {
-                    item.Font = new Font(this.Font, FontStyle.Bold);
-                }
-
-                // 重要度が高い場合は、フォントを太字にする
-                if (mail.priority == "urgent") {
-                    item.ForeColor = Color.Tomato;
-                }
-                else if (mail.priority == "non-urgent") {
-                    item.ForeColor = Color.LightBlue;
-                }
-                return item;
-            });
-            listMail.Items.AddRange(items.ToArray());
+            folder.Select(CreateMailItem).Select(listMail.Items.Add);
             listMail.EndUpdate();
+        }
+
+        private ListViewItem CreateMailItem(Mail mail, int index)
+        {
+            ListViewItem item = new ListViewItem(mail.address);
+            if (mail.subject != "") {
+                item.SubItems.Add(mail.subject);
+            }
+            else {
+                item.SubItems.Add("(no subject)");
+            }
+
+            // メールの受信(送信)日時とメールサイズをリストのサブアイテムに追加する
+            item.SubItems.Add(mail.date);
+            item.SubItems.Add(mail.size);
+
+            // 各項目のタグに要素の番号を格納する
+            item.Tag = index;
+            item.Name = index.ToString();
+
+            // 未読(未送信)の場合は、フォントを太字にする
+            if (mail.notReadYet) {
+                item.Font = new Font(this.Font, FontStyle.Bold);
+            }
+
+            // 重要度が高い場合は、フォントを太字にする
+            if (mail.priority == "urgent") {
+                item.ForeColor = Color.Tomato;
+            }
+            else if (mail.priority == "non-urgent") {
+                item.ForeColor = Color.LightBlue;
+            }
+            return item;
         }
 
         private static object lockobj = new object();
