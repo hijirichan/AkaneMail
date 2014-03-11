@@ -255,7 +255,7 @@ namespace AkaneMail
                 return;
             }
 
-            folder.Select(CreateMailItem).Select(listMail.Items.Add);
+            folder.Select(CreateMailItem).Select(listMail.Items.Add).ToList();
             listMail.EndUpdate();
         }
 
