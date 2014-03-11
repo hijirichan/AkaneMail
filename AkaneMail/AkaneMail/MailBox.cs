@@ -244,7 +244,7 @@ namespace AkaneMail
                                             cc = pop.Field ?? cc;
 
                                             // ヘッダから重要度を取得する
-                                            priority = Mail.ParsePriority(header);
+                                            priority = MailPriority.Parse(header);
                                         }
 
                                         // メール格納配列に格納する
