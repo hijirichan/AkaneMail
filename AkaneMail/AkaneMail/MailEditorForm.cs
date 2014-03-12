@@ -13,7 +13,6 @@ namespace AkaneMail
     public partial class MailEditorForm : Form
     {
         public string attachName;
-        public string[] attachFileNameList;
         findDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
 
         /// <summary>
