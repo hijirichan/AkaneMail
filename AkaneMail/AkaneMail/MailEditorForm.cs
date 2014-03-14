@@ -110,9 +110,6 @@ namespace AkaneMail
 
         private void menuSendMail_Click(object sender, EventArgs e)
         {
-            string size = "";
-            string priority = "";
-
             // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
                 if (textAddress.Text == "") {
@@ -131,9 +128,6 @@ namespace AkaneMail
                 textSubject.Text = "(無題)";
             }
 
-            // 優先度の設定をする
-            priority = mailPriority[comboPriority.Text];
-
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
@@ -143,8 +137,8 @@ namespace AkaneMail
 
             attachName = GetAttaches();
 
-            // 送信メールサイズを取得する
-            size = GetMailSize();
+            var priority = mailPriority[comboPriority.Text];
+            var size = GetMailSize();
 
             // 直接送信
             MainForm.DirectSendMail(this.textAddress.Text, this.textCc.Text, this.textBcc.Text, this.textSubject.Text, this.textBody.Text, attachName, priority);
@@ -209,16 +203,12 @@ namespace AkaneMail
 
         private void menuSetAttachFile_Click(object sender, EventArgs e)
         {
-            Icon appIcon;
-
-            // ファイルを開くダイアログを表示する
             if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                 if (openFileDialog1.FileName != "") {
                     buttonAttachList.Visible = true;
                     labelMessage.Text = openFileDialog1.FileName + "をメールに添付しました。";
-                    appIcon = System.Drawing.Icon.ExtractAssociatedIcon(openFileDialog1.FileName);
+                    var appIcon = Icon.ExtractAssociatedIcon(openFileDialog1.FileName);
                     buttonAttachList.DropDownItems.Add(openFileDialog1.FileName, appIcon.ToBitmap());
-                    // isDirtyをtrueにする
                     IsDirty = true;
                 }
             }
@@ -294,8 +284,6 @@ namespace AkaneMail
 
         private void menuSendMailBox_Click(object sender, EventArgs e)
         {
-            string size = "";
-            string priority = "";
 
             // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
@@ -315,9 +303,6 @@ namespace AkaneMail
                 textSubject.Text = "(無題)";
             }
 
-            // 優先度の設定をする
-            priority = mailPriority[comboPriority.Text];
-
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
@@ -329,11 +314,12 @@ namespace AkaneMail
 
             // 未送信メールは作成日時を格納するようにする(未送信という文字列だと日付ソートでエラーになる)
             string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
-
+            var priority = mailPriority[comboPriority.Text];
+ 
             // 編集フラグがOffのとき
             if (!IsEdit) {
                 // 送信メールサイズを取得する
-                size = GetMailSize();
+                var size = GetMailSize();
 
                 // Form1からのコレクションに追加してリスト更新する
                 var newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attachName, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
@@ -342,7 +328,8 @@ namespace AkaneMail
             else {
                 // 選択したメールの内容を書き換える
                 // 送信リストに入れている情報を書き換える
-                size = GetMailSize();
+                var size = GetMailSize();
+                // 優先度の設定をする
                 SendList[ListTag].subject = textSubject.Text;
                 SendList[ListTag].address = textAddress.Text;
                 SendList[ListTag].body = textBody.Text;
@@ -378,7 +365,6 @@ namespace AkaneMail
 
         private void MailEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // isDirtyフラグがtrueのとき
             if (IsDirty) {
                 string message = "", title = "";
                 if (IsEdit) {
@@ -390,11 +376,9 @@ namespace AkaneMail
                     title = "新規作成";
                 }
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No) {
-                    // ウィンドウを閉じるのをキャンセル
                     e.Cancel = true;
                 }
             }
-            // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
         }
 
@@ -414,12 +398,12 @@ namespace AkaneMail
 
         private void menuFind_Click(object sender, EventArgs e)
         {
-            SuppresMultiDialogs(findDlg, dialogMode.Find, textBody);
+            SuppressMultiDialogs(findDlg, dialogMode.Find, textBody);
         }
 
         private void menuReplace_Click(object sender, EventArgs e)
         {
-            SuppresMultiDialogs(findDlg, dialogMode.Replace, textBody);
+            SuppressMultiDialogs(findDlg, dialogMode.Replace, textBody); 
         }
 
         /// <summary>
@@ -428,7 +412,7 @@ namespace AkaneMail
         /// <param name="dialog">表示させるダイアログのインスタンス。</param>
         /// <param name="dialogMode">表示させるモード。</param>
         /// <param name="textBox">対象のTextBox</param>
-        private void SuppresMultiDialogs(findDialog dialog, dialogMode dialogMode, TextBox textBox)
+        private void SuppressMultiDialogs(findDialog dialog, dialogMode dialogMode, TextBox textBox)
         {
             if (dialog == null || dialog.IsDisposed) {
                 dialog = new findDialog(dialogMode, textBox);
@@ -455,7 +439,6 @@ namespace AkaneMail
                     this.menuDelete.Enabled = isctrlSelected;
                 });
 
-            // クリップボードの内容確認
             this.menuPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
         }
 

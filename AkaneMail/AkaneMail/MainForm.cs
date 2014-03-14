@@ -663,14 +663,11 @@ namespace AkaneMail
                         this.textBody.Text = mail.body;
                     }
                 }
-                // 添付ファイルを外した本文が空値以外の場合
-                // 添付ファイル名リストがnull以外のとき
                 if (attach.FileNameList != null) {
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
                         buttonAttachList.Visible = true;
                         attachMenuFlag = true;
-                        // メニューに添付ファイルの名前を追加する
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
                         buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.FileNameList).ToArray());
@@ -690,7 +687,6 @@ namespace AkaneMail
                     buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
                 }
 
-                // Contents-TypeがBase64のメールの場合
                 var base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.header).Contains("base64");
 
                 // Base64の文章が添付されている場合
@@ -944,13 +940,13 @@ namespace AkaneMail
             }
         }
 
-        private void InitializeMailEditorForm(Mail mail, int tag)
+        private void InitializeMailEditorForm(Mail mail, int tag, MainForm mainForm)
         {
             // 1番目のカラムが宛先のときは編集画面を表示する
             MailEditorForm EditMailForm = new MailEditorForm();
-
+            
             // 親フォームをForm1に設定する
-            EditMailForm.MainForm = this;
+            EditMailForm.MainForm = mainForm;
 
             // 親フォームにタイトルを設定する
             EditMailForm.Text = mail.subject + " - Akane Mail";
@@ -1007,7 +1003,7 @@ namespace AkaneMail
                 dataDirtyFlag = true;
             }
             else if (listMail.Columns[0].Text == "宛先") {
-                InitializeMailEditorForm(mail, (int)item.Tag);
+                InitializeMailEditorForm(mail, (int)item.Tag, this);
             }
         }
 
@@ -2031,7 +2027,6 @@ namespace AkaneMail
                 Directory.Delete(Application.StartupPath + @"\tmp", true);
             }
 
-            // データエラーフラグがfalseでデータ変更フラグがtrueのとき
             if (!errorFlag && dataDirtyFlag) {
                 // データファイルを削除する
                 if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
