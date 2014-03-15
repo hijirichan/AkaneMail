@@ -204,11 +204,11 @@ namespace AkaneMail
                 _mode = value;
                 if (_mode == dialogMode.Find) {
                     dialogTitle = DIALOGTITLE_FIND;
-                    ReplacePanel.Visible = false;
+                    findCourseGroupBox.Visible = false;
                 }
                 else {
                     dialogTitle = DIALOGTITLE_REPLACE;
-                    ReplacePanel.Visible = true;
+                    findCourseGroupBox.Visible = true;
                 }
                 this.Text = dialogTitle;
             }

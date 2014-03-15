@@ -36,39 +36,47 @@
             this.findCourseGroupBox = new System.Windows.Forms.GroupBox();
             this.currentPosRadio = new System.Windows.Forms.RadioButton();
             this.topPosRadio = new System.Windows.Forms.RadioButton();
-            this.ReplacePanel = new System.Windows.Forms.Panel();
             this.replaceAllButton = new System.Windows.Forms.Button();
             this.replaceNextButton = new System.Windows.Forms.Button();
             this.ReplaceTextBox = new System.Windows.Forms.TextBox();
             this.ReplaceLabel = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.findCourseGroupBox.SuspendLayout();
-            this.ReplacePanel.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label1.Location = new System.Drawing.Point(7, 7);
+            this.label1.Location = new System.Drawing.Point(8, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(129, 15);
+            this.label1.Size = new System.Drawing.Size(162, 30);
             this.label1.TabIndex = 0;
             this.label1.Text = "検索する文字列(&N):";
             // 
             // findTextBox
             // 
+            this.findTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.findTextBox.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.findTextBox.Location = new System.Drawing.Point(139, 7);
+            this.findTextBox.Location = new System.Drawing.Point(176, 3);
             this.findTextBox.Name = "findTextBox";
-            this.findTextBox.Size = new System.Drawing.Size(253, 20);
+            this.findTextBox.Size = new System.Drawing.Size(542, 24);
             this.findTextBox.TabIndex = 1;
             // 
             // findButton
             // 
+            this.findButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.findButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.findButton.Location = new System.Drawing.Point(398, 4);
+            this.findButton.Location = new System.Drawing.Point(724, 3);
             this.findButton.Name = "findButton";
-            this.findButton.Size = new System.Drawing.Size(108, 26);
+            this.findButton.Size = new System.Drawing.Size(127, 24);
             this.findButton.TabIndex = 3;
             this.findButton.Text = "次を検索(&F)";
             this.findButton.UseVisualStyleBackColor = true;
@@ -76,10 +84,13 @@
             // 
             // cancelButton
             // 
+            this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(398, 100);
+            this.cancelButton.Location = new System.Drawing.Point(724, 123);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(108, 26);
+            this.cancelButton.Size = new System.Drawing.Size(127, 24);
             this.cancelButton.TabIndex = 5;
             this.cancelButton.Text = "キャンセル";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -89,21 +100,25 @@
             // 
             this.LgSmCheckBox.AutoSize = true;
             this.LgSmCheckBox.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.LgSmCheckBox.Location = new System.Drawing.Point(7, 100);
+            this.LgSmCheckBox.Location = new System.Drawing.Point(176, 123);
             this.LgSmCheckBox.Name = "LgSmCheckBox";
-            this.LgSmCheckBox.Size = new System.Drawing.Size(161, 17);
+            this.LgSmCheckBox.Padding = new System.Windows.Forms.Padding(16, 0, 0, 0);
+            this.LgSmCheckBox.Size = new System.Drawing.Size(222, 21);
             this.LgSmCheckBox.TabIndex = 4;
             this.LgSmCheckBox.Text = "大文字小文字を区別する";
             this.LgSmCheckBox.UseVisualStyleBackColor = true;
             // 
             // findCourseGroupBox
             // 
+            this.findCourseGroupBox.AutoSize = true;
+            this.findCourseGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.findCourseGroupBox.Controls.Add(this.currentPosRadio);
             this.findCourseGroupBox.Controls.Add(this.topPosRadio);
+            this.findCourseGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.findCourseGroupBox.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.findCourseGroupBox.Location = new System.Drawing.Point(196, 46);
+            this.findCourseGroupBox.Location = new System.Drawing.Point(176, 63);
             this.findCourseGroupBox.Name = "findCourseGroupBox";
-            this.findCourseGroupBox.Size = new System.Drawing.Size(225, 48);
+            this.findCourseGroupBox.Size = new System.Drawing.Size(542, 54);
             this.findCourseGroupBox.TabIndex = 5;
             this.findCourseGroupBox.TabStop = false;
             this.findCourseGroupBox.Text = "検索する方法";
@@ -111,9 +126,11 @@
             // currentPosRadio
             // 
             this.currentPosRadio.AutoSize = true;
-            this.currentPosRadio.Location = new System.Drawing.Point(109, 21);
+            this.currentPosRadio.Dock = System.Windows.Forms.DockStyle.Left;
+            this.currentPosRadio.Location = new System.Drawing.Point(124, 20);
+            this.currentPosRadio.MinimumSize = new System.Drawing.Size(0, 20);
             this.currentPosRadio.Name = "currentPosRadio";
-            this.currentPosRadio.Size = new System.Drawing.Size(113, 17);
+            this.currentPosRadio.Size = new System.Drawing.Size(144, 31);
             this.currentPosRadio.TabIndex = 6;
             this.currentPosRadio.Text = "現在位置から(&D)";
             this.currentPosRadio.UseVisualStyleBackColor = true;
@@ -123,31 +140,25 @@
             // 
             this.topPosRadio.AutoSize = true;
             this.topPosRadio.Checked = true;
-            this.topPosRadio.Location = new System.Drawing.Point(15, 21);
+            this.topPosRadio.Dock = System.Windows.Forms.DockStyle.Left;
+            this.topPosRadio.Location = new System.Drawing.Point(3, 20);
+            this.topPosRadio.MinimumSize = new System.Drawing.Size(0, 20);
             this.topPosRadio.Name = "topPosRadio";
-            this.topPosRadio.Size = new System.Drawing.Size(87, 17);
+            this.topPosRadio.Padding = new System.Windows.Forms.Padding(12, 0, 0, 0);
+            this.topPosRadio.Size = new System.Drawing.Size(121, 31);
             this.topPosRadio.TabIndex = 0;
             this.topPosRadio.TabStop = true;
             this.topPosRadio.Text = "先頭から(&T)";
             this.topPosRadio.UseVisualStyleBackColor = true;
             this.topPosRadio.CheckedChanged += new System.EventHandler(this.findPosition_Radio_CheckedChanged);
             // 
-            // ReplacePanel
-            // 
-            this.ReplacePanel.Controls.Add(this.replaceAllButton);
-            this.ReplacePanel.Controls.Add(this.replaceNextButton);
-            this.ReplacePanel.Controls.Add(this.ReplaceTextBox);
-            this.ReplacePanel.Controls.Add(this.ReplaceLabel);
-            this.ReplacePanel.Location = new System.Drawing.Point(0, 35);
-            this.ReplacePanel.Name = "ReplacePanel";
-            this.ReplacePanel.Size = new System.Drawing.Size(507, 60);
-            this.ReplacePanel.TabIndex = 7;
-            // 
             // replaceAllButton
             // 
-            this.replaceAllButton.Location = new System.Drawing.Point(397, 34);
+            this.replaceAllButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.replaceAllButton.Location = new System.Drawing.Point(724, 63);
             this.replaceAllButton.Name = "replaceAllButton";
-            this.replaceAllButton.Size = new System.Drawing.Size(108, 26);
+            this.replaceAllButton.Size = new System.Drawing.Size(127, 26);
             this.replaceAllButton.TabIndex = 4;
             this.replaceAllButton.Text = "すべて置換(&A)";
             this.replaceAllButton.UseVisualStyleBackColor = true;
@@ -155,10 +166,13 @@
             // 
             // replaceNextButton
             // 
+            this.replaceNextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.replaceNextButton.Enabled = false;
-            this.replaceNextButton.Location = new System.Drawing.Point(397, -1);
+            this.replaceNextButton.Location = new System.Drawing.Point(724, 33);
             this.replaceNextButton.Name = "replaceNextButton";
-            this.replaceNextButton.Size = new System.Drawing.Size(108, 26);
+            this.replaceNextButton.Size = new System.Drawing.Size(127, 24);
             this.replaceNextButton.TabIndex = 10;
             this.replaceNextButton.Text = "置換して次に(&R)";
             this.replaceNextButton.UseVisualStyleBackColor = true;
@@ -166,21 +180,54 @@
             // 
             // ReplaceTextBox
             // 
+            this.ReplaceTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplaceTextBox.Font = new System.Drawing.Font("MS UI Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.ReplaceTextBox.Location = new System.Drawing.Point(141, 3);
+            this.ReplaceTextBox.Location = new System.Drawing.Point(176, 33);
             this.ReplaceTextBox.Name = "ReplaceTextBox";
-            this.ReplaceTextBox.Size = new System.Drawing.Size(251, 20);
+            this.ReplaceTextBox.Size = new System.Drawing.Size(542, 24);
             this.ReplaceTextBox.TabIndex = 2;
             // 
             // ReplaceLabel
             // 
+            this.ReplaceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ReplaceLabel.AutoSize = true;
             this.ReplaceLabel.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.ReplaceLabel.Location = new System.Drawing.Point(3, 9);
+            this.ReplaceLabel.Location = new System.Drawing.Point(3, 30);
             this.ReplaceLabel.Name = "ReplaceLabel";
-            this.ReplaceLabel.Size = new System.Drawing.Size(131, 15);
+            this.ReplaceLabel.Size = new System.Drawing.Size(167, 30);
             this.ReplaceLabel.TabIndex = 12;
             this.ReplaceLabel.Text = "置換後の文字列(&P):";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.replaceAllButton, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.findCourseGroupBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.ReplaceLabel, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.cancelButton, 2, 3);
+            this.tableLayoutPanel1.Controls.Add(this.ReplaceTextBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.findTextBox, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.findButton, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.replaceNextButton, 2, 1);
+            this.tableLayoutPanel1.Controls.Add(this.LgSmCheckBox, 1, 3);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(854, 150);
+            this.tableLayoutPanel1.TabIndex = 8;
             // 
             // findDialog
             // 
@@ -188,14 +235,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(512, 131);
-            this.Controls.Add(this.ReplacePanel);
-            this.Controls.Add(this.findCourseGroupBox);
-            this.Controls.Add(this.LgSmCheckBox);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.findButton);
-            this.Controls.Add(this.findTextBox);
-            this.Controls.Add(this.label1);
+            this.ClientSize = new System.Drawing.Size(854, 150);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -204,8 +245,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.findCourseGroupBox.ResumeLayout(false);
             this.findCourseGroupBox.PerformLayout();
-            this.ReplacePanel.ResumeLayout(false);
-            this.ReplacePanel.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,10 +262,10 @@
         private System.Windows.Forms.GroupBox findCourseGroupBox;
         private System.Windows.Forms.RadioButton currentPosRadio;
         private System.Windows.Forms.RadioButton topPosRadio;
-        private System.Windows.Forms.Panel ReplacePanel;
         private System.Windows.Forms.Button replaceAllButton;
         private System.Windows.Forms.Button replaceNextButton;
         private System.Windows.Forms.TextBox ReplaceTextBox;
         private System.Windows.Forms.Label ReplaceLabel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }
