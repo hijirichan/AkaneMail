@@ -261,32 +261,32 @@ namespace AkaneMail
 
         private ListViewItem CreateMailItem(Mail mail, int index)
         {
-            ListViewItem item = new ListViewItem(mail.address);
-            if (mail.subject != "") {
-                item.SubItems.Add(mail.subject);
+            ListViewItem item = new ListViewItem(mail.Address);
+            if (mail.Subject != "") {
+                item.SubItems.Add(mail.Subject);
             }
             else {
                 item.SubItems.Add("(no subject)");
             }
 
             // メールの受信(送信)日時とメールサイズをリストのサブアイテムに追加する
-            item.SubItems.Add(mail.date);
-            item.SubItems.Add(mail.size);
+            item.SubItems.Add(mail.Date);
+            item.SubItems.Add(mail.Size);
 
             // 各項目のタグに要素の番号を格納する
             item.Tag = index;
             item.Name = index.ToString();
 
             // 未読(未送信)の場合は、フォントを太字にする
-            if (mail.notReadYet) {
+            if (mail.NotReadYet) {
                 item.Font = new Font(this.Font, FontStyle.Bold);
             }
 
             // 重要度が高い場合は、フォントを太字にする
-            if (mail.priority == MailPriority.Urgent) {
+            if (mail.Priority == MailPriority.Urgent) {
                 item.ForeColor = Color.Tomato;
             }
-            else if (mail.priority == MailPriority.NonUrgent) {
+            else if (mail.Priority == MailPriority.NonUrgent) {
                 item.ForeColor = Color.LightBlue;
             }
             return item;
@@ -572,22 +572,22 @@ namespace AkaneMail
             var attach = new nMail.Attachment();
 
             // 未読メールの場合
-            checkNotYetReadMail = mail.notReadYet;
+            checkNotYetReadMail = mail.NotReadYet;
 
             // 保存パスはプログラム直下に作成したtmpに設定する
             attach.Path = Application.StartupPath + @"\tmp";
 
             // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
-            var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.header).Contains("text/html");
+            var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.Header).Contains("text/html");
             // 添付ファイルが存在するかを確認する
-            var exists = attach.GetId(mail.header) != nMail.Attachment.NoAttachmentFile;
+            var exists = attach.GetId(mail.Header) != nMail.Attachment.NoAttachmentFile;
 
             // 添付ファイルが存在する場合(存在しない場合は-1が返る)
             // もしくは HTML メールの場合
             if (exists || isHtmlMail) {
                 try {
                     // 旧バージョンからの変換データではないとき
-                    if (mail.convert == "") {
+                    if (mail.Convert == "") {
                         // HTML/Base64のデコードを有効にする
                         Options.EnableDecodeBody();
                     }
@@ -596,7 +596,7 @@ namespace AkaneMail
                         Options.DisableDecodeBodyText();
                     }
                     // ヘッダと本文付きの文字列を添付クラスに追加する
-                    attach.Add(mail.header, mail.body);
+                    attach.Add(mail.Header, mail.Body);
 
                     // 添付ファイルを取り外す
                     attach.Save();
@@ -628,7 +628,7 @@ namespace AkaneMail
                             string htmlBody = sr.ReadToEnd();
 
                             // HTMLからタグを取り除いた本文を返信文に格納する
-                            attachMailBody = Mail.HtmlToText(htmlBody, mail.header);
+                            attachMailBody = Mail.HtmlToText(htmlBody, mail.Header);
                         }
                     }
 
@@ -648,7 +648,7 @@ namespace AkaneMail
                             string htmlBody = sr.ReadToEnd();
 
                             // HTMLからタグを取り除く
-                            htmlBody = Mail.HtmlToText(htmlBody, mail.header);
+                            htmlBody = Mail.HtmlToText(htmlBody, mail.Header);
 
                             attachMailBody = htmlBody;
                             this.textBody.Text = htmlBody;
@@ -660,7 +660,7 @@ namespace AkaneMail
                         this.textBody.Text = text;
                     }
                     else {
-                        this.textBody.Text = mail.body;
+                        this.textBody.Text = mail.Body;
                     }
                 }
                 if (attach.FileNameList != null) {
@@ -687,7 +687,7 @@ namespace AkaneMail
                     buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
                 }
 
-                var base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.header).Contains("base64");
+                var base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("base64");
 
                 // Base64の文章が添付されている場合
                 if (base64Mail) {
@@ -695,7 +695,7 @@ namespace AkaneMail
                     Options.EnableDecodeBody();
 
                     // ヘッダと本文付きの文字列を添付クラスに追加する
-                    attach.Add(mail.header, mail.body);
+                    attach.Add(mail.Header, mail.Body);
 
                     // 添付ファイルを取り外す
                     attach.Save();
@@ -706,12 +706,12 @@ namespace AkaneMail
                 }
                 else {
                     // ISO-2022-JPでかつquoted-printableがある場合(nMail.dllが対応するまでの暫定処理)
-                    if (attach.GetHeaderField("Content-Type:", mail.header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.header).Contains("quoted-printable")) {
+                    if (attach.GetHeaderField("Content-Type:", mail.Header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("quoted-printable")) {
                         // 文章をデコードする
                         Options.EnableDecodeBody();
 
                         // ヘッダと本文付きの文字列を添付クラスに追加する
-                        attach.Add(mail.header, mail.body);
+                        attach.Add(mail.Header, mail.Body);
 
                         // 添付ファイルを取り外す
                         attach.Save();
@@ -720,10 +720,10 @@ namespace AkaneMail
                         attachMailBody = text;
                         this.textBody.Text = text;
                     }
-                    else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.header).Contains("8bit")) {
+                    else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
                         // Unicode化されたUTF-8文字列をデコードする
                         // 1件のメールサイズの大きさのbyte型配列を確保
-                        var bs = mail.body.Select(c => (byte)c).ToArray();
+                        var bs = mail.Body.Select(c => (byte)c).ToArray();
 
                         // GetStringでバイト型配列をUTF-8の配列にエンコードする
                         attachMailBody = Encoding.UTF8.GetString(bs);
@@ -731,7 +731,7 @@ namespace AkaneMail
                     }
                     else {
                         // テキストボックスに出力する文字コードをJISに変更する
-                        byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
+                        byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
                         string strBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
 
                         // 本文をテキストとして表示する
@@ -773,29 +773,29 @@ namespace AkaneMail
         private string EncodeBody(Mail mail, nMail.Attachment attach)
         {
             // ISO-2022-JPでかつquoted-printableがある場合(nMail.dllが対応するまでの暫定処理)
-            if (attach.GetHeaderField("Content-Type:", mail.header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.header).Contains("quoted-printable")) {
+            if (attach.GetHeaderField("Content-Type:", mail.Header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("quoted-printable")) {
                 // 文章をデコードする
                 Options.EnableDecodeBody();
 
                 // ヘッダと本文付きの文字列を添付クラスに追加する
-                attach.Add(mail.header, mail.body);
+                attach.Add(mail.Header, mail.Body);
 
                 // 添付ファイルを取り外す
                 attach.Save();
 
                 return BreakLine(attach.Body);
             }
-            else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.header).Contains("8bit")) {
+            else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
                 // Unicode化されたUTF-8文字列をデコードする
                 // 1件のメールサイズの大きさのbyte型配列を確保
-                var bs = mail.body.Select(c => (byte)c).ToArray();
+                var bs = mail.Body.Select(c => (byte)c).ToArray();
 
                 // GetStringでバイト型配列をUTF-8の配列にエンコードする
                 return Encoding.UTF8.GetString(bs);
             }
             else {
                 // テキストボックス .に出力する文字コードをJISに変更する
-                byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
+                byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
                 return Encoding.GetEncoding("iso-2022-jp").GetString(b);
             }
         }
@@ -815,26 +815,26 @@ namespace AkaneMail
             NewMailForm.SendList = mailBox.Send.ToList();
 
             // 返信のための宛先・件名を設定する
-            NewMailForm.textAddress.Text = mail.address;
-            NewMailForm.textSubject.Text = "Re:" + mail.subject;
+            NewMailForm.textAddress.Text = mail.Address;
+            NewMailForm.textSubject.Text = "Re:" + mail.Subject;
 
             // 添付なしメールのときはbodyを渡す
             if (!attachMailReplay) {
                 // UTF-8でエンコードされたメールのときはattachMailBodyを渡す
                 if (attachMailBody != "") {
-                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.address + " was wrote ---\r\n\r\n" + attachMailBody;
+                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + attachMailBody;
                 }
                 else {
-                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.address + " was wrote ---\r\n\r\n" + mail.body;
+                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + mail.Body;
                 }
             }
             else {
                 // 添付付きメールのときはattachMailBodyを渡す
                 if (attachMailBody != "") {
-                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.address + " was wrote ---\r\n\r\n" + attachMailBody;
+                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + attachMailBody;
                 }
                 else {
-                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.address + " was wrote ---\r\n\r\n" + mail.body;
+                    NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + mail.Body;
                 }
             }
 
@@ -858,7 +858,7 @@ namespace AkaneMail
 
             // 転送のために件名を設定する(件名は空白にする)
             NewMailForm.textAddress.Text = "";
-            NewMailForm.textSubject.Text = "Fw:" + mail.subject;
+            NewMailForm.textSubject.Text = "Fw:" + mail.Subject;
 
             NewMailForm.textBody.Text = BuildForwardingBody(mail);
 
@@ -894,17 +894,17 @@ namespace AkaneMail
             var atch = new nMail.Attachment();
 
             // メールヘッダが存在するとき
-            if (mail.header != "") {
-                from = atch.GetHeaderField("From:", mail.header);
-                to = atch.GetHeaderField("To:", mail.header);
-                sentAt = atch.GetHeaderField("Date:", mail.header);
-                subject = atch.GetHeaderField("Subject:", mail.header);
+            if (mail.Header != "") {
+                from = atch.GetHeaderField("From:", mail.Header);
+                to = atch.GetHeaderField("To:", mail.Header);
+                sentAt = atch.GetHeaderField("Date:", mail.Header);
+                subject = atch.GetHeaderField("Subject:", mail.Header);
             }
             else {
                 from = AccountInfo.mailAddress;
-                to = mail.address;
-                sentAt = mail.date;
-                subject = mail.subject;
+                to = mail.Address;
+                sentAt = mail.Date;
+                subject = mail.Subject;
             }
 
             var builder = new StringBuilder("\r\n\r\n");
@@ -926,7 +926,7 @@ namespace AkaneMail
                 }
                 else {
                     // JISコードなどのメールは通常のbodyを渡す
-                    return builder.Append(mail.body).ToString();
+                    return builder.Append(mail.Body).ToString();
                 }
             }
             else {
@@ -935,7 +935,7 @@ namespace AkaneMail
                     return builder.Append(attachMailBody).ToString();
                 }
                 else {
-                    return builder.Append(mail.body).ToString();
+                    return builder.Append(mail.Body).ToString();
                 }
             }
         }
@@ -949,7 +949,7 @@ namespace AkaneMail
             EditMailForm.MainForm = mainForm;
 
             // 親フォームにタイトルを設定する
-            EditMailForm.Text = mail.subject + " - Akane Mail";
+            EditMailForm.Text = mail.Subject + " - Akane Mail";
 
             // 送信箱の配列をForm3に渡す
             EditMailForm.SendList = mailBox.Send.ToList();
@@ -957,17 +957,17 @@ namespace AkaneMail
             EditMailForm.IsEdit = true;
 
             // 宛先、件名、本文をForm3に渡す
-            EditMailForm.textAddress.Text = mail.address;
-            EditMailForm.textCc.Text = mail.cc;
-            EditMailForm.textBcc.Text = mail.bcc;
-            EditMailForm.textSubject.Text = mail.subject;
-            EditMailForm.textBody.Text = mail.body;
+            EditMailForm.textAddress.Text = mail.Address;
+            EditMailForm.textCc.Text = mail.Cc;
+            EditMailForm.textBcc.Text = mail.Bcc;
+            EditMailForm.textSubject.Text = mail.Subject;
+            EditMailForm.textBody.Text = mail.Body;
 
             // 重要度をForm3に渡す
-            if (mail.priority == MailPriority.Urgent) {
+            if (mail.Priority == MailPriority.Urgent) {
                 EditMailForm.comboPriority.SelectedIndex = 0;
             }
-            else if (mail.priority == MailPriority.Normal) {
+            else if (mail.Priority == MailPriority.Normal) {
                 EditMailForm.comboPriority.SelectedIndex = 1;
             }
             else {
@@ -995,7 +995,7 @@ namespace AkaneMail
         {
             // 1番目のカラムの表示が差出人か差出人または宛先のとき
             if (listMail.Columns[0].Text == "差出人" || listMail.Columns[0].Text == "差出人または宛先") {
-                mail.notReadYet = false;
+                mail.NotReadYet = false;
 
                 ReforcusListView(listMail);
 
@@ -1072,7 +1072,7 @@ namespace AkaneMail
                 // 元リストからメールアイテムを取得
                 var mail = fromFolder[nIndices[nLen - 1]];
 
-                if (item.SubItems[1].Text == mail.subject) {
+                if (item.SubItems[1].Text == mail.Subject) {
                     mailBox.Trash.Add(mail);
                     fromFolder.Remove(mail);
                 }
@@ -1103,7 +1103,7 @@ namespace AkaneMail
                 // 元リストからメールアイテムを取得
                 Mail mail = dList[nIndices[nLen - 1]];
 
-                if (item.SubItems[1].Text == mail.subject) {
+                if (item.SubItems[1].Text == mail.Subject) {
                     dList.Remove(mail);
                 }
                 nLen--;
@@ -1155,7 +1155,7 @@ namespace AkaneMail
                         var uidls = Enumerable.Range(1, pop.Count).Select(i => { pop.GetUidl(i); return pop.Uidl; });
                         var locals = mailBox.Receive.Union(mailBox.Trash);
                         var unreadMails = from u in uidls
-                                          join l in locals on u equals l.uidl
+                                          join l in locals on u equals l.Uidl
                                           select l;
                         return unreadMails.Count();
                     });
@@ -1311,7 +1311,7 @@ namespace AkaneMail
             int send_no = 0;
 
             // 送信可能なメールの数を確認する
-            max_no = mailBox.Send.Count(m => m.notReadYet);
+            max_no = mailBox.Send.Count(m => m.NotReadYet);
 
             // 送信可能なメールが存在しないとき
             if (max_no == 0) {
@@ -1386,38 +1386,38 @@ namespace AkaneMail
                     }
 
                     foreach (var mail in mailBox.Send) {
-                        if (mail.notReadYet) {
+                        if (mail.NotReadYet) {
                             // CCが存在するとき
-                            if (mail.cc != "") {
+                            if (mail.Cc != "") {
                                 // CCの宛先を設定する
-                                smtp.Cc = mail.cc;
+                                smtp.Cc = mail.Cc;
                             }
 
                             // BCCが存在するとき
-                            if (mail.bcc != "") {
+                            if (mail.Bcc != "") {
                                 // BCCの宛先を設定する
-                                smtp.Bcc = mail.bcc;
+                                smtp.Bcc = mail.Bcc;
                             }
 
                             // 添付ファイルを指定している場合
-                            if (mail.attach != "") {
-                                smtp.FileName = mail.attach;
+                            if (mail.Attach != "") {
+                                smtp.FileName = mail.Attach;
                             }
 
                             // 追加ヘッダをつける
-                            smtp.Header = "\r\nPriority: " + mail.priority + "\r\nX-Mailer: Akane Mail Version " + Application.ProductVersion;
+                            smtp.Header = "\r\nPriority: " + mail.Priority + "\r\nX-Mailer: Akane Mail Version " + Application.ProductVersion;
 
                             // 差出人のアドレスを編集する
                             string fromAddress = AccountInfo.FromAddress;
 
                             // 送信する
-                            smtp.SendMail(mail.address, fromAddress, mail.subject, mail.body);
+                            smtp.SendMail(mail.Address, fromAddress, mail.Subject, mail.Body);
 
                             // 送信日時を設定する
-                            mail.date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+                            mail.Date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
 
                             // 送信済みに変更する
-                            mail.notReadYet = false;
+                            mail.NotReadYet = false;
 
                             // メールの送信件数を更新する
                             send_no++;
@@ -1465,7 +1465,7 @@ namespace AkaneMail
         /// <summary>
         /// 直接メール送信
         /// </summary>
-        /// <param name="address">宛先</param>
+        /// <param name="Address">宛先</param>
         /// <param name="cc">CCのアドレス</param>
         /// <param name="bcc">BCCのアドレス</param>
         /// <param name="subject">件名</param>
@@ -1585,9 +1585,9 @@ namespace AkaneMail
                     // 添付ファイル展開用のテンポラリファイルを作成する
                     string tmpFileName = Path.GetTempFileName();
                     using (var writer = new StreamWriter(tmpFileName)) {
-                        writer.Write(mail.header);
+                        writer.Write(mail.Header);
                         writer.Write("\r\n");
-                        writer.Write(mail.body);
+                        writer.Write(mail.Body);
                     }
 
                     // テンポラリファイルを開いて添付ファイルを開く
@@ -1635,19 +1635,19 @@ namespace AkaneMail
             string fileHeader = "";
 
             // ヘッダから文字コードを取得する(添付付きは取得できない)
-            string enc = Mail.ParseEncoding(mail.header);
+            string enc = Mail.ParseEncoding(mail.Header);
 
             // 出力する文字コードがUTF-8ではないとき
             if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows")) {
                 // 出力するヘッダをUTF-8から各文字コードに変換する
-                Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.header);
+                Byte[] b = Encoding.GetEncoding(enc).GetBytes(mail.Header);
                 fileHeader = Encoding.GetEncoding(enc).GetString(b);
 
                 // 出力する本文をUTF-8から各文字コードに変換する
-                b = Encoding.GetEncoding(enc).GetBytes(mail.body);
+                b = Encoding.GetEncoding(enc).GetBytes(mail.Body);
                 fileBody = Encoding.GetEncoding(enc).GetString(b);
             }
-            else if (enc.ToLower().Contains("utf-8") || mail.header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
+            else if (enc.ToLower().Contains("utf-8") || mail.Header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
                 // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
                 // nMail.dllはUTF-8エンコードのメールを8bit単位に分解してUncode(16bit)扱いで格納している。
                 // これはUnicodeで文字列を受け取る関数内で生のUTF-8の文字列を受け取っておかしなことに
@@ -1656,23 +1656,23 @@ namespace AkaneMail
                 // 可読化することができる。
 
                 // Byte型構造体に変換する
-                var bs = mail.body.Select(s => (byte)s).ToArray();
+                var bs = mail.Body.Select(s => (byte)s).ToArray();
 
                 // GetStringでバイト型配列をUTF-8の配列にエンコードする
                 fileBody = Encoding.UTF8.GetString(bs);
 
                 // fileHeaderにヘッダを格納する
-                fileHeader = mail.header;
+                fileHeader = mail.Header;
 
                 // ファイル出力フラグにUTF-8を設定する
                 enc = "utf-8";
             }
             else {
                 // ここに落ちてくるのは基本的に添付ファイルのみ
-                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.header);
+                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Header);
                 fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
 
-                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
+                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
                 fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
 
                 // 文字コードをJISに設定する
@@ -1684,14 +1684,14 @@ namespace AkaneMail
 
             using (var writer = new StreamWriter(FileToSave, false, writeEnc)) {
                 // 受信メール(ヘッダが存在する)のとき
-                if (mail.header.Length > 0) {
+                if (mail.Header.Length > 0) {
                     writer.Write(fileHeader);
                     writer.Write("\r\n");
                 }
                 else {
                     // 送信メールのときはヘッダの代わりに送り先と件名を出力
-                    writer.WriteLine("To: " + mail.address);
-                    writer.WriteLine("Subject: " + mail.subject);
+                    writer.WriteLine("To: " + mail.Address);
+                    writer.WriteLine("Subject: " + mail.Subject);
                     writer.Write("\r\n");
                 }
                 writer.Write(fileBody);
@@ -1954,7 +1954,7 @@ namespace AkaneMail
                 // 元リストからメールアイテムを取得
                 Mail mail = sList[nIndices[nLen]];
 
-                sList[nIndices[nLen]].notReadYet = !(item.SubItems[1].Text == mail.subject);
+                sList[nIndices[nLen]].NotReadYet = !(item.SubItems[1].Text == mail.Subject);
             }
 
             ReforcusListView(listMail);
@@ -1989,7 +1989,7 @@ namespace AkaneMail
                 // 元リストからメールアイテムを取得
                 Mail mail = sList[nIndices[nLen]];
 
-                sList[nIndices[nLen]].notReadYet = item.SubItems[1].Text == mail.subject;
+                sList[nIndices[nLen]].NotReadYet = item.SubItems[1].Text == mail.Subject;
             }
 
             ReforcusListView(listMail);
@@ -2226,7 +2226,7 @@ namespace AkaneMail
             mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // ファイル名にメールの件名を入れる
-            saveFileDialog1.FileName = mail.subject;
+            saveFileDialog1.FileName = mail.Subject;
 
             // 名前を付けて保存
             if (saveFileDialog1.ShowDialog() == DialogResult.OK) {
@@ -2270,7 +2270,7 @@ namespace AkaneMail
             // ファイルを開くかの確認をする
             if (MessageBox.Show(e.ClickedItem.Text + "を開きますか？\nファイルによってはウイルスの可能性もあるため\n注意してファイルを開いてください。", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
                 // 受信されたメールのとき
-                if (mail.attach.Length == 0) {
+                if (mail.Attach.Length == 0) {
                     System.Diagnostics.Process.Start(Application.StartupPath + @"\tmp\" + e.ClickedItem.Text);
                 }
                 else {

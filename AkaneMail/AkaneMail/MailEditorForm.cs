@@ -327,16 +327,16 @@ namespace AkaneMail
                 // 送信リストに入れている情報を書き換える
                 var size = GetMailSize();
                 // 優先度の設定をする
-                SendList[ListTag].subject = textSubject.Text;
-                SendList[ListTag].address = textAddress.Text;
-                SendList[ListTag].body = textBody.Text;
-                SendList[ListTag].attach = attachName;
-                SendList[ListTag].date = date;
-                SendList[ListTag].size = size;
-                SendList[ListTag].notReadYet = true;
-                SendList[ListTag].cc = textCc.Text;
-                SendList[ListTag].bcc = textBcc.Text;
-                SendList[ListTag].priority = priority;
+                SendList[ListTag].Subject = textSubject.Text;
+                SendList[ListTag].Address = textAddress.Text;
+                SendList[ListTag].Body = textBody.Text;
+                SendList[ListTag].Attach = attachName;
+                SendList[ListTag].Date = date;
+                SendList[ListTag].Size = size;
+                SendList[ListTag].NotReadYet = true;
+                SendList[ListTag].Cc = textCc.Text;
+                SendList[ListTag].Bcc = textBcc.Text;
+                SendList[ListTag].Priority = priority;
 
                 // Becky!と同じように更新後はテキストも変更
                 MainForm.textBody.Text = textBody.Text;

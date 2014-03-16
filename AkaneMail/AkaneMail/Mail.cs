@@ -9,39 +9,38 @@ namespace AkaneMail
 {
     public class Mail
     {
-        // インスタンスフィールド(メールの情報)
-        public string address { get; set; }              // 差出人(宛先)アドレス
-        public string header { get; set; }               // メールヘッダ
-        public string subject { get; set; }              // メールの件名
-        public string body { get; set; }                 // メール本文
-        public string attach { get; set; }               // 添付ファイル
-        public string date { get; set; }                 // 受信(送信)日時
-        public string size { get; set; }                 // メールサイズ
-        public string uidl { get; set; }                 // UIDL
-        public bool notReadYet { get; set; }             // 未読・未送信フラグ
-        public string cc { get; set; }                   // CCアドレス
-        public string bcc { get; set; }                  // BCCアドレス
-        public string priority { get; set; }             // 優先度(None/Low/Normal/High)
-        public string convert { get; set; }              // バージョン識別用
+        public string Address { get; set; }              // 差出人(宛先)アドレス
+        public string Header { get; set; }               // メールヘッダ
+        public string Subject { get; set; }              // メールの件名
+        public string Body { get; set; }                 // メール本文
+        public string Attach { get; set; }               // 添付ファイル
+        public string Date { get; set; }                 // 受信(送信)日時
+        public string Size { get; set; }                 // メールサイズ
+        public string Uidl { get; set; }                 // UIDL
+        public bool NotReadYet { get; set; }             // 未読・未送信フラグ
+        public string Cc { get; set; }                   // CCアドレス
+        public string Bcc { get; set; }                  // BCCアドレス
+        public string Priority { get; set; }             // 優先度(None/Low/Normal/High)
+        public string Convert { get; set; }              // バージョン識別用
 
-        public string[] Attaches { get { return attach.Split(','); } }
+        public string[] Attaches { get { return Attach.Split(','); } }
 
         // コンストラクタ
         public Mail(string address, string header, string subject, string body, string attach, string date, string size, string uidl, bool notReadYet, string convert, string cc, string bcc, string priority)
         {
-            this.address = address;
-            this.header = header;
-            this.subject = subject;
-            this.body = body;
-            this.attach = attach;
-            this.date = date;
-            this.size = size;
-            this.uidl = uidl;
-            this.notReadYet = notReadYet;
-            this.cc = cc;
-            this.bcc = bcc;
-            this.priority = priority;
-            this.convert = convert;
+            this.Address = address;
+            this.Header = header;
+            this.Subject = subject;
+            this.Body = body;
+            this.Attach = attach;
+            this.Date = date;
+            this.Size = size;
+            this.Uidl = uidl;
+            this.NotReadYet = notReadYet;
+            this.Cc = cc;
+            this.Bcc = bcc;
+            this.Priority = priority;
+            this.Convert = convert;
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace AkaneMail
             string codeName = pop.GetHeaderField("Content-Type:", mailHeader);
 
             codeName = codeName.Replace("\"", "");
-            string[] arrayName = codeName.Split('=');
+            var arrayName = codeName.Split('=');
             codeName = arrayName[1];
 
             return codeName;
@@ -80,10 +79,10 @@ namespace AkaneMail
             codeName = ParseEncoding(mailHeader);
 
             // metaタグから正規表現で文字コードを取り出す
-            Regex regEnc = new Regex("<meta.*?charset=(?<encode>.*?)\".*?>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var regEnc = new Regex("<meta.*?charset=(?<encode>.*?)\".*?>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
             // regEncにマッチする文字列を検索
-            Match m = regEnc.Match(htmlBody);
+            var m = regEnc.Match(htmlBody);
 
             // HTML本文の中でcharset=文字コード名がマッチしたとき
             if(m.Success == true){
@@ -104,18 +103,18 @@ namespace AkaneMail
             else{
                 // htmlBody内にcharset指定が存在しないときは
                 // メールヘッダの文字コードで変換する
-                Byte[] b = Encoding.GetEncoding(codeName).GetBytes(htmlBody);
+                var b = Encoding.GetEncoding(codeName).GetBytes(htmlBody);
                 htmlBody = Encoding.GetEncoding(codeName).GetString(b);
             }
 
             // 正規表現の設定(<script>, <noscript>)
-            Regex re1 = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var re1 = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
             // 正規表現の設定(<style>)
-            Regex re2 = new Regex("<style.*?style>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var re2 = new Regex("<style.*?style>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
             // 正規表現の設定(すべてのタグ)
-            Regex re3 = new Regex("<.*?>", RegexOptions.Singleline);
+            var re3 = new Regex("<.*?>", RegexOptions.Singleline);
 
             // タグを取り除く
             htmlBody = re1.Replace(htmlBody, "");
