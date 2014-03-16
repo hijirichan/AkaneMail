@@ -1,4 +1,4 @@
-Ak@Ne! Version 1.2.1
+Akane Mail Version 1.2.1
 作者:Angelic Sotware(作成者：砂倉瑞希)
 
 対応OS：WindowsXP/2003/2008/Vista/7/8(.NET Framework 4.0以降に対応している環境)
@@ -21,16 +21,16 @@ Ak@Ne! Version 1.2.1
 
 ■アンインストール
 
-  Ak@Ne!のフォルダごと削除を行えばOKです。(レジストリは使用していません)
+  Akane Mailのフォルダごと削除を行えばOKです。(レジストリは使用していません)
 
 
 ■ファイル内容(akane121.lzh)
 
-  ・ AkaneMail.exe   (Ak@Ne! Version 1.2.1本体)
+  ・ AkaneMail.exe   (Akane Mail Version 1.2.1本体)
   ・ readme.txt      (このファイル)
   ・ nMail.dll       (nMail.dll Version 3.10 32bit (C)軟式)
   ・ nMail.dll.64    (nMail.dll Version 3.10 64bit (C)軟式)
-  ・ MailConvert.exe (Ak@Ne! Mail Converter Version 1.0.1)
+  ・ MailConvert.exe (Akane Mail Mail Converter Version 1.0.1)
   ・ ACryptLib.dll   (Akane Mail Crypt Library Version 1.0.0)
 
   注意：将来フォルダ、ファイル構成が変わる場合があります
@@ -128,7 +128,7 @@ Ak@Ne! Version 1.2.1
     [OK]ボタンを押すと添付されているファイルが展開されます。
 
   ■スプラッシュウィンドウについて
-    Ak@Ne!と同じフォルダにakanemail.pngが存在する時はスプラッシュウィンドウの
+    Akane Mailと同じフォルダにakanemail.pngが存在する時はスプラッシュウィンドウの
     画像を変更することができます。(画像サイズは490x330です)
 
 
@@ -222,7 +222,7 @@ Ak@Ne! Version 1.2.1
 
 
 ■ソースコードに関して
-  Ak@Ne!のソースコードは修正BSDライセンスの元に公開をさせて頂いています。
+  Akane Mailのソースコードは修正BSDライセンスの元に公開をさせて頂いています。
   ・ソースコードは無保証であること。
   ・ソースコード等の著作権表示を削除しない条件の下での再配布許可。
   ・ソースコードの改変可能範囲は著作権を所有するソースコード、リソースのみとする。
