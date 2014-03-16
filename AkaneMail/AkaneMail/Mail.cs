@@ -24,8 +24,6 @@ namespace AkaneMail
         public string priority { get; set; }             // 優先度(None/Low/Normal/High)
         public string convert { get; set; }              // バージョン識別用
 
-        public string[] Attaches { get { return attach.Split(','); } }
-
         // コンストラクタ
         public Mail(string address, string header, string subject, string body, string attach, string date, string size, string uidl, bool notReadYet, string convert, string cc, string bcc, string priority)
         {

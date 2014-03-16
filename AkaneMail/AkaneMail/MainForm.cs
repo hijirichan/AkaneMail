@@ -547,29 +547,27 @@ namespace AkaneMail
             }
         }
 
-        /// <summary> 添付ファイルメニューに登録されている要素を破棄する </summary>
-        private void ClearAttachMenu()
-        {
-            buttonAttachList.DropDownItems.Clear();
-            buttonAttachList.Visible = false;
-            attachMenuFlag = false;
-            attachMailReplay = false;
-            attachMailBody = "";
-        }
-
-
-
         /// <summary>
         /// 指定されたメールを開く
         /// </summary>
         /// <param name="mail">メール</param>
         private void OpenMail(Mail mail)
         {
+            bool htmlMail = false;
+            bool base64Mail = false;
 
-            ClearAttachMenu();
+            // 添付ファイルメニューに登録されている要素を破棄する
+            buttonAttachList.DropDownItems.Clear();
+            buttonAttachList.Visible = false;
+            attachMenuFlag = false;
+            attachMailReplay = false;
+            attachMailBody = "";
 
             // 添付ファイルクラスのインスタンスを作成する
-            var attach = new nMail.Attachment();
+            nMail.Attachment attach = new nMail.Attachment();
+
+            // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
+            htmlMail = attach.GetHeaderField("Content-Type:", mail.header).Contains("text/html");
 
             // 未読メールの場合
             checkNotYetReadMail = mail.notReadYet;
@@ -577,14 +575,12 @@ namespace AkaneMail
             // 保存パスはプログラム直下に作成したtmpに設定する
             attach.Path = Application.StartupPath + @"\tmp";
 
-            // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
-            var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.header).Contains("text/html");
             // 添付ファイルが存在するかを確認する
-            var exists = attach.GetId(mail.header) != nMail.Attachment.NoAttachmentFile;
+            int id = attach.GetId(mail.header);
 
             // 添付ファイルが存在する場合(存在しない場合は-1が返る)
             // もしくは HTML メールの場合
-            if (exists || isHtmlMail) {
+            if (id != nMail.Attachment.NoAttachmentFile || htmlMail) {
                 try {
                     // 旧バージョンからの変換データではないとき
                     if (mail.convert == "") {
@@ -617,7 +613,7 @@ namespace AkaneMail
                     this.browserBody.Visible = true;
 
                     // Contents-Typeがtext/htmlでないとき(テキストとHTMLパートが存在する添付メール)
-                    if (!isHtmlMail) {
+                    if (!htmlMail) {
                         // テキストパートを返信文に格納する
                         attachMailBody = attach.Body;
                     }
@@ -641,7 +637,7 @@ namespace AkaneMail
                     this.browserBody.Visible = false;
                     this.textBody.Visible = true;
                     // IE コンポーネントを使用せず、HTML メールで HTML パートを保存したファイルがある場合
-                    if (isHtmlMail && !AccountInfo.bodyIEShow && attach.HtmlFile != "") {
+                    if (htmlMail && !AccountInfo.bodyIEShow && attach.HtmlFile != "") {
                         // 本文にHTMLタグが直書きされているタイプのHTMLメールのとき
                         // 展開したHTMLファイルをストリーム読み込みしてテキストボックスに表示する
                         using (var sr = new StreamReader(Application.StartupPath + @"\tmp\" + attach.HtmlFile, Encoding.Default)) {
@@ -655,22 +651,35 @@ namespace AkaneMail
                         }
                     }
                     else if (attach.Body != "") {
-                        var text = BreakLine(attach.Body);
-                        attachMailBody = text;
-                        this.textBody.Text = text;
+                        // デコードした本文の行末が\n\nではないとき
+                        if (!attach.Body.Contains("\n\n")) {
+                            attachMailBody = attach.Body;
+                            this.textBody.Text = attach.Body;
+                        }
+                        else {
+                            attach.Body.Replace("\n\n", "\r\n");
+                            attachMailBody = attach.Body.Replace("\n", "\r\n");
+                            this.textBody.Text = attachMailBody;
+                        }
                     }
                     else {
                         this.textBody.Text = mail.body;
                     }
                 }
+                // 添付ファイルを外した本文が空値以外の場合
+                // 添付ファイル名リストがnull以外のとき
                 if (attach.FileNameList != null) {
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
                         buttonAttachList.Visible = true;
                         attachMenuFlag = true;
+                        // メニューに添付ファイルの名前を追加する
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
-                        buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.FileNameList).ToArray());
+                        foreach (var attachFile in attach.FileNameList) {
+                            var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Application.StartupPath + @"\tmp\" + attachFile);
+                            buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
+                        }
                     }
                 }
             }
@@ -681,13 +690,27 @@ namespace AkaneMail
                 this.textBody.Visible = true;
 
                 // 添付ファイルリストが""でないとき
-                if (mail.Attaches.Length != 0) {
+                if (mail.attach != "") {
                     buttonAttachList.Visible = true;
 
-                    buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
+                    // 添付ファイルリストを分割して一覧にする
+                    string[] attachFileNameList = mail.attach.Split(',');
+
+                    for (int i = 0; i < attachFileNameList.Length; i++) {
+                        var attachFile = attachFileNameList[i];
+                        if (File.Exists(attachFile)) {
+                            var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(attachFile);
+                            buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
+                        }
+                        else {
+                            buttonAttachList.DropDownItems.Add(attachFile + "は削除されています。");
+                            buttonAttachList.DropDownItems[i].Enabled = false;
+                        }
+                    }
                 }
 
-                var base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.header).Contains("base64");
+                // Contents-TypeがBase64のメールの場合
+                base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.header).Contains("base64");
 
                 // Base64の文章が添付されている場合
                 if (base64Mail) {
@@ -700,9 +723,15 @@ namespace AkaneMail
                     // 添付ファイルを取り外す
                     attach.Save();
 
-                    var text = BreakLine(attach.Body);
-                    attachMailBody = text;
-                    this.textBody.Text = text;
+                    if (!attach.Body.Contains("\n\n")) {
+                        attachMailBody = attach.Body;
+                        this.textBody.Text = attach.Body;
+                    }
+                    else {
+                        attach.Body.Replace("\n\n", "\r\n");
+                        attachMailBody = attach.Body.Replace("\n", "\r\n");
+                        this.textBody.Text = attachMailBody;
+                    }
                 }
                 else {
                     // ISO-2022-JPでかつquoted-printableがある場合(nMail.dllが対応するまでの暫定処理)
@@ -716,9 +745,15 @@ namespace AkaneMail
                         // 添付ファイルを取り外す
                         attach.Save();
 
-                        var text = BreakLine(attach.Body);
-                        attachMailBody = text;
-                        this.textBody.Text = text;
+                        if (!attach.Body.Contains("\n\n")) {
+                            attachMailBody = attach.Body;
+                            this.textBody.Text = attach.Body;
+                        }
+                        else {
+                            attach.Body.Replace("\n\n", "\r\n");
+                            attachMailBody = attach.Body.Replace("\n", "\r\n");
+                            this.textBody.Text = attachMailBody;
+                        }
                     }
                     else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.header).Contains("8bit")) {
                         // Unicode化されたUTF-8文字列をデコードする
@@ -738,65 +773,6 @@ namespace AkaneMail
                         this.textBody.Text = strBody;
                     }
                 }
-            }
-        }
-
-        private string BreakLine(string text)
-        {
-            if (text.Contains("\n\n")) {
-                text = text.Replace("\n\n", "\r\n").Replace("\n", "\r\n");
-            }
-            return text;
-        }
-
-        private IEnumerable<ToolStripItem> GenerateMenuItem(IEnumerable<string> attaches, bool enableWhenRemoved = false)
-        {
-
-            foreach (var attachFile in attaches) {
-                if (File.Exists(attachFile)) {
-                    yield return new ToolStripMenuItem 
-                    { 
-                        Text = attachFile,
-                        Image = System.Drawing.Icon.ExtractAssociatedIcon(attachFile).ToBitmap() 
-                    };
-                }
-                else {
-                    yield return new ToolStripMenuItem 
-                    {
-                        Text = attachFile + "は削除されています。",
-                        Enabled = enableWhenRemoved
-                    };
-                }
-            }
-        }
-
-        private string EncodeBody(Mail mail, nMail.Attachment attach)
-        {
-            // ISO-2022-JPでかつquoted-printableがある場合(nMail.dllが対応するまでの暫定処理)
-            if (attach.GetHeaderField("Content-Type:", mail.header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.header).Contains("quoted-printable")) {
-                // 文章をデコードする
-                Options.EnableDecodeBody();
-
-                // ヘッダと本文付きの文字列を添付クラスに追加する
-                attach.Add(mail.header, mail.body);
-
-                // 添付ファイルを取り外す
-                attach.Save();
-
-                return BreakLine(attach.Body);
-            }
-            else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.header).Contains("8bit")) {
-                // Unicode化されたUTF-8文字列をデコードする
-                // 1件のメールサイズの大きさのbyte型配列を確保
-                var bs = mail.body.Select(c => (byte)c).ToArray();
-
-                // GetStringでバイト型配列をUTF-8の配列にエンコードする
-                return Encoding.UTF8.GetString(bs);
-            }
-            else {
-                // テキストボックス .に出力する文字コードをJISに変更する
-                byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.body);
-                return Encoding.GetEncoding("iso-2022-jp").GetString(b);
             }
         }
 
@@ -848,6 +824,7 @@ namespace AkaneMail
         /// <param name="mail">メール</param>
         private void CreateFowerdMail(Mail mail)
         {
+            Icon appIcon;
             MailEditorForm NewMailForm = new MailEditorForm();
 
             // 親フォームをForm1に設定する
@@ -863,11 +840,16 @@ namespace AkaneMail
             NewMailForm.textBody.Text = BuildForwardingBody(mail);
 
             // 送信メールで添付ファイルがあるとき
-            if (mail.Attaches.Length != 0) {
+            if (mail.attach != "") {
                 // 添付リストメニューを表示
                 NewMailForm.buttonAttachList.Visible = true;
+                // 添付ファイルリストを分割して一覧にする
+                NewMailForm.attachFileNameList = mail.attach.Split(',');
                 // 添付ファイルの数だけメニューを追加する
-                NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
+                foreach (var attachFile in NewMailForm.attachFileNameList) {
+                    appIcon = System.Drawing.Icon.ExtractAssociatedIcon(attachFile);
+                    NewMailForm.buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
+                }
             }
             else if (this.buttonAttachList.Visible) {
                 // 受信メールで添付ファイルがあるとき
@@ -875,9 +857,13 @@ namespace AkaneMail
                 NewMailForm.buttonAttachList.Visible = true;
 
                 // 添付ファイルの数だけメニューを追加する
-                var attaches = this.buttonAttachList.DropDownItems.Cast<ToolStripItem>()
-                    .Select(i => Application.StartupPath + @"\tmp\" + i.Text);
-                NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attaches).ToArray());
+                foreach (var attachFile in this.buttonAttachList.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text)) {
+                    // 添付ファイルが存在するかを確認してから添付する
+                    if (File.Exists(Application.StartupPath + @"\tmp\" + attachFile)) {
+                        appIcon = System.Drawing.Icon.ExtractAssociatedIcon(Application.StartupPath + @"\tmp\" + attachFile);
+                        NewMailForm.buttonAttachList.DropDownItems.Add(Application.StartupPath + @"\tmp\" + attachFile, appIcon.ToBitmap());
+                    }
+                }
             }
 
             // メール新規作成フォームを表示する
@@ -890,7 +876,7 @@ namespace AkaneMail
             var to = "";
             var sentAt = "";
             var subject = "";
-             
+
             var atch = new nMail.Attachment();
 
             // メールヘッダが存在するとき
@@ -940,13 +926,13 @@ namespace AkaneMail
             }
         }
 
-        private void InitializeMailEditorForm(Mail mail, int tag, MainForm mainForm)
+        private void InitializeMailEditorForm(Mail mail, int tag)
         {
             // 1番目のカラムが宛先のときは編集画面を表示する
             MailEditorForm EditMailForm = new MailEditorForm();
-            
+
             // 親フォームをForm1に設定する
-            EditMailForm.MainForm = mainForm;
+            EditMailForm.MainForm = this;
 
             // 親フォームにタイトルを設定する
             EditMailForm.Text = mail.subject + " - Akane Mail";
@@ -975,11 +961,21 @@ namespace AkaneMail
             }
 
             // 添付ファイルが付いているとき
-            if (mail.Attaches.Length != 0) {
+            if (mail.attach != "") {
                 // 添付リストメニューを表示
                 EditMailForm.buttonAttachList.Visible = true;
+                // 添付ファイルリストを分割して一覧にする
+                EditMailForm.attachFileNameList = mail.attach.Split(',');
                 // 添付ファイルの数だけメニューを追加する
-                EditMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches, true).ToArray());
+                foreach (var attachFile in EditMailForm.attachFileNameList) {
+                    if (File.Exists(attachFile)) {
+                        var appIcon = System.Drawing.Icon.ExtractAssociatedIcon(attachFile);
+                        EditMailForm.buttonAttachList.DropDownItems.Add(attachFile, appIcon.ToBitmap());
+                    }
+                    else {
+                        EditMailForm.buttonAttachList.DropDownItems.Add(attachFile + "は削除されています。");
+                    }
+                }
             }
 
             // メール編集フォームを表示する
@@ -1003,7 +999,7 @@ namespace AkaneMail
                 dataDirtyFlag = true;
             }
             else if (listMail.Columns[0].Text == "宛先") {
-                InitializeMailEditorForm(mail, (int)item.Tag, this);
+                InitializeMailEditorForm(mail, (int)item.Tag);
             }
         }
 
@@ -1032,13 +1028,30 @@ namespace AkaneMail
 
             ClearInput();
 
-            var after = Math.Min(nSel, listMail.Items.Count) - 1;
+            // リストが空になったのを判定するフラグ
+            bool isListEmpty = false;
+
+            // 選択しているリスト位置が現在のリスト件数以上のとき
+            if (listMail.Items.Count <= nSel) {
+                // 選択しているリスト位置が0でないとき
+                if (nSel != 0) {
+                    nSel = listMail.Items.Count - 1;
+                }
+                else {
+                    isListEmpty = true;
+                }
+            }
+            else {
+                // 選択しているリスト位置が0でないとき
+                if (nSel != 0)
+                    nSel--;
+            }
 
             // リストが空でないとき
-            if (after >= 0) {
+            if (!isListEmpty) {
                 // フォーカスをnSelの行に当てる
-                listMail.Items[after].Selected = true;
-                listMail.Items[after].Focused = true;
+                listMail.Items[nSel].Selected = true;
+                listMail.Items[nSel].Focused = true;
                 listMail.SelectedItems[0].EnsureVisible();
                 listMail.Select();
                 listMail.Focus();
@@ -2027,6 +2040,7 @@ namespace AkaneMail
                 Directory.Delete(Application.StartupPath + @"\tmp", true);
             }
 
+            // データエラーフラグがfalseでデータ変更フラグがtrueのとき
             if (!errorFlag && dataDirtyFlag) {
                 // データファイルを削除する
                 if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
