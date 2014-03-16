@@ -62,7 +62,22 @@ namespace AkaneMail
             return codeName;
         }
 
-       
+        private static Encoding DetectEncoding(string htmlBody, string mailHeader)
+        {
+            var codeName = ParseEncoding(mailHeader);
+
+            var regEnc = new Regex("<meta.*?charset=(?<encode>.*?)\".*?>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var m = regEnc.Match(htmlBody);
+
+            if (m.Success) {
+                var bodyCodeName = m.Groups["encode"].Value;
+                var endcoding = codeName.ToLower() == bodyCodeName.ToLower() ? bodyCodeName : codeName;
+                return Encoding.GetEncoding(endcoding);
+            }
+            else {
+                return Encoding.GetEncoding(codeName);
+            }
+        }
 
         /// <summary>
         /// HTMLからタグを取り除く
@@ -72,40 +87,9 @@ namespace AkaneMail
         /// <returns>タグが取り除かれた文字列</returns>
         public static string HtmlToText(string htmlBody, string mailHeader)
         {
-            string codeName;        // 文字コード名
-            string bodyCodeName;    // HTMLの文字コード名   
+            var encode = DetectEncoding(htmlBody, mailHeader);
 
-            // メールヘッダの文字コードを取得する
-            codeName = ParseEncoding(mailHeader);
-
-            // metaタグから正規表現で文字コードを取り出す
-            var regEnc = new Regex("<meta.*?charset=(?<encode>.*?)\".*?>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // regEncにマッチする文字列を検索
-            var m = regEnc.Match(htmlBody);
-
-            // HTML本文の中でcharset=文字コード名がマッチしたとき
-            if(m.Success == true){
-                // HTMLの文字コード名を取得する
-                bodyCodeName = m.Groups["encode"].Value;
-                // メールヘッダの文字コードとHTMLの文字コードが同じとき
-                if(codeName.ToLower() == bodyCodeName.ToLower()){
-                    // HTMLの文字コードで変換する
-                    Byte[] b = Encoding.GetEncoding(bodyCodeName).GetBytes(htmlBody);
-                    htmlBody = Encoding.GetEncoding(bodyCodeName).GetString(b);
-                }
-                else{
-                    // 文字コードが異なる場合はメールヘッダの文字コードで変換する
-                    Byte[] b = Encoding.GetEncoding(codeName).GetBytes(htmlBody);
-                    htmlBody = Encoding.GetEncoding(codeName).GetString(b);
-                }
-            }
-            else{
-                // htmlBody内にcharset指定が存在しないときは
-                // メールヘッダの文字コードで変換する
-                var b = Encoding.GetEncoding(codeName).GetBytes(htmlBody);
-                htmlBody = Encoding.GetEncoding(codeName).GetString(b);
-            }
+            htmlBody = htmlBody.SafeRencode(encode);
 
             // 正規表現の設定(<script>, <noscript>)
             var re1 = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
@@ -136,5 +120,23 @@ namespace AkaneMail
             return htmlBody;
         }
 
+    }
+
+    internal static class ByteArrayExtender
+    {
+        private static string DecodeString(this byte[] bytes, Encoding encode)
+        {
+            return encode.GetString(bytes);
+        }
+
+        private static byte[] EncodeString(this string input, Encoding encode)
+        {
+            return encode.GetBytes(input);
+        }
+
+        public static string SafeRencode(this string input, Encoding encode)
+        {
+            return input.EncodeString(encode).DecodeString(encode);
+        }
     }
 }
