@@ -26,6 +26,7 @@ namespace AkaneMail
         public string[] Attaches { get { return Attach.Split(','); } }
 
         // コンストラクタ
+        //TODO 引数減らす
         public Mail(string address, string header, string subject, string body, string attach, string date, string size, string uidl, bool notReadYet, string convert, string cc, string bcc, string priority)
         {
             this.Address = address;
@@ -71,8 +72,10 @@ namespace AkaneMail
 
             if (m.Success) {
                 var bodyCodeName = m.Groups["encode"].Value;
-                var endcoding = codeName.ToLower() == bodyCodeName.ToLower() ? bodyCodeName : codeName;
-                return Encoding.GetEncoding(endcoding);
+                //var encoding = codeName.ToLower() == bodyCodeName.ToLower() ? bodyCodeName : codeName;
+                // 同じことのような…
+                var encoding = codeName;
+                return Encoding.GetEncoding(encoding);
             }
             else {
                 return Encoding.GetEncoding(codeName);
@@ -91,19 +94,14 @@ namespace AkaneMail
 
             htmlBody = htmlBody.SafeRencode(encode);
 
-            // 正規表現の設定(<script>, <noscript>)
-            var re1 = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // 正規表現の設定(<style>)
-            var re2 = new Regex("<style.*?style>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            // 正規表現の設定(すべてのタグ)
-            var re3 = new Regex("<.*?>", RegexOptions.Singleline);
+            var script = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var style = new Regex("<style.*?style>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+            var tags = new Regex("<.*?>", RegexOptions.Singleline);
 
             // タグを取り除く
-            htmlBody = re1.Replace(htmlBody, "");
-            htmlBody = re2.Replace(htmlBody, "");
-            htmlBody = re3.Replace(htmlBody, "");
+            htmlBody = script.Replace(htmlBody, "");
+            htmlBody = style.Replace(htmlBody, "");
+            htmlBody = tags.Replace(htmlBody, "");
 
             // 変換できなかった特殊文字を個別置換
             htmlBody = htmlBody.Replace("&nbsp;", " ");

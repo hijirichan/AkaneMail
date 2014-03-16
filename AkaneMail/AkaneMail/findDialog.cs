@@ -9,20 +9,18 @@ using System.Windows.Forms;
 namespace AkaneMail
 {
     // [検索]用、[置換]用の列挙型(フラグ用)
-    public enum dialogMode
+    public enum DialogMode
     {
         Find,
         Replace
     }
 
-    public partial class findDialog : Form
+    public partial class FindDialog : Form
     {
         // 処理対象となる TextBox のインスタンスを保持
         private TextBox _textBox;
 
-        // [検索]用のダイアログボックスを表示するか、
-        // [置換用のダイアログボックス]を表示するかのフラグ
-        private dialogMode _mode;
+        private DialogMode _mode;
 
         private int findStartIndex = 0;
         private int findCount = 0;
@@ -30,24 +28,24 @@ namespace AkaneMail
 
         #region Constructor // コンストラクタ
 
-        public findDialog()
+        public FindDialog()
         {
             InitializeComponent();
         }
 
-        public findDialog(TextBox txtBox)
+        public FindDialog(TextBox txtBox)
         {
             InitializeComponent();
             _textBox = txtBox;
         }
 
-        public findDialog(dialogMode mode)
+        public FindDialog(DialogMode mode)
         {
             InitializeComponent();
             Mode = mode;
         }
 
-        public findDialog(dialogMode mode, TextBox txtBox)
+        public FindDialog(DialogMode mode, TextBox txtBox)
         {
             InitializeComponent();
             _textBox = txtBox;
@@ -123,7 +121,7 @@ namespace AkaneMail
             if (findPoint == -1) {
                 const string MSGBOX_FINDED_STRING = "ドキュメントの最後まで検索しました。\nもう一度先頭から検索しますか?";
                 const string MSGBOX_REPLACED_STRING = " 件置換しました";
-                string msgboxString = (_mode == dialogMode.Find) ? MSGBOX_FINDED_STRING : findCount.ToString() + MSGBOX_REPLACED_STRING;
+                string msgboxString = (_mode == DialogMode.Find) ? MSGBOX_FINDED_STRING : findCount.ToString() + MSGBOX_REPLACED_STRING;
                 string msbox_NothingWord = "\"" + findString + "\"は見つかりません。";
                 if (findCount != 0) {
                     if (MessageBox.Show(this, msgboxString, dialogTitle,
@@ -194,7 +192,7 @@ namespace AkaneMail
 
         // [検索]用のダイアログボックスを表示するか、
         // [置換用のダイアログボックス]を表示するかのプロパティ
-        public dialogMode Mode
+        public DialogMode Mode
         {
             get { return _mode; }
             set
@@ -202,7 +200,7 @@ namespace AkaneMail
                 const string DIALOGTITLE_FIND = "検索";
                 const string DIALOGTITLE_REPLACE = "置換";
                 _mode = value;
-                if (_mode == dialogMode.Find) {
+                if (_mode == DialogMode.Find) {
                     dialogTitle = DIALOGTITLE_FIND;
                     findCourseGroupBox.Visible = false;
                 }

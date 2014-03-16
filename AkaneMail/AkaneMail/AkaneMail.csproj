@@ -51,11 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountInfo.cs" />
-    <Compile Include="findDialog.cs">
+    <Compile Include="FindDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="findDialog.Designer.cs">
-      <DependentUpon>findDialog.cs</DependentUpon>
+    <Compile Include="FindDialog.Designer.cs">
+      <DependentUpon>FindDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="MailBox.cs" />
     <Compile Include="MailFolder.cs" />
@@ -91,8 +91,8 @@
     <Compile Include="nMail.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="findDialog.resx">
-      <DependentUpon>findDialog.cs</DependentUpon>
+    <EmbeddedResource Include="FindDialog.resx">
+      <DependentUpon>FindDialog.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">

@@ -13,7 +13,7 @@ namespace AkaneMail
     public partial class MailEditorForm : Form
     {
         public string attachName;
-        findDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
+        FindDialog findDlg = null;  // 検索ダイアログのインスタンスを格納
 
         /// <summary>
         /// 親フォームクラス
@@ -395,12 +395,12 @@ namespace AkaneMail
 
         private void menuFind_Click(object sender, EventArgs e)
         {
-            SuppressMultiDialogs(findDlg, dialogMode.Find, textBody);
+            SuppressMultiDialogs(findDlg, DialogMode.Find, textBody);
         }
 
         private void menuReplace_Click(object sender, EventArgs e)
         {
-            SuppressMultiDialogs(findDlg, dialogMode.Replace, textBody); 
+            SuppressMultiDialogs(findDlg, DialogMode.Replace, textBody); 
         }
 
         /// <summary>
@@ -409,10 +409,10 @@ namespace AkaneMail
         /// <param name="dialog">表示させるダイアログのインスタンス。</param>
         /// <param name="dialogMode">表示させるモード。</param>
         /// <param name="textBox">対象のTextBox</param>
-        private void SuppressMultiDialogs(findDialog dialog, dialogMode dialogMode, TextBox textBox)
+        private void SuppressMultiDialogs(FindDialog dialog, DialogMode dialogMode, TextBox textBox)
         {
             if (dialog == null || dialog.IsDisposed) {
-                dialog = new findDialog(dialogMode, textBox);
+                dialog = new FindDialog(dialogMode, textBox);
                 dialog.Show(this);
             }
         }
