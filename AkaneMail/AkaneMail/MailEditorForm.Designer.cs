@@ -422,7 +422,7 @@
             this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.comboPriority, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
@@ -562,7 +562,7 @@
             // 
             // textBody
             // 
-            this.textBody.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.textBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBody.ForeColor = System.Drawing.Color.Yellow;
             this.textBody.ImeMode = System.Windows.Forms.ImeMode.On;
             this.textBody.Location = new System.Drawing.Point(0, 194);
