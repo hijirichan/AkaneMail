@@ -82,10 +82,7 @@ namespace AkaneMail
 
         private void MailEditorForm_Resize(object sender, EventArgs e)
         {
-            textAddress.Width = this.Width - 85;
-            textSubject.Width = this.Width - 85;
-            textCc.Width = this.Width - 85;
-            textBcc.Width = this.Width - 85;
+
         }
 
         private void menuClose_Click(object sender, EventArgs e)

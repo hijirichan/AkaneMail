@@ -67,8 +67,9 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.labelMessage = new System.Windows.Forms.ToolStripStatusLabel();
             this.buttonAttachList = new System.Windows.Forms.ToolStripDropDownButton();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.comboPriority = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.textSubject = new System.Windows.Forms.TextBox();
@@ -77,17 +78,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.textAddress = new System.Windows.Forms.TextBox();
             this.textBcc = new System.Windows.Forms.TextBox();
-            this.comboPriority = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.textBody = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -100,7 +95,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1046, 27);
+            this.menuStrip1.Size = new System.Drawing.Size(1229, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -302,7 +297,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 27);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(1046, 26);
+            this.toolStrip1.Size = new System.Drawing.Size(1229, 26);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -399,14 +394,14 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 681);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 18, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1046, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1229, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // labelMessage
             // 
             this.labelMessage.Name = "labelMessage";
-            this.labelMessage.Size = new System.Drawing.Size(1026, 17);
+            this.labelMessage.Size = new System.Drawing.Size(1209, 17);
             this.labelMessage.Spring = true;
             this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -421,36 +416,15 @@
             this.buttonAttachList.Visible = false;
             this.buttonAttachList.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.buttonAttachList_DropDownItemClicked);
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 53);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer1.Panel1.Controls.Add(this.comboPriority);
-            this.splitContainer1.Panel1.Controls.Add(this.label5);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.textBody);
-            this.splitContainer1.Size = new System.Drawing.Size(1046, 628);
-            this.splitContainer1.SplitterDistance = 112;
-            this.splitContainer1.SplitterWidth = 5;
-            this.splitContainer1.TabIndex = 3;
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.AutoSize = true;
             this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.comboPriority, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.textSubject, 1, 3);
@@ -460,21 +434,47 @@
             this.tableLayoutPanel1.Controls.Add(this.textAddress, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.textBcc, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 53);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowCount = 5;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1046, 112);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1229, 141);
             this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // comboPriority
+            // 
+            this.comboPriority.FormattingEnabled = true;
+            this.comboPriority.Items.AddRange(new object[] {
+            "高い",
+            "普通",
+            "低い"});
+            this.comboPriority.Location = new System.Drawing.Point(154, 115);
+            this.comboPriority.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.comboPriority.Name = "comboPriority";
+            this.comboPriority.Size = new System.Drawing.Size(114, 23);
+            this.comboPriority.TabIndex = 9;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(94, 112);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(52, 29);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "重要度";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.label1.Location = new System.Drawing.Point(4, 0);
+            this.label1.Location = new System.Drawing.Point(109, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 28);
@@ -485,7 +485,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.label3.Location = new System.Drawing.Point(14, 28);
+            this.label3.Location = new System.Drawing.Point(119, 28);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(27, 28);
@@ -494,12 +494,13 @@
             // 
             // textSubject
             // 
-            this.textSubject.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.textSubject.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textSubject.Location = new System.Drawing.Point(49, 87);
+            this.textSubject.Location = new System.Drawing.Point(154, 87);
             this.textSubject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textSubject.Name = "textSubject";
-            this.textSubject.Size = new System.Drawing.Size(993, 22);
+            this.textSubject.Size = new System.Drawing.Size(1071, 22);
             this.textSubject.TabIndex = 7;
             this.textSubject.TextChanged += new System.EventHandler(this.TextEdited);
             // 
@@ -507,7 +508,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.label4.Location = new System.Drawing.Point(4, 56);
+            this.label4.Location = new System.Drawing.Point(109, 56);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(37, 28);
@@ -516,18 +517,20 @@
             // 
             // textCc
             // 
-            this.textCc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textCc.Location = new System.Drawing.Point(49, 31);
+            this.textCc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textCc.Location = new System.Drawing.Point(154, 31);
             this.textCc.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textCc.Name = "textCc";
-            this.textCc.Size = new System.Drawing.Size(993, 22);
+            this.textCc.Size = new System.Drawing.Size(1071, 22);
             this.textCc.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.label2.Location = new System.Drawing.Point(4, 84);
+            this.label2.Location = new System.Drawing.Point(109, 84);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 28);
@@ -536,56 +539,38 @@
             // 
             // textAddress
             // 
-            this.textAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textAddress.Location = new System.Drawing.Point(49, 3);
+            this.textAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textAddress.Location = new System.Drawing.Point(154, 3);
             this.textAddress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textAddress.Name = "textAddress";
-            this.textAddress.Size = new System.Drawing.Size(993, 22);
+            this.textAddress.Size = new System.Drawing.Size(1071, 22);
             this.textAddress.TabIndex = 1;
             this.textAddress.TextChanged += new System.EventHandler(this.TextEdited);
             // 
             // textBcc
             // 
-            this.textBcc.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBcc.Location = new System.Drawing.Point(49, 59);
+            this.textBcc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBcc.Location = new System.Drawing.Point(154, 59);
             this.textBcc.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBcc.Name = "textBcc";
-            this.textBcc.Size = new System.Drawing.Size(993, 22);
+            this.textBcc.Size = new System.Drawing.Size(1071, 22);
             this.textBcc.TabIndex = 5;
-            // 
-            // comboPriority
-            // 
-            this.comboPriority.FormattingEnabled = true;
-            this.comboPriority.Items.AddRange(new object[] {
-            "高い",
-            "普通",
-            "低い"});
-            this.comboPriority.Location = new System.Drawing.Point(78, 140);
-            this.comboPriority.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.comboPriority.Name = "comboPriority";
-            this.comboPriority.Size = new System.Drawing.Size(114, 23);
-            this.comboPriority.TabIndex = 9;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 143);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(52, 15);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "重要度";
             // 
             // textBody
             // 
-            this.textBody.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBody.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.textBody.ForeColor = System.Drawing.Color.Yellow;
             this.textBody.ImeMode = System.Windows.Forms.ImeMode.On;
-            this.textBody.Location = new System.Drawing.Point(0, 0);
+            this.textBody.Location = new System.Drawing.Point(0, 194);
             this.textBody.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBody.Multiline = true;
             this.textBody.Name = "textBody";
             this.textBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBody.Size = new System.Drawing.Size(1046, 511);
+            this.textBody.Size = new System.Drawing.Size(1229, 487);
             this.textBody.TabIndex = 0;
             this.textBody.TextChanged += new System.EventHandler(this.TextEdited);
             // 
@@ -598,8 +583,9 @@
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1046, 703);
-            this.Controls.Add(this.splitContainer1);
+            this.ClientSize = new System.Drawing.Size(1229, 703);
+            this.Controls.Add(this.textBody);
+            this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -613,19 +599,12 @@
             this.Load += new System.EventHandler(this.MailEditorForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MailEditorForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MailEditorForm_DragEnter);
-            this.Resize += new System.EventHandler(this.MailEditorForm_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel1.PerformLayout();
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
@@ -666,7 +645,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton buttonHelp;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         public System.Windows.Forms.TextBox textAddress;
         private System.Windows.Forms.Label label1;
         public System.Windows.Forms.TextBox textBody;
