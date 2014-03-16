@@ -312,7 +312,7 @@ namespace AkaneMail
             // 未送信メールは作成日時を格納するようにする(未送信という文字列だと日付ソートでエラーになる)
             string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
             var priority = mailPriority[comboPriority.Text];
- 
+
             // 編集フラグがOffのとき
             if (!IsEdit) {
                 // 送信メールサイズを取得する

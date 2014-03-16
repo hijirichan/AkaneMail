@@ -66,7 +66,7 @@ namespace AkaneMail
         private static Encoding DetectEncoding(string htmlBody, string mailHeader)
         {
             var codeName = ParseEncoding(mailHeader);
-
+       
             var regEnc = new Regex("<meta.*?charset=(?<encode>.*?)\".*?>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             var m = regEnc.Match(htmlBody);
 

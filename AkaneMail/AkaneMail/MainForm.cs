@@ -658,11 +658,11 @@ namespace AkaneMail
                         var text = BreakLine(attach.Body);
                         attachMailBody = text;
                         this.textBody.Text = text;
-                    }
-                    else {
+                        }
+                        else {
                         this.textBody.Text = mail.Body;
+                        }
                     }
-                }
                 if (attach.FileNameList != null) {
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
@@ -671,9 +671,9 @@ namespace AkaneMail
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
                         buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.FileNameList).ToArray());
+                        }
                     }
                 }
-            }
             else {
                 // 添付ファイルが存在しない通常のメールまたは
                 // 送信済みメールのときは本文をテキストボックスに表示する
@@ -792,7 +792,7 @@ namespace AkaneMail
 
                 // GetStringでバイト型配列をUTF-8の配列にエンコードする
                 return Encoding.UTF8.GetString(bs);
-            }
+                }
             else {
                 // テキストボックス .に出力する文字コードをJISに変更する
                 byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
@@ -868,7 +868,7 @@ namespace AkaneMail
                 NewMailForm.buttonAttachList.Visible = true;
                 // 添付ファイルの数だけメニューを追加する
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
-            }
+                }
             else if (this.buttonAttachList.Visible) {
                 // 受信メールで添付ファイルがあるとき
                 // 添付リストメニューを表示
@@ -878,7 +878,7 @@ namespace AkaneMail
                 var attaches = this.buttonAttachList.DropDownItems.Cast<ToolStripItem>()
                     .Select(i => Application.StartupPath + @"\tmp\" + i.Text);
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attaches).ToArray());
-            }
+                    }
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -890,7 +890,7 @@ namespace AkaneMail
             var to = "";
             var sentAt = "";
             var subject = "";
-             
+
             var atch = new nMail.Attachment();
 
             // メールヘッダが存在するとき
@@ -944,7 +944,7 @@ namespace AkaneMail
         {
             // 1番目のカラムが宛先のときは編集画面を表示する
             MailEditorForm EditMailForm = new MailEditorForm();
-            
+
             // 親フォームをForm1に設定する
             EditMailForm.MainForm = mainForm;
 
