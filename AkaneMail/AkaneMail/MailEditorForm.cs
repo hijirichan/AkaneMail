@@ -294,9 +294,6 @@ namespace AkaneMail
 
         private void menuSendMailBox_Click(object sender, EventArgs e)
         {
-            string size = "";
-            string priority = "";
-
             // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
                 if (textAddress.Text == "") {
@@ -316,7 +313,7 @@ namespace AkaneMail
             }
 
             // 優先度の設定をする
-            priority = mailPriority[comboPriority.Text];
+            var priority = mailPriority[comboPriority.Text];
 
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if (!textBody.Text.EndsWith("\r\n")) {
@@ -333,7 +330,7 @@ namespace AkaneMail
             // 編集フラグがOffのとき
             if (!IsEdit) {
                 // 送信メールサイズを取得する
-                size = GetMailSize();
+                var size = GetMailSize();
 
                 // Form1からのコレクションに追加してリスト更新する
                 var newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attachName, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
