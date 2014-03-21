@@ -82,7 +82,10 @@ namespace AkaneMail
 
         private void MailEditorForm_Resize(object sender, EventArgs e)
         {
-
+            textAddress.Width = this.Width - 85;
+            textSubject.Width = this.Width - 85;
+            textCc.Width = this.Width - 85;
+            textBcc.Width = this.Width - 85;
         }
 
         private void menuClose_Click(object sender, EventArgs e)
@@ -107,6 +110,9 @@ namespace AkaneMail
 
         private void menuSendMail_Click(object sender, EventArgs e)
         {
+            string size = "";
+            string priority = "";
+
             // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
                 if (textAddress.Text == "") {
@@ -125,6 +131,9 @@ namespace AkaneMail
                 textSubject.Text = "(無題)";
             }
 
+            // 優先度の設定をする
+            priority = mailPriority[comboPriority.Text];
+
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
@@ -134,8 +143,8 @@ namespace AkaneMail
 
             attachName = GetAttaches();
 
-            var priority = mailPriority[comboPriority.Text];
-            var size = GetMailSize();
+            // 送信メールサイズを取得する
+            size = GetMailSize();
 
             // 直接送信
             MainForm.DirectSendMail(this.textAddress.Text, this.textCc.Text, this.textBcc.Text, this.textSubject.Text, this.textBody.Text, attachName, priority);
@@ -200,12 +209,16 @@ namespace AkaneMail
 
         private void menuSetAttachFile_Click(object sender, EventArgs e)
         {
+            Icon appIcon;
+
+            // ファイルを開くダイアログを表示する
             if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                 if (openFileDialog1.FileName != "") {
                     buttonAttachList.Visible = true;
                     labelMessage.Text = openFileDialog1.FileName + "をメールに添付しました。";
-                    var appIcon = Icon.ExtractAssociatedIcon(openFileDialog1.FileName);
+                    appIcon = System.Drawing.Icon.ExtractAssociatedIcon(openFileDialog1.FileName);
                     buttonAttachList.DropDownItems.Add(openFileDialog1.FileName, appIcon.ToBitmap());
+                    // isDirtyをtrueにする
                     IsDirty = true;
                 }
             }
@@ -281,7 +294,6 @@ namespace AkaneMail
 
         private void menuSendMailBox_Click(object sender, EventArgs e)
         {
-
             // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
                 if (textAddress.Text == "") {
@@ -300,6 +312,9 @@ namespace AkaneMail
                 textSubject.Text = "(無題)";
             }
 
+            // 優先度の設定をする
+            var priority = mailPriority[comboPriority.Text];
+
             // 文面の末尾が\r\nでないときは\r\nを付加する
             if (!textBody.Text.EndsWith("\r\n")) {
                 textBody.Text += "\r\n";
@@ -311,8 +326,7 @@ namespace AkaneMail
 
             // 未送信メールは作成日時を格納するようにする(未送信という文字列だと日付ソートでエラーになる)
             string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
-            var priority = mailPriority[comboPriority.Text];
-
+ 
             // 編集フラグがOffのとき
             if (!IsEdit) {
                 // 送信メールサイズを取得する
@@ -362,6 +376,7 @@ namespace AkaneMail
 
         private void MailEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // isDirtyフラグがtrueのとき
             if (IsDirty) {
                 string message = "", title = "";
                 if (IsEdit) {
@@ -373,9 +388,11 @@ namespace AkaneMail
                     title = "新規作成";
                 }
                 if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No) {
+                    // ウィンドウを閉じるのをキャンセル
                     e.Cancel = true;
                 }
             }
+            // Appliction.Idleを削除する
             Application.Idle -= new EventHandler(Application_Idle);
         }
 
@@ -436,6 +453,7 @@ namespace AkaneMail
                     this.menuDelete.Enabled = isctrlSelected;
                 });
 
+            // クリップボードの内容確認
             this.menuPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
         }
 

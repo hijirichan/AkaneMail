@@ -54,13 +54,7 @@ namespace AkaneMail
         // 環境保存用のクラスインスタンス
         private MailSettings MailSetting;
 
-        // デリゲートの宣言
-        delegate void ProgressMailInitDlg(int value);
-        delegate void ProgressMailUpdateDlg(int value);
-        delegate void ProgressMailDisableDlg();
-        delegate void EnableButtonDlg(bool enable);
-        delegate void UpdateViewDlg(int flag);
-        delegate void FlashWindowOnDlg();
+        private TaskScheduler UITaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
         // 点滅用 Win32API のインポート
         [DllImport("user32.dll")]
@@ -293,7 +287,7 @@ namespace AkaneMail
         }
 
         private static object lockobj = new object();
-
+        #region UI更新
         /// <summary>
         /// メール送信・受信用プログレスバーの初期化
         /// </summary>
@@ -397,6 +391,17 @@ namespace AkaneMail
                 }
             }
         }
+
+        private void Invoke(Action invokeAction)
+        {
+            this.Invoke(invokeAction);
+        }
+
+        private void Invoke<T>(Action<T> action, T param)
+        {
+            this.Invoke(action, param);
+        }
+        #endregion
 
         /// <summary>
         /// 設定ファイルからアプリケーション設定を読み出す
@@ -1117,12 +1122,6 @@ namespace AkaneMail
         {
             int mailCount = 0;              // 未受信メール件数
 
-            ProgressMailInitDlg progressMailInit = ProgressMailInit;
-            ProgressMailUpdateDlg progressMailUpdate = ProgressMailUpdate;
-            UpdateViewDlg updateView = UpdateView;
-            FlashWindowOnDlg flashWindow = FlashWindowOn;
-            EnableButtonDlg enableButton = EnableButton;
-
             try {
                 // ステータスバーに状況表示する
                 labelMessage.Text = "メール受信中";
@@ -1171,7 +1170,7 @@ namespace AkaneMail
                         labelMessage.Text = "新着のメッセージはありませんでした。";
 
                         // メール受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, true);
+                        Invoke(EnableButton, true);
                         return;
                     }
 
@@ -1182,17 +1181,17 @@ namespace AkaneMail
                         labelMessage.Text = "新着のメッセージはありませんでした。";
 
                         // プログレスバーを非表示に戻す
-                        Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                        Invoke(ProgressMailDisable);
 
                         // メール受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, true);
+                        Invoke(EnableButton, true);
 
                         return;
                     }
 
                     // プログレスバーを表示して最大値を未受信メール件数に設定する
                     int mailCountMax = pop.Count - receivedCount;
-                    Invoke(progressMailInit, mailCountMax);
+                    Invoke(ProgressMailInit, mailCountMax);
 
                     // 未受信のメールを取得するためカウントを1増加させる
                     receivedCount++;
@@ -1224,7 +1223,7 @@ namespace AkaneMail
                         }
 
                         // メールの受信件数を更新する
-                        Invoke(progressMailUpdate, mailCount);
+                        Invoke(ProgressMailUpdate, mailCount);
 
                         // スレッドを1秒間待機させる
                         System.Threading.Thread.Sleep(1000);
@@ -1232,10 +1231,10 @@ namespace AkaneMail
                 }
 
                 // プログレスバーを非表示に戻す
-                Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                Invoke(ProgressMailDisable);
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 // 未受信メールが1件以上の場合
                 if (mailCount >= 1) {
@@ -1254,7 +1253,7 @@ namespace AkaneMail
                     }
                     else {
                         // 画面をフラッシュさせる
-                        Invoke(flashWindow);
+                        Invoke(FlashWindow, this);
 
                         // ステータスバーに状況表示する
                         labelMessage.Text = mailCount + "件の新着メールを受信しました。";
@@ -1268,7 +1267,7 @@ namespace AkaneMail
                     labelMessage.Text = "新着のメッセージはありませんでした。";
 
                     // メール受信のメニューとツールボタンを有効化する
-                    Invoke(enableButton, true);
+                    Invoke(EnableButton, true);
 
                     return;
                 }
@@ -1278,7 +1277,7 @@ namespace AkaneMail
                 labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 return;
             }
@@ -1287,13 +1286,13 @@ namespace AkaneMail
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
 
                 // メール受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 return;
             }
 
             // TreeViewとListViewの更新を行う
-            Invoke(updateView, 0);
+            Invoke(UpdateView, 0);
 
         }
 
@@ -1302,21 +1301,13 @@ namespace AkaneMail
         /// </summary>
         private void SendMail()
         {
-            ProgressMailInitDlg progressMailInit = ProgressMailInit;
-            ProgressMailUpdateDlg progressMailUpdate = ProgressMailUpdate;
-            UpdateViewDlg updateView = UpdateView;
-            EnableButtonDlg enableButton = EnableButton;
-
-            int max_no = 0;
-            int send_no = 0;
 
             // 送信可能なメールの数を確認する
-            max_no = mailBox.Send.Count(m => m.NotReadYet);
+            var max_no = mailBox.Send.Count(m => m.NotReadYet);
 
             // 送信可能なメールが存在しないとき
             if (max_no == 0) {
-                // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
                 return;
             }
 
@@ -1325,30 +1316,20 @@ namespace AkaneMail
                 labelMessage.Text = "メール送信中";
 
                 // プログレスバーを表示して最大値を未送信メール件数に設定する
-                Invoke(progressMailInit, max_no);
+                Invoke(ProgressMailInit, max_no);
 
                 // POP before SMTPが有効の場合
                 if (AccountInfo.popBeforeSMTP) {
                     try {
-                        // POP3のセッションを作成する
                         using (var pop = new nMail.Pop3()) {
-                            // POP3への接続タイムアウト設定をする
                             Options.EnableConnectTimeout();
 
-                            // APOPを使用するときに使うフラグ
                             pop.APop = AccountInfo.apopFlag;
 
-                            // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
                             if (AccountInfo.popOverSSL) {
                                 pop.SSL = nMail.Pop3.SSL3;
-                                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
                             }
-                            else {
-                                // POP3へ接続する
-                                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                            }
-
-                            // POP3への認証処理を行う
+                            pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
                             pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
                         }
                     }
@@ -1357,7 +1338,7 @@ namespace AkaneMail
                         labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
                         // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, true);
+                        Invoke(EnableButton, true);
 
                         return;
                     }
@@ -1366,7 +1347,7 @@ namespace AkaneMail
                         labelMessage.Text = "エラーメッセージ:" + exp.Message;
 
                         // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(enableButton, true);
+                        Invoke(EnableButton, true);
 
                         return;
                     }
@@ -1384,7 +1365,7 @@ namespace AkaneMail
                         // SMTP認証を行う
                         smtp.Authenticate(AccountInfo.userName, AccountInfo.passWord, Smtp.AuthPlain | Smtp.AuthCramMd5);
                     }
-
+                    var send_no = 0;
                     foreach (var mail in mailBox.Send) {
                         if (mail.NotReadYet) {
                             // CCが存在するとき
@@ -1421,7 +1402,7 @@ namespace AkaneMail
 
                             // メールの送信件数を更新する
                             send_no++;
-                            Invoke(progressMailUpdate, send_no);
+                            Invoke(ProgressMailUpdate, send_no);
 
                             // スレッドを1秒間待機させる
                             System.Threading.Thread.Sleep(1000);
@@ -1430,10 +1411,10 @@ namespace AkaneMail
                 }
 
                 // プログレスバーを非表示に戻す
-                Invoke(new ProgressMailDisableDlg(ProgressMailDisable));
+                Invoke(ProgressMailDisable);
 
                 // ボタンとメニューを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 // ステータスバーに状況表示する
                 labelMessage.Text = "メール送信完了";
@@ -1443,7 +1424,7 @@ namespace AkaneMail
                 labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
                 // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 return;
             }
@@ -1452,13 +1433,13 @@ namespace AkaneMail
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
 
                 // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(EnableButton, true);
 
                 return;
             }
 
             // TreeViewとListViewの更新を行う
-            Invoke(updateView, 1);
+            Invoke(UpdateView, 1);
 
         }
 
