@@ -54,6 +54,8 @@ namespace AkaneMail
         // 環境保存用のクラスインスタンス
         private MailSettings MailSetting;
 
+        private TaskScheduler UITaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
         // デリゲートの宣言
         delegate void ProgressMailInitDlg(int value);
         delegate void ProgressMailUpdateDlg(int value);
@@ -293,7 +295,7 @@ namespace AkaneMail
         }
 
         private static object lockobj = new object();
-
+        #region UI更新
         /// <summary>
         /// メール送信・受信用プログレスバーの初期化
         /// </summary>
@@ -397,6 +399,12 @@ namespace AkaneMail
                 }
             }
         }
+
+        private void Invoke(Action invokeAction)
+        {
+            this.Invoke(invokeAction);
+        }
+        #endregion
 
         /// <summary>
         /// 設定ファイルからアプリケーション設定を読み出す
@@ -1316,7 +1324,7 @@ namespace AkaneMail
             // 送信可能なメールが存在しないとき
             if (max_no == 0) {
                 // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(enableButton, true);
+                Invoke(() => EnableButton(true));
                 return;
             }
 
