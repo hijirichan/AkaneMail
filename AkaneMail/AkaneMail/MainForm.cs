@@ -54,8 +54,6 @@ namespace AkaneMail
         // 環境保存用のクラスインスタンス
         private MailSettings MailSetting;
 
-        private TaskScheduler UITaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
         // 点滅用 Win32API のインポート
         [DllImport("user32.dll")]
         private static extern bool FlashWindow(IntPtr hwnd, bool bInvert);
