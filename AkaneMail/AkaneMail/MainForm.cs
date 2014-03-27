@@ -392,12 +392,12 @@ namespace AkaneMail
 
         private void Invoke(Action invokeAction)
         {
-            this.Invoke(invokeAction);
+            this.Invoke((Delegate)invokeAction);
         }
 
         private void Invoke<T>(Action<T> action, T param)
         {
-            this.Invoke(action, param);
+            this.Invoke((Delegate)action, param);
         }
         #endregion
 
@@ -673,7 +673,7 @@ namespace AkaneMail
                         attachMenuFlag = true;
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
-                        buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.FileNameList).ToArray());
+                        buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.Path + "\\", attach.FileNameList).ToArray());
                         }
                     }
                 }
@@ -752,25 +752,31 @@ namespace AkaneMail
             return text;
         }
 
-        private IEnumerable<ToolStripItem> GenerateMenuItem(IEnumerable<string> attaches, bool enableWhenRemoved = false)
+        private IEnumerable<ToolStripItem> GenerateMenuItem(string rootPath, IEnumerable<string> attaches, bool enableWhenRemoved = false)
         {
-
-            foreach (var attachFile in attaches) {
-                if (File.Exists(attachFile)) {
-                    yield return new ToolStripMenuItem 
-                    { 
+            foreach (var attachFile in attaches)
+            {
+                if (File.Exists(rootPath + attachFile))
+                {
+                    yield return new ToolStripMenuItem
+                    {
                         Text = attachFile,
-                        Image = System.Drawing.Icon.ExtractAssociatedIcon(attachFile).ToBitmap() 
+                        Image = System.Drawing.Icon.ExtractAssociatedIcon(rootPath+attachFile).ToBitmap()
                     };
                 }
-                else {
-                    yield return new ToolStripMenuItem 
+                else
+                {
+                    yield return new ToolStripMenuItem
                     {
                         Text = attachFile + "は削除されています。",
                         Enabled = enableWhenRemoved
                     };
                 }
             }
+        }
+        private IEnumerable<ToolStripItem> GenerateMenuItem(IEnumerable<string> attaches, bool enableWhenRemoved = false)
+        {
+            return GenerateMenuItem("", attaches, enableWhenRemoved);
         }
 
         private string EncodeBody(Mail mail, nMail.Attachment attach)
@@ -1113,9 +1119,21 @@ namespace AkaneMail
             }
         }
 
+        private IEnumerable<string> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
+        {
+            foreach (var i in Enumerable.Range(1, pop.Count))
+            {
+                pop.GetUidl(i);
+                var uidl = pop.Uidl;
+                if (locals.Any(m => m.Uidl == uidl))
+                {
+                    yield return uidl;
+                }
+            }
+        }
+
         /// <summary>
         /// POP3サーバからメールを受信する
-        /// </summary>
         private void RecieveMail()
         {
             int mailCount = 0;              // 未受信メール件数
@@ -1124,7 +1142,7 @@ namespace AkaneMail
                 // ステータスバーに状況表示する
                 labelMessage.Text = "メール受信中";
 
-                // POP3のセッションを作成する
+                // POP3のセッションを作成する;
                 using (var pop = new nMail.Pop3()) {
                     // POP3への接続タイムアウト設定をする
                     Options.EnableConnectTimeout();
@@ -1149,12 +1167,8 @@ namespace AkaneMail
                     // 未受信のメールが何件あるかチェックする
                     var countMail = new Task<int>(() =>
                     {
-                        var uidls = Enumerable.Range(1, pop.Count).Select(i => { pop.GetUidl(i); return pop.Uidl; });
                         var locals = mailBox.Receive.Union(mailBox.Trash);
-                        var unreadMails = from u in uidls
-                                          join l in locals on u equals l.Uidl
-                                          select l;
-                        return unreadMails.Count();
+                        return QueryUnreadMailUids(pop, locals).Count();
                     });
                     countMail.Start();
 
@@ -2130,7 +2144,7 @@ namespace AkaneMail
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             // Appliction.Idleを削除する
-            Application.Idle -= new EventHandler(Application_Idle);
+            Application.Idle -= Application_Idle;
 
             // 致命的なnMail.dllエラーがないとき
             if (!nMailError) {
