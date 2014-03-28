@@ -312,17 +312,17 @@
             this.progressMail,
             this.buttonAttachList,
             this.labelDate});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 674);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 670);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(1045, 28);
+            this.statusStrip1.Size = new System.Drawing.Size(1045, 32);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // labelMessage
             // 
             this.labelMessage.Name = "labelMessage";
-            this.labelMessage.Size = new System.Drawing.Size(940, 23);
+            this.labelMessage.Size = new System.Drawing.Size(737, 27);
             this.labelMessage.Spring = true;
             this.labelMessage.Text = "現在のステータス";
             this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -339,7 +339,7 @@
             this.buttonAttachList.Image = ((System.Drawing.Image)(resources.GetObject("buttonAttachList.Image")));
             this.buttonAttachList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAttachList.Name = "buttonAttachList";
-            this.buttonAttachList.Size = new System.Drawing.Size(29, 26);
+            this.buttonAttachList.Size = new System.Drawing.Size(29, 30);
             this.buttonAttachList.ToolTipText = "添付ファイル";
             this.buttonAttachList.Visible = false;
             this.buttonAttachList.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.buttonAttachList_DropDownItemClicked);
@@ -348,7 +348,7 @@
             // 
             this.labelDate.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
             this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(85, 23);
+            this.labelDate.Size = new System.Drawing.Size(85, 27);
             this.labelDate.Text = "現在の時刻";
             // 
             // toolStrip1
@@ -462,7 +462,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1045, 621);
+            this.splitContainer1.Size = new System.Drawing.Size(1045, 617);
             this.splitContainer1.SplitterDistance = 210;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
@@ -497,7 +497,7 @@
             this.treeMailBoxFolder.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode4});
             this.treeMailBoxFolder.SelectedImageIndex = 0;
-            this.treeMailBoxFolder.Size = new System.Drawing.Size(210, 621);
+            this.treeMailBoxFolder.Size = new System.Drawing.Size(210, 617);
             this.treeMailBoxFolder.TabIndex = 0;
             this.treeMailBoxFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMailBoxFolder_AfterSelect);
             // 
@@ -541,8 +541,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBody);
             this.splitContainer2.Panel2.Controls.Add(this.browserBody);
-            this.splitContainer2.Size = new System.Drawing.Size(830, 621);
-            this.splitContainer2.SplitterDistance = 233;
+            this.splitContainer2.Size = new System.Drawing.Size(830, 617);
+            this.splitContainer2.SplitterDistance = 232;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -560,7 +560,7 @@
             this.listMail.Location = new System.Drawing.Point(0, 0);
             this.listMail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listMail.Name = "listMail";
-            this.listMail.Size = new System.Drawing.Size(830, 233);
+            this.listMail.Size = new System.Drawing.Size(830, 232);
             this.listMail.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listMail.TabIndex = 1;
             this.listMail.UseCompatibleStateImageBehavior = false;
@@ -670,7 +670,7 @@
             this.textBody.Multiline = true;
             this.textBody.Name = "textBody";
             this.textBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBody.Size = new System.Drawing.Size(830, 383);
+            this.textBody.Size = new System.Drawing.Size(830, 380);
             this.textBody.TabIndex = 2;
             // 
             // browserBody
@@ -682,7 +682,7 @@
             this.browserBody.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.browserBody.MinimumSize = new System.Drawing.Size(27, 25);
             this.browserBody.Name = "browserBody";
-            this.browserBody.Size = new System.Drawing.Size(830, 383);
+            this.browserBody.Size = new System.Drawing.Size(830, 380);
             this.browserBody.TabIndex = 3;
             this.browserBody.TabStop = false;
             this.browserBody.Visible = false;
