@@ -62,11 +62,13 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.updownGetmailInterval)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
+            this.flowLayoutPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -127,29 +129,32 @@
             // textUserAddress
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textUserAddress, 2);
+            this.textUserAddress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textUserAddress.Location = new System.Drawing.Point(199, 34);
             this.textUserAddress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textUserAddress.Name = "textUserAddress";
-            this.textUserAddress.Size = new System.Drawing.Size(384, 22);
+            this.textUserAddress.Size = new System.Drawing.Size(387, 22);
             this.textUserAddress.TabIndex = 3;
             // 
             // textUserName
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textUserName, 2);
+            this.textUserName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textUserName.Location = new System.Drawing.Point(199, 64);
             this.textUserName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textUserName.Name = "textUserName";
-            this.textUserName.Size = new System.Drawing.Size(384, 22);
+            this.textUserName.Size = new System.Drawing.Size(387, 22);
             this.textUserName.TabIndex = 5;
             // 
             // textPassword
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textPassword, 2);
+            this.textPassword.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textPassword.Location = new System.Drawing.Point(199, 94);
             this.textPassword.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textPassword.Name = "textPassword";
             this.textPassword.PasswordChar = '*';
-            this.textPassword.Size = new System.Drawing.Size(384, 22);
+            this.textPassword.Size = new System.Drawing.Size(387, 22);
             this.textPassword.TabIndex = 7;
             // 
             // textSmtpServer
@@ -162,6 +167,7 @@
             // 
             // textPopServer
             // 
+            this.textPopServer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textPopServer.Location = new System.Drawing.Point(199, 124);
             this.textPopServer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textPopServer.Name = "textPopServer";
@@ -171,7 +177,7 @@
             // checkApop
             // 
             this.checkApop.AutoSize = true;
-            this.checkApop.Location = new System.Drawing.Point(4, 4);
+            this.checkApop.Location = new System.Drawing.Point(124, 8);
             this.checkApop.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkApop.Name = "checkApop";
             this.checkApop.Size = new System.Drawing.Size(144, 19);
@@ -182,7 +188,7 @@
             // checkDeleteMail
             // 
             this.checkDeleteMail.AutoSize = true;
-            this.checkDeleteMail.Location = new System.Drawing.Point(4, 31);
+            this.checkDeleteMail.Location = new System.Drawing.Point(124, 35);
             this.checkDeleteMail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkDeleteMail.Name = "checkDeleteMail";
             this.checkDeleteMail.Size = new System.Drawing.Size(219, 19);
@@ -193,7 +199,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(391, 458);
+            this.buttonOK.Location = new System.Drawing.Point(378, 4);
             this.buttonOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(100, 29);
@@ -205,7 +211,7 @@
             // buttonCencel
             // 
             this.buttonCencel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCencel.Location = new System.Drawing.Point(499, 458);
+            this.buttonCencel.Location = new System.Drawing.Point(486, 4);
             this.buttonCencel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.buttonCencel.Name = "buttonCencel";
             this.buttonCencel.Size = new System.Drawing.Size(100, 29);
@@ -217,7 +223,7 @@
             // checkPopBeforeSmtp
             // 
             this.checkPopBeforeSmtp.AutoSize = true;
-            this.checkPopBeforeSmtp.Location = new System.Drawing.Point(4, 58);
+            this.checkPopBeforeSmtp.Location = new System.Drawing.Point(124, 62);
             this.checkPopBeforeSmtp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkPopBeforeSmtp.Name = "checkPopBeforeSmtp";
             this.checkPopBeforeSmtp.Size = new System.Drawing.Size(224, 19);
@@ -227,7 +233,8 @@
             // 
             // textSmtpPortNo
             // 
-            this.textSmtpPortNo.Location = new System.Drawing.Point(527, 154);
+            this.textSmtpPortNo.Dock = System.Windows.Forms.DockStyle.Right;
+            this.textSmtpPortNo.Location = new System.Drawing.Point(530, 154);
             this.textSmtpPortNo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textSmtpPortNo.Name = "textSmtpPortNo";
             this.textSmtpPortNo.Size = new System.Drawing.Size(56, 22);
@@ -235,7 +242,8 @@
             // 
             // textPopPortNo
             // 
-            this.textPopPortNo.Location = new System.Drawing.Point(527, 124);
+            this.textPopPortNo.Dock = System.Windows.Forms.DockStyle.Right;
+            this.textPopPortNo.Location = new System.Drawing.Point(530, 124);
             this.textPopPortNo.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textPopPortNo.Name = "textPopPortNo";
             this.textPopPortNo.Size = new System.Drawing.Size(56, 22);
@@ -244,10 +252,11 @@
             // textFromName
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.textFromName, 2);
+            this.textFromName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textFromName.Location = new System.Drawing.Point(199, 4);
             this.textFromName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textFromName.Name = "textFromName";
-            this.textFromName.Size = new System.Drawing.Size(384, 22);
+            this.textFromName.Size = new System.Drawing.Size(387, 22);
             this.textFromName.TabIndex = 1;
             // 
             // label6
@@ -354,7 +363,7 @@
             // checkBrowser
             // 
             this.checkBrowser.AutoSize = true;
-            this.checkBrowser.Location = new System.Drawing.Point(4, 194);
+            this.checkBrowser.Location = new System.Drawing.Point(124, 198);
             this.checkBrowser.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkBrowser.Name = "checkBrowser";
             this.checkBrowser.Size = new System.Drawing.Size(269, 19);
@@ -366,7 +375,7 @@
             // checkMinimizeTaskTray
             // 
             this.checkMinimizeTaskTray.AutoSize = true;
-            this.checkMinimizeTaskTray.Location = new System.Drawing.Point(4, 221);
+            this.checkMinimizeTaskTray.Location = new System.Drawing.Point(124, 225);
             this.checkMinimizeTaskTray.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkMinimizeTaskTray.Name = "checkMinimizeTaskTray";
             this.checkMinimizeTaskTray.Size = new System.Drawing.Size(231, 19);
@@ -377,7 +386,7 @@
             // checkPop3OverSSL
             // 
             this.checkPop3OverSSL.AutoSize = true;
-            this.checkPop3OverSSL.Location = new System.Drawing.Point(4, 85);
+            this.checkPop3OverSSL.Location = new System.Drawing.Point(124, 89);
             this.checkPop3OverSSL.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkPop3OverSSL.Name = "checkPop3OverSSL";
             this.checkPop3OverSSL.Size = new System.Drawing.Size(241, 19);
@@ -388,7 +397,7 @@
             // checkSmtpAuth
             // 
             this.checkSmtpAuth.AutoSize = true;
-            this.checkSmtpAuth.Location = new System.Drawing.Point(4, 112);
+            this.checkSmtpAuth.Location = new System.Drawing.Point(124, 116);
             this.checkSmtpAuth.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.checkSmtpAuth.Name = "checkSmtpAuth";
             this.checkSmtpAuth.Size = new System.Drawing.Size(174, 19);
@@ -418,7 +427,9 @@
             this.tableLayoutPanel1.Controls.Add(this.textSmtpPortNo, 2, 5);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 5);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -427,7 +438,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(587, 180);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(590, 180);
             this.tableLayoutPanel1.TabIndex = 29;
             // 
             // flowLayoutPanel1
@@ -437,7 +448,7 @@
             this.flowLayoutPanel1.Controls.Add(this.checkAutoGetMail);
             this.flowLayoutPanel1.Controls.Add(this.updownGetmailInterval);
             this.flowLayoutPanel1.Controls.Add(this.labelIntervalRecieve);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 135);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(120, 139);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(355, 27);
@@ -450,7 +461,7 @@
             this.flowLayoutPanel2.Controls.Add(this.checkSoundPlay);
             this.flowLayoutPanel2.Controls.Add(this.textSoundFileName);
             this.flowLayoutPanel2.Controls.Add(this.buttonBrowse);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 162);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(120, 166);
             this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(467, 28);
@@ -469,26 +480,43 @@
             this.flowLayoutPanel3.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel3.Controls.Add(this.checkBrowser);
             this.flowLayoutPanel3.Controls.Add(this.checkMinimizeTaskTray);
+            this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel3.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(132, 198);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(12, 192);
+            this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(12);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(467, 244);
+            this.flowLayoutPanel3.Padding = new System.Windows.Forms.Padding(120, 4, 0, 0);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(590, 296);
             this.flowLayoutPanel3.TabIndex = 32;
+            // 
+            // flowLayoutPanel4
+            // 
+            this.flowLayoutPanel4.AutoSize = true;
+            this.flowLayoutPanel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel4.Controls.Add(this.buttonCencel);
+            this.flowLayoutPanel4.Controls.Add(this.buttonOK);
+            this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.flowLayoutPanel4.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(12, 451);
+            this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(590, 37);
+            this.flowLayoutPanel4.TabIndex = 33;
             // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(614, 500);
+            this.Controls.Add(this.flowLayoutPanel4);
             this.Controls.Add(this.flowLayoutPanel3);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.buttonCencel);
-            this.Controls.Add(this.buttonOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SettingForm";
+            this.Padding = new System.Windows.Forms.Padding(12);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "環境設定";
@@ -502,6 +530,7 @@
             this.flowLayoutPanel2.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.flowLayoutPanel3.PerformLayout();
+            this.flowLayoutPanel4.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -543,5 +572,6 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel4;
     }
 }
