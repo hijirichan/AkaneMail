@@ -28,39 +28,48 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labelProgress = new System.Windows.Forms.Label();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
+            // labelProgress
             // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Location = new System.Drawing.Point(-8, 275);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(486, 12);
-            this.label1.TabIndex = 0;
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.labelProgress.BackColor = System.Drawing.Color.Transparent;
+            this.labelProgress.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelProgress.Location = new System.Drawing.Point(0, 283);
+            this.labelProgress.Name = "labelProgress";
+            this.labelProgress.Size = new System.Drawing.Size(490, 15);
+            this.labelProgress.TabIndex = 0;
+            this.labelProgress.Text = "ProgressMessage";
+            this.labelProgress.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label2
+            // labelVersion
             // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(408, 247);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(70, 12);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Version 1.2.1";
+            this.labelVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.BackColor = System.Drawing.Color.Transparent;
+            this.labelVersion.Location = new System.Drawing.Point(372, 241);
+            this.labelVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(64, 15);
+            this.labelVersion.TabIndex = 1;
+            this.labelVersion.Text = "Version...";
+            this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // SplashScreen
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(490, 330);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelVersion);
+            this.Controls.Add(this.labelProgress);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "SplashScreen";
+            this.Padding = new System.Windows.Forms.Padding(0, 0, 0, 32);
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SplashScreen";
@@ -71,7 +80,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labelProgress;
+        private System.Windows.Forms.Label labelVersion;
     }
 }
