@@ -57,7 +57,6 @@
     <Compile Include="FindDialog.Designer.cs">
       <DependentUpon>FindDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogLevel.cs" />
     <Compile Include="MailBox.cs" />
     <Compile Include="MailFolder.cs" />
     <Compile Include="MailPriority.cs" />

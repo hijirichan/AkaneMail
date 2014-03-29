@@ -23,7 +23,7 @@ namespace AkaneMail
         public string Priority { get; set; }             // 優先度(None/Low/Normal/High)
         public string Convert { get; set; }              // バージョン識別用
 
-        public string[] Attaches { get { return Attach.Split(','); } }
+        public string[] Attaches { get { return Attach.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries); } }
 
         // コンストラクタ
         //TODO 引数減らす
