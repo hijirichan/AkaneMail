@@ -872,7 +872,7 @@ namespace AkaneMail
         /// <param name="mail">メール</param>
         private void CreateFowerdMail(Mail mail)
         {
-            MailEditorForm NewMailForm = new MailEditorForm();
+            var NewMailForm = new MailEditorForm();
 
             // 親フォームをForm1に設定する
             NewMailForm.MainForm = this;
@@ -2014,15 +2014,14 @@ namespace AkaneMail
 
         private void listMail_DoubleClick(object sender, EventArgs e)
         {
-            Mail mail = null;
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
             // メールボックスのときは反応しない
             if (listMail.Columns[0].Text == "名前") {
                 return;
             }
 
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+           var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // メールの編集
             EditMail(mail, item);
