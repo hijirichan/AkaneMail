@@ -560,7 +560,20 @@ namespace AkaneMail
             attachMailBody = "";
         }
 
-
+        /// <summary>
+        /// デコード機能を使用するかを設定
+        /// </summary>
+        /// <param name="Convert"></param>
+        private void ChangeConvertMode(string Convert)
+        {
+            // 変換フラグがない時はHTML/Base64のデコードを有効にする
+            if (Convert.Trim() == "") {
+                Options.EnableDecodeBody();
+            }
+            else {
+                Options.DisableDecodeBodyText();
+            }
+        }
 
         /// <summary>
         /// 指定されたメールを開く
@@ -568,7 +581,6 @@ namespace AkaneMail
         /// <param name="mail">メール</param>
         private void OpenMail(Mail mail)
         {
-
             ClearAttachMenu();
 
             // 添付ファイルクラスのインスタンスを作成する
@@ -589,15 +601,18 @@ namespace AkaneMail
             // もしくは HTML メールの場合
             if (exists || isHtmlMail) {
                 try {
+                    ChangeConvertMode(mail.Convert);
+
                     // 旧バージョンからの変換データではないとき
-                    if (mail.Convert == "") {
+                    /*if (mail.Convert == "") {
                         // HTML/Base64のデコードを有効にする
                         Options.EnableDecodeBody();
                     }
                     else {
                         // HTML/Base64のデコードを無効にする
                         Options.DisableDecodeBodyText();
-                    }
+                    }*/
+
                     // ヘッダと本文付きの文字列を添付クラスに追加する
                     attach.Add(mail.Header, mail.Body);
 
