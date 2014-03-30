@@ -229,11 +229,8 @@ namespace AkaneMail
             Control ctrl = this.ActiveControl;
 
             // Spliterコントロール配下のコントロールを取得する
-            if (ctrl is SplitContainer) {
-                ctrl = (ctrl as SplitContainer).ActiveControl;
-                if (ctrl is TextBox) {
-                    action(ctrl as TextBox);
-                }
+            if (ctrl is TextBox) {
+                action(ctrl as TextBox);
             }
         }
 
