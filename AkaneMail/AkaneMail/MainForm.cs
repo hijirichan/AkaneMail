@@ -1256,10 +1256,8 @@ namespace AkaneMail
                         pop.GetMail(no);
 
                         // メールの情報を格納する
-                        Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", MailPriority.Parse(pop.Header));
-                        mailBox.Receive.Add(mail);
+                        mailBox.Receive.Add(new Mail(pop, true, ""));
 
-                        // 受信メールの数を増加する
                         mailCount++;
 
                         // メール受信時にPOP3サーバ上のメール削除のチェックがある時はPOP3サーバからメールを削除する
@@ -1341,6 +1339,24 @@ namespace AkaneMail
 
         }
 
+        private void Preauthenticate()
+        {
+            // POP before SMTPが有効の場合
+            if (!AccountInfo.popBeforeSMTP) return;
+            using (var pop = new nMail.Pop3()) {
+                Options.EnableConnectTimeout();
+
+                pop.APop = AccountInfo.apopFlag;
+
+                if (AccountInfo.popOverSSL) {
+                    pop.SSL = nMail.Pop3.SSL3;
+                }
+                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
+                pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
+            }
+        }
+    
+
         /// <summary>
         /// メールを送信する
         /// </summary>
@@ -1363,40 +1379,7 @@ namespace AkaneMail
                 // プログレスバーを表示して最大値を未送信メール件数に設定する
                 Invoke(ProgressMailInit, max_no);
 
-                // POP before SMTPが有効の場合
-                if (AccountInfo.popBeforeSMTP) {
-                    try {
-                        using (var pop = new nMail.Pop3()) {
-                            Options.EnableConnectTimeout();
-
-                            pop.APop = AccountInfo.apopFlag;
-
-                            if (AccountInfo.popOverSSL) {
-                                pop.SSL = nMail.Pop3.SSL3;
-                            }
-                            pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                            pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
-                        }
-                    }
-                    catch (nMail.nMailException nex) {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
-
-                        // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(EnableButton, true);
-
-                        return;
-                    }
-                    catch (Exception exp) {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "エラーメッセージ:" + exp.Message;
-
-                        // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(EnableButton, true);
-
-                        return;
-                    }
-                }
+                Preauthenticate();       
 
                 // SMTPのセッションを作成する
                 using (var smtp = new nMail.Smtp(AccountInfo.smtpServer)) {
@@ -1455,32 +1438,20 @@ namespace AkaneMail
                     }
                 }
 
-                // プログレスバーを非表示に戻す
                 Invoke(ProgressMailDisable);
 
-                // ボタンとメニューを有効化する
-                Invoke(EnableButton, true);
-
-                // ステータスバーに状況表示する
                 labelMessage.Text = "メール送信完了";
             }
             catch (nMail.nMailException nex) {
-                // ステータスバーに状況表示する
                 labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
-
-                // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
-
                 return;
             }
             catch (Exception exp) {
-                // ステータスバーに状況表示する
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
-
-                // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
-
                 return;
+            }
+            finally {
+                Invoke(EnableButton, true);
             }
 
             // TreeViewとListViewの更新を行う
