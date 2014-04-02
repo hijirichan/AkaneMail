@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using nMail;
 using ACryptLib;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace AkaneMail
 {
@@ -67,6 +68,22 @@ namespace AkaneMail
         /// </summary>
         public class ListViewItemComparer : System.Collections.IComparer
         {
+
+            public static ListViewItemComparer Default
+            {
+                get { return _default; }
+            }
+
+            public static ListViewItemComparer()
+            {
+                _default = new ListViewItemComparer
+                {
+                    Column = 2,
+                    Order = SortOrder.Descending,
+                    ColumnModes = new[] { ComparerMode.String, ComparerMode.String, ComparerMode.DateTime, ComparerMode.Integer }
+                };
+            }
+
             /// <summary>
             /// 比較する方法
             /// </summary>
@@ -78,6 +95,7 @@ namespace AkaneMail
             };
 
             private int _column;
+            private static ListViewItemComparer _default;
 
             /// <summary>
             /// 並び替えるListView列の番号
@@ -892,7 +910,7 @@ namespace AkaneMail
                 NewMailForm.buttonAttachList.Visible = true;
                 // 添付ファイルの数だけメニューを追加する
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
-                }
+            }
             else if (this.buttonAttachList.Visible) {
                 // 受信メールで添付ファイルがあるとき
                 // 添付リストメニューを表示
@@ -902,7 +920,7 @@ namespace AkaneMail
                 var attaches = this.buttonAttachList.DropDownItems.Cast<ToolStripItem>()
                     .Select(i => Application.StartupPath + @"\tmp\" + i.Text);
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attaches).ToArray());
-                    }
+            }
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -2055,35 +2073,13 @@ namespace AkaneMail
 
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void CheckSocket()
         {
-            // スプラッシュ・スクリーンの表示開始
-            SplashScreen splash = new SplashScreen();
-            splash.ProgressMsg = "メールクライアントの初期化中です";
-            if (File.Exists(@"akanemail.png")) {
-                try {
-                    splash.BackgroundImage = Image.FromFile(@"akanemail.png");
-                }
-                catch {
-                    // 読み込めないときは通常画像を表示するため処理なし
-                }
-            }
-            splash.Show();
-            splash.Refresh();
-
-            // 最大化の時スプラッシュスクリーンよりも先にフォームが出ることがあるので
-            // それを防ぐために一時的にフォームを非表示にする。
-            this.Hide();
-
-            // 環境設定の読み込み
-            LoadSettings();
-
             try {
-                // WinSockの初期化処理
                 nMail.Winsock.Initialize();
             }
             catch (Exception exp) {
-                // 64bit版OSで同梱の32bit版OS用のnMail.dllを使用して起動したときはエラーになるため差し替えのお願いメッセージを表示する
+                // 64bit環境で32bit用のnMail.dllを使用して起動したときはエラーになる
                 if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
                     MessageBox.Show("64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合\nこのエラーが表示されます。\n\nお手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更してAkane Mailを起動\nしてください。", "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     // 致命的なnMail.dllのエラーフラグをOn
@@ -2092,6 +2088,19 @@ namespace AkaneMail
                     return;
                 }
             }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // スプラッシュスクリーンよりも先にフォームが出ることがあるらしい
+            this.Hide();
+
+            SplashScreen splash = new SplashScreen();
+            splash.Initialize();
+
+            LoadSettings();
+
+            CheckSocket();
 
             // nMailのHTML添付ファイルの展開オプションをONにする
             Options.EnableSaveHtmlFile();
@@ -2102,15 +2111,11 @@ namespace AkaneMail
             }
 
             try {
-                // Threadオブジェクトを作成する
-                var t = new System.Threading.Thread(new System.Threading.ThreadStart(mailBox.MailDataLoad));
-
-                splash.ProgressMsg = "メールデータの読み込み作業中です";
-
-                // スレッドを開始する
+                var t = new Thread(mailBox.MailDataLoad);
                 t.Start();
 
-                // スレッドが終了するまで待機
+                splash.ProgressMesssage = "メールデータの読み込み作業中です";
+
                 t.Join();
             }
             catch (MailLoadException) {
@@ -2119,7 +2124,7 @@ namespace AkaneMail
 
             // メール自動受信が設定されている場合はタイマーを起動する
             if (AccountInfo.autoMailFlag) {
-                // 取得間隔*60000(60000ミリ秒=1分)をタイマー実行間隔に設定する
+                // 60000(msec)
                 timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
                 timerAutoReceive.Enabled = true;
             }
@@ -2130,16 +2135,12 @@ namespace AkaneMail
 
             // ListViewItemComparerの作成と設定
             // 受信or送信日時の降順で並べる
-            listViewItemSorter = new ListViewItemComparer() { Column = 2, Order = SortOrder.Descending };
-            listViewItemSorter.ColumnModes = new ListViewItemComparer.ComparerMode[] { ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.DateTime, ListViewItemComparer.ComparerMode.Integer };
+            listViewItemSorter = ListViewItemComparer.Default;
 
             // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // スプラッシュ・スクリーンの表示終了
-            splash.Close();
-            if (!splash.IsDisposed)
-                splash.Dispose();
+            splash.Dispose();
 
             // 一時的に非表示にした画面を表示させる
             if (!(AccountInfo.minimizeTaskTray && WindowState == FormWindowState.Minimized)) {
@@ -2147,10 +2148,8 @@ namespace AkaneMail
                 this.Show();
             }
 
-            // ツリービューを展開する
             treeMailBoxFolder.ExpandAll();
 
-            // メインとなるフォームをアクティブに戻す
             this.Activate();
 
         }
