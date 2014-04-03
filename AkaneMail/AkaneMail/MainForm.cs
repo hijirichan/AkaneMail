@@ -74,7 +74,7 @@ namespace AkaneMail
                 get { return _default; }
             }
 
-            public static ListViewItemComparer()
+            static ListViewItemComparer()
             {
                 _default = new ListViewItemComparer
                 {
@@ -1831,82 +1831,60 @@ namespace AkaneMail
 
         private void menuSetEnv_Click(object sender, EventArgs e)
         {
-            SettingForm Form2 = new SettingForm();
+            var settingForm = new SettingForm();
 
             timerAutoReceive.Enabled = false;
 
-            DialogResult ret = Form2.ShowDialog();
+            var ret = settingForm.ShowDialog();
 
             if (ret == DialogResult.OK) {
-                if (Form2.checkAutoGetMail.Checked) {
-                    timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
-                    timerAutoReceive.Enabled = true;
-                }
-                else {
-                    timerAutoReceive.Enabled = false;
-                }
+                SetTimer(settingForm.checkAutoGetMail.Checked, AccountInfo.getMailInterval);
             }
-            // ListViewItemSorterを解除する
+            
             listMail.ListViewItemSorter = null;
-
-            // リストビューを更新する
             UpdateListView();
-
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
         }
 
         private void timerStatusTime_Tick(object sender, EventArgs e)
         {
-            // 現在の時刻を表示する
             labelDate.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
         }
 
         private void menuNewMail_Click(object sender, EventArgs e)
         {
-            MailEditorForm NewMailForm = new MailEditorForm();
+            var newMailForm = new MailEditorForm();
 
-            // 親フォームをForm1に設定する
-            NewMailForm.MainForm = this;
+            newMailForm.MainForm = this;
 
-            // 送信箱の配列をForm3に渡す
-            NewMailForm.SendList = mailBox.Send.ToList();
+            // TODO たぶんメール渡すだけでいい
+            newMailForm.SendList = mailBox.Send.ToList();
 
-            // メール新規作成フォームを表示する
-            NewMailForm.Show();
+            newMailForm.Show();
         }
 
         private void menuSendMail_Click(object sender, EventArgs e)
         {
-            // メール送信・受信のメニューとツールボタンを無効化する
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonSendMail.Enabled = false;
 
-            // Threadオブジェクトを作成する
-            System.Threading.Thread ts = new System.Threading.Thread(new System.Threading.ThreadStart(SendMail));
-
-            // メール送信スレッドを開始する
-            ts.Start();
+            var t = new Thread(SendMail);
+            t.Start();
         }
 
         private void menuRecieveMail_Click(object sender, EventArgs e)
         {
-            // メール受信のメニューとツールボタンを無効化する
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
 
-            // Threadオブジェクトを作成する
-            System.Threading.Thread tr = new System.Threading.Thread(new System.Threading.ThreadStart(RecieveMail));
-
-            // メール受信スレッドを開始する
-            tr.Start();
+            var t = new Thread(RecieveMail);
+            t.Start();
         }
 
         private void menuDeleteMail_Click(object sender, EventArgs e)
         {
-            // メールを削除
             DeleteMail();
         }
 
@@ -2029,19 +2007,14 @@ namespace AkaneMail
                     File.Delete(Application.StartupPath + @"\Mail.dat");
                 }
 
-                // Threadオブジェクトを作成する
-                System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(mailBox.MailDataSave));
+                var t = new Thread(mailBox.MailDataSave);
 
-                // スレッドを開始する
                 t.Start();
 
-                // スレッドが終了するまで待機
                 t.Join();
             }
 
-            // 環境設定の書き出し
             SaveSettings();
-
         }
 
         private void CheckSocket()
@@ -2059,6 +2032,13 @@ namespace AkaneMail
                     return;
                 }
             }
+        }
+
+        private void SetTimer(bool isEnabled, int intervalMinutes)
+        {
+            // 60,000(msec)
+            timerAutoReceive.Interval = intervalMinutes * 60000;
+            timerAutoReceive.Enabled = isEnabled;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -2093,27 +2073,17 @@ namespace AkaneMail
                 errorFlag = true;
             }
 
-            // メール自動受信が設定されている場合はタイマーを起動する
-            if (AccountInfo.autoMailFlag) {
-                // 60000(msec)
-                timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
-                timerAutoReceive.Enabled = true;
-            }
+            SetTimer(AccountInfo.autoMailFlag, AccountInfo.getMailInterval);
 
             // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
-            // ListViewItemComparerの作成と設定
-            // 受信or送信日時の降順で並べる
             listViewItemSorter = ListViewItemComparer.Default;
-
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
             splash.Dispose();
 
-            // 一時的に非表示にした画面を表示させる
             if (!(AccountInfo.minimizeTaskTray && WindowState == FormWindowState.Minimized)) {
                 ShowInTaskbar = true;
                 this.Show();
@@ -2263,10 +2233,7 @@ namespace AkaneMail
             if (listMail.Columns[0].Text == "名前")
                 return;
 
-            // クリックされた列を設定
             listViewItemSorter.Column = e.Column;
-
-            // 並び替える
             listMail.Sort();
         }
 
@@ -2282,11 +2249,9 @@ namespace AkaneMail
 
         private void MainForm_ClientSizeChanged(object sender, EventArgs e)
         {
-            // 最小化時にタスクトレイに格納フラグがtrueでウィンドウが最小化されたとき
             if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray) {
-                // フォームが最小化の状態であればフォームを非表示にする   
+                // 最初化時に通知領域にしか表示しない
                 this.Hide();
-                // トレイリストのアイコンを表示する   
                 notifyIcon1.Visible = true;
             }
         }
@@ -2294,27 +2259,23 @@ namespace AkaneMail
         private void menuTaskRestoreWindow_Click(object sender, EventArgs e)
         {
             this.ShowInTaskbar = true;
-            // フォームを表示する   
             this.Visible = true;
 
-            // 現在の状態が最小化の状態であれば通常の状態に戻す   
             if (this.WindowState == FormWindowState.Minimized) {
                 this.WindowState = FormWindowState.Normal;
             }
 
-            // フォームをアクティブにする   
             this.Activate();
         }
 
         private void menuFile_DropDownOpening(object sender, EventArgs e)
         {
-            // メールの選択件が1かつメールボックスのとき
+            // メールボックスのメールを1件選んでいるとき
             var condition = listMail.SelectedItems.Count == 1 && listMail.Columns[0].Text != "名前";
             menuSaveMailFile.Enabled = condition;
             menuGetAttatch.Enabled = condition;
             menuGetAttatch.Enabled = condition && attachMenuFlag;
 
-            // 削除メールが0件の場合
             menuClearTrush.Enabled = mailBox.Trash.Count != 0;
         }
 
@@ -2394,18 +2355,14 @@ namespace AkaneMail
 
         private void menuFowerdMail_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            // 選択アイテムが0のときは反応にしない
             if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
-            // 表示機能はシンプルなものに変わる
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // 転送メールの作成
             CreateFowerdMail(mail);
         }
 
