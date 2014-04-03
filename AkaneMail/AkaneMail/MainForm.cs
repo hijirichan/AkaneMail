@@ -203,8 +203,7 @@ namespace AkaneMail
 
             InitializeComponent();
 
-            // Appliction.Idleを登録する
-            Application.Idle += new EventHandler(Application_Idle);
+            Application.Idle += Application_Idle;
 
             mailBox = new MailBox();
         }
@@ -248,24 +247,29 @@ namespace AkaneMail
             }
             else if (listMail.Columns[0].Text == "名前") {
                 // メールボックスのとき
-                ListViewItem item = new ListViewItem(AccountInfo.fromName);
-                item.SubItems.Add(AccountInfo.mailAddress);
-                if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
-                    string mailDataDate = File.GetLastWriteTime(Application.StartupPath + @"\Mail.dat").ToShortDateString() + " " + File.GetLastWriteTime(Application.StartupPath + @"\Mail.dat").ToLongTimeString();
-                    FileInfo fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
-                    item.SubItems.Add(mailDataDate);
-                    item.SubItems.Add(fi.Length.ToString());
-                }
-                else {
-                    item.SubItems.Add("データ未作成");
-                    item.SubItems.Add("0");
-                }
-                listMail.Items.Add(item);
-                listMail.EndUpdate();
+                InitializeMailBox();
                 return;
             }
 
             folder.Select(CreateMailItem).Select(listMail.Items.Add).ToList();
+            listMail.EndUpdate();
+        }
+
+        private void InitializeMailBox()
+        {
+            var item = new ListViewItem(AccountInfo.fromName);
+            item.SubItems.Add(AccountInfo.mailAddress);
+            if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
+                var fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
+                var mailDataDate = fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString();
+                item.SubItems.Add(mailDataDate);
+                item.SubItems.Add(fi.Length.ToString());
+            }
+            else {
+                item.SubItems.Add("データ未作成");
+                item.SubItems.Add("0");
+            }
+            listMail.Items.Add(item);
             listMail.EndUpdate();
         }
 
@@ -1721,17 +1725,13 @@ namespace AkaneMail
         /// <param name="listView">対象のリストビュー</param>
         private void ReforcusListView(ListView listView)
         {
-            // ListViewItemSorterを解除する
             listView.ListViewItemSorter = null;
 
-            // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // フォーカスを当て直す
             listView.Items[currentRow].Selected = true;
             listView.SelectedItems[0].EnsureVisible();
             listView.Select();
@@ -1820,7 +1820,6 @@ namespace AkaneMail
                     break;
             }
 
-            // 画面設定をクリアする。
             ClearInput();
         }
 
@@ -1910,27 +1909,10 @@ namespace AkaneMail
         {
             var sList = GetShowingMailFolder();
 
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
+            var items = listMail.SelectedItems;
+            if (items.Count == 0) return;
 
-            // 選択アイテムの数が0のとき
-            if (nLen == 0)
-                return;
-
-            // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
-
-            while (nLen > 0) {
-                nLen--;
-                // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listMail.SelectedItems[nIndex];
-
-                // 元リストからメールアイテムを取得
-                Mail mail = sList[nIndices[nLen]];
-
-                sList[nIndices[nLen]].NotReadYet = !(item.SubItems[1].Text == mail.Subject);
-            }
+            items.Cast<ListViewItem>().Select(t => int.Parse(t.Name)).Select(i => sList[i]).ToList().ForEach(m => m.NotReadYet = false);
 
             ReforcusListView(listMail);
 
@@ -1945,27 +1927,10 @@ namespace AkaneMail
         {
             var sList = GetShowingMailFolder();
 
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
+            var items = listMail.SelectedItems;
+            if (items.Count == 0) return;
 
-            // 選択アイテムの数が0のとき
-            if (nLen == 0)
-                return;
-
-            // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
-
-            while (nLen > 0) {
-                nLen--;
-                // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listMail.SelectedItems[nIndex];
-
-                // 元リストからメールアイテムを取得
-                Mail mail = sList[nIndices[nLen]];
-
-                sList[nIndices[nLen]].NotReadYet = item.SubItems[1].Text == mail.Subject;
-            }
+            items.Cast<ListViewItem>().Select(t => int.Parse(t.Name)).Select(i => sList[i]).ToList().ForEach(m => m.NotReadYet = true);
 
             ReforcusListView(listMail);
 
