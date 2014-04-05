@@ -44,6 +44,23 @@ namespace AkaneMail
             this.Convert = convert;
         }
 
+        public Mail(Pop3 pop, bool unread, string covert)
+        {
+            Address = pop.From;
+            Header = pop.Header;
+            Subject = pop.Subject;
+            Body = pop.Body;
+            Attach = pop.FileName;
+            Date = pop.DateString;
+            Size = pop.Size.ToString();
+            Uidl = pop.Uidl;
+            Cc = pop.GetDecodeHeaderField("Cc:");
+            Bcc = "";
+            Convert = "";
+            Priority = MailPriority.Parse(pop.Header);
+            NotReadYet = unread;
+        }
+
         /// <summary>
         /// 文字コードを取得する
         /// </summary>

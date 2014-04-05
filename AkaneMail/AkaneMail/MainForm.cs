@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using nMail;
 using ACryptLib;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace AkaneMail
 {
@@ -67,6 +68,22 @@ namespace AkaneMail
         /// </summary>
         public class ListViewItemComparer : System.Collections.IComparer
         {
+
+            public static ListViewItemComparer Default
+            {
+                get { return _default; }
+            }
+
+            static ListViewItemComparer()
+            {
+                _default = new ListViewItemComparer
+                {
+                    Column = 2,
+                    Order = SortOrder.Descending,
+                    ColumnModes = new[] { ComparerMode.String, ComparerMode.String, ComparerMode.DateTime, ComparerMode.Integer }
+                };
+            }
+
             /// <summary>
             /// 比較する方法
             /// </summary>
@@ -78,6 +95,7 @@ namespace AkaneMail
             };
 
             private int _column;
+            private static ListViewItemComparer _default;
 
             /// <summary>
             /// 並び替えるListView列の番号
@@ -185,8 +203,7 @@ namespace AkaneMail
 
             InitializeComponent();
 
-            // Appliction.Idleを登録する
-            Application.Idle += new EventHandler(Application_Idle);
+            Application.Idle += Application_Idle;
 
             mailBox = new MailBox();
         }
@@ -230,11 +247,21 @@ namespace AkaneMail
             }
             else if (listMail.Columns[0].Text == "名前") {
                 // メールボックスのとき
-                ListViewItem item = new ListViewItem(AccountInfo.fromName);
+                InitializeMailBox();
+                return;
+            }
+
+            folder.Select(CreateMailItem).Select(listMail.Items.Add).ToList();
+            listMail.EndUpdate();
+        }
+
+        private void InitializeMailBox()
+        {
+            var item = new ListViewItem(AccountInfo.fromName);
                 item.SubItems.Add(AccountInfo.mailAddress);
                 if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
-                    string mailDataDate = File.GetLastWriteTime(Application.StartupPath + @"\Mail.dat").ToShortDateString() + " " + File.GetLastWriteTime(Application.StartupPath + @"\Mail.dat").ToLongTimeString();
-                    FileInfo fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
+                var fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
+                var mailDataDate = fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString();
                     item.SubItems.Add(mailDataDate);
                     item.SubItems.Add(fi.Length.ToString());
                 }
@@ -244,12 +271,7 @@ namespace AkaneMail
                 }
                 listMail.Items.Add(item);
                 listMail.EndUpdate();
-                return;
             }
-
-            folder.Select(CreateMailItem).Select(listMail.Items.Add).ToList();
-            listMail.EndUpdate();
-        }
 
         private ListViewItem CreateMailItem(Mail mail, int index)
         {
@@ -344,10 +366,22 @@ namespace AkaneMail
         /// <summary>
         /// メール送受信後のTreeView、ListViewの更新
         /// </summary>
-        private void UpdateView(int flag)
+        private void UpdateView()
         {
-            // フラグの値が0のとき
-            if (flag == 0) {
+
+            // ListViewItemSorterを解除する
+            listMail.ListViewItemSorter = null;
+
+            // ツリービューとリストビューの表示を更新する
+            UpdateTreeView();
+            UpdateListView();
+
+            // ListViewItemSorterを指定する
+            listMail.ListViewItemSorter = listViewItemSorter;
+        }
+
+        private void UpdateViewFully()
+        {
                 // テキストボックスを空値にする
                 this.textBody.Text = "";
                 // IEコンポが表示されているいとき
@@ -357,7 +391,6 @@ namespace AkaneMail
                     this.browserBody.Visible = false;
                     this.textBody.Visible = true;
                 }
-            }
 
             // ListViewItemSorterを解除する
             listMail.ListViewItemSorter = null;
@@ -367,17 +400,13 @@ namespace AkaneMail
             UpdateListView();
 
             // フラグの値が0のとき
-            if (flag == 0) {
                 // 受信or送信日時の降順で並べる
                 listViewItemSorter.Column = 2;
                 listViewItemSorter.Order = SortOrder.Descending;
-            }
 
             // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // フラグの値が0のとき
-            if (flag == 0) {
                 // 受信メールのとき
                 if (listMail.Columns[0].Text == "差出人") {
                     // ListViewの1行目にフォーカスを当て直す
@@ -388,7 +417,6 @@ namespace AkaneMail
                     listMail.Focus();
                 }
             }
-        }
 
         private void Invoke(Action invokeAction)
         {
@@ -538,7 +566,7 @@ namespace AkaneMail
             }
         }
 
-        /// <summary>文字列を複合化します</summary>
+        /// <summary>文字列を復号します</summary>
         /// <remarks>例外発生時は旧バージョンと同じ動作をします</remarks>
         private string Decrypt(string password)
         {
@@ -583,7 +611,6 @@ namespace AkaneMail
         {
             ClearAttachMenu();
 
-            // 添付ファイルクラスのインスタンスを作成する
             var attach = new nMail.Attachment();
 
             // 未読メールの場合
@@ -594,12 +621,9 @@ namespace AkaneMail
 
             // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
             var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.Header).Contains("text/html");
-            // 添付ファイルが存在するかを確認する
-            var exists = attach.GetId(mail.Header) != nMail.Attachment.NoAttachmentFile;
+            var hasAttachments = attach.GetId(mail.Header) != nMail.Attachment.NoAttachmentFile;
 
-            // 添付ファイルが存在する場合(存在しない場合は-1が返る)
-            // もしくは HTML メールの場合
-            if (exists || isHtmlMail) {
+            if (hasAttachments || isHtmlMail) {
                 try {
                     ChangeConvertMode(mail.Convert);
 
@@ -620,12 +644,10 @@ namespace AkaneMail
                     attach.Save();
                 }
                 catch (Exception ex) {
-                    // エラーメッセージを表示する
                     labelMessage.Text = String.Format("エラー メッセージ:{0:s}", ex.Message);
                     return;
                 }
 
-                // 添付返信フラグをtrueにする
                 attachMailReplay = true;
 
                 // IE コンポーネントを使用かつ HTML パートを保存したファイルがある場合
@@ -698,7 +720,6 @@ namespace AkaneMail
                 this.browserBody.Visible = false;
                 this.textBody.Visible = true;
 
-                // 添付ファイルリストが""でないとき
                 if (mail.Attaches.Length != 0) {
                     buttonAttachList.Visible = true;
 
@@ -707,9 +728,7 @@ namespace AkaneMail
 
                 var base64Mail = attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("base64");
 
-                // Base64の文章が添付されている場合
                 if (base64Mail) {
-                    // 文章をデコードする
                     Options.EnableDecodeBody();
 
                     // ヘッダと本文付きの文字列を添付クラスに追加する
@@ -728,10 +747,7 @@ namespace AkaneMail
                         // 文章をデコードする
                         Options.EnableDecodeBody();
 
-                        // ヘッダと本文付きの文字列を添付クラスに追加する
                         attach.Add(mail.Header, mail.Body);
-
-                        // 添付ファイルを取り外す
                         attach.Save();
 
                         var text = BreakLine(attach.Body);
@@ -740,10 +756,8 @@ namespace AkaneMail
                     }
                     else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
                         // Unicode化されたUTF-8文字列をデコードする
-                        // 1件のメールサイズの大きさのbyte型配列を確保
                         var bs = mail.Body.Select(c => (byte)c).ToArray();
 
-                        // GetStringでバイト型配列をUTF-8の配列にエンコードする
                         attachMailBody = Encoding.UTF8.GetString(bs);
                         this.textBody.Text = attachMailBody;
                     }
@@ -769,18 +783,15 @@ namespace AkaneMail
 
         private IEnumerable<ToolStripItem> GenerateMenuItem(string rootPath, IEnumerable<string> attaches, bool enableWhenRemoved = false)
         {
-            foreach (var attachFile in attaches)
-            {
-                if (File.Exists(rootPath + attachFile))
-                {
+            foreach (var attachFile in attaches) {
+                if (File.Exists(rootPath + attachFile)) {
                     yield return new ToolStripMenuItem
                     {
                         Text = attachFile,
-                        Image = System.Drawing.Icon.ExtractAssociatedIcon(rootPath+attachFile).ToBitmap()
+                        Image = System.Drawing.Icon.ExtractAssociatedIcon(rootPath + attachFile).ToBitmap()
                     };
                 }
-                else
-                {
+                else {
                     yield return new ToolStripMenuItem
                     {
                         Text = attachFile + "は削除されています。",
@@ -1136,12 +1147,10 @@ namespace AkaneMail
 
         private IEnumerable<string> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
         {
-            foreach (var i in Enumerable.Range(1, pop.Count))
-            {
+            foreach (var i in Enumerable.Range(1, pop.Count)) {
                 pop.GetUidl(i);
                 var uidl = pop.Uidl;
-                if (locals.Any(m => m.Uidl == uidl))
-                {
+                if (locals.Any(m => m.Uidl == uidl)) {
                     yield return uidl;
                 }
             }
@@ -1168,12 +1177,9 @@ namespace AkaneMail
                     // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
                     if (AccountInfo.popOverSSL) {
                         pop.SSL = nMail.Pop3.SSL3;
-                        pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
                     }
-                    else {
                         // POP3へ接続する
                         pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                    }
 
                     // POP3への認証処理を行う
                     pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
@@ -1238,10 +1244,8 @@ namespace AkaneMail
                         pop.GetMail(no);
 
                         // メールの情報を格納する
-                        Mail mail = new Mail(pop.From, pop.Header, pop.Subject, pop.Body, pop.FileName, pop.DateString, pop.Size.ToString(), pop.Uidl, true, "", pop.GetDecodeHeaderField("Cc:"), "", MailPriority.Parse(pop.Header));
-                        mailBox.Receive.Add(mail);
+                        mailBox.Receive.Add(new Mail(pop, true, ""));
 
-                        // 受信メールの数を増加する
                         mailCount++;
 
                         // メール受信時にPOP3サーバ上のメール削除のチェックがある時はPOP3サーバからメールを削除する
@@ -1264,8 +1268,28 @@ namespace AkaneMail
                 Invoke(EnableButton, true);
 
                 // 未受信メールが1件以上の場合
-                if (mailCount >= 1) {
-                    // メール着信音の設定をしている場合
+                NotifyReceive(mailCount);
+            }
+            catch (nMail.nMailException nex) {
+                labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
+
+                Invoke(EnableButton, true);
+
+                return;
+            }
+            catch (Exception exp) {
+                labelMessage.Text = "エラーメッセージ:" + exp.Message;
+
+                Invoke(EnableButton, true);
+                return;
+            }
+
+            Invoke(UpdateViewFully);
+        }
+
+        private void NotifyReceive(int mailCount)
+        {
+            if (mailCount > 0) {
                     if (AccountInfo.popSoundFlag && AccountInfo.popSoundName != "") {
                         SoundPlayer sndPlay = new SoundPlayer(AccountInfo.popSoundName);
                         sndPlay.Play();
@@ -1279,49 +1303,37 @@ namespace AkaneMail
                         notifyIcon1.ShowBalloonTip(300);
                     }
                     else {
-                        // 画面をフラッシュさせる
                         Invoke(FlashWindow, this);
 
-                        // ステータスバーに状況表示する
                         labelMessage.Text = mailCount + "件の新着メールを受信しました。";
                     }
 
-                    // データ変更フラグをtrueにする
                     dataDirtyFlag = true;
                 }
                 else {
-                    // ステータスバーに状況表示する
                     labelMessage.Text = "新着のメッセージはありませんでした。";
 
-                    // メール受信のメニューとツールボタンを有効化する
                     Invoke(EnableButton, true);
-
                     return;
                 }
             }
-            catch (nMail.nMailException nex) {
-                // ステータスバーに状況表示する
-                labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
 
-                // メール受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
+        private void Preauthenticate()
+        {
+            if (!AccountInfo.popBeforeSMTP) return;
+            using (var pop = new nMail.Pop3()) {
+                Options.EnableConnectTimeout();
 
-                return;
+                pop.APop = AccountInfo.apopFlag;
+
+                if (AccountInfo.popOverSSL) {
+                    pop.SSL = nMail.Pop3.SSL3;
+                }
+                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
+                pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
             }
-            catch (Exception exp) {
-                // ステータスバーに状況表示する
-                labelMessage.Text = "エラーメッセージ:" + exp.Message;
-
-                // メール受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
-
-                return;
             }
 
-            // TreeViewとListViewの更新を行う
-            Invoke(UpdateView, 0);
-
-        }
 
         /// <summary>
         /// メールを送信する
@@ -1345,40 +1357,7 @@ namespace AkaneMail
                 // プログレスバーを表示して最大値を未送信メール件数に設定する
                 Invoke(ProgressMailInit, max_no);
 
-                // POP before SMTPが有効の場合
-                if (AccountInfo.popBeforeSMTP) {
-                    try {
-                        using (var pop = new nMail.Pop3()) {
-                            Options.EnableConnectTimeout();
-
-                            pop.APop = AccountInfo.apopFlag;
-
-                            if (AccountInfo.popOverSSL) {
-                                pop.SSL = nMail.Pop3.SSL3;
-                            }
-                            pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                            pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
-                        }
-                    }
-                    catch (nMail.nMailException nex) {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
-
-                        // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(EnableButton, true);
-
-                        return;
-                    }
-                    catch (Exception exp) {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "エラーメッセージ:" + exp.Message;
-
-                        // メール送信・受信のメニューとツールボタンを有効化する
-                        Invoke(EnableButton, true);
-
-                        return;
-                    }
-                }
+                Preauthenticate();
 
                 // SMTPのセッションを作成する
                 using (var smtp = new nMail.Smtp(AccountInfo.smtpServer)) {
@@ -1437,36 +1416,24 @@ namespace AkaneMail
                     }
                 }
 
-                // プログレスバーを非表示に戻す
                 Invoke(ProgressMailDisable);
 
-                // ボタンとメニューを有効化する
-                Invoke(EnableButton, true);
-
-                // ステータスバーに状況表示する
                 labelMessage.Text = "メール送信完了";
             }
             catch (nMail.nMailException nex) {
-                // ステータスバーに状況表示する
                 labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
-
-                // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
-
                 return;
             }
             catch (Exception exp) {
-                // ステータスバーに状況表示する
                 labelMessage.Text = "エラーメッセージ:" + exp.Message;
-
-                // メール送信・受信のメニューとツールボタンを有効化する
-                Invoke(EnableButton, true);
-
                 return;
+            }
+            finally {
+                Invoke(EnableButton, true);
             }
 
             // TreeViewとListViewの更新を行う
-            Invoke(UpdateView, 1);
+            Invoke(UpdateView);
 
         }
 
@@ -1484,44 +1451,9 @@ namespace AkaneMail
         public void DirectSendMail(string address, string cc, string bcc, string subject, string body, string attach, string priority)
         {
             try {
-                // ステータスバーに状況表示する
                 labelMessage.Text = "メール送信中";
 
-                // POP before SMTPが有効の場合
-                if (AccountInfo.popBeforeSMTP) {
-                    try {
-                        // POP3のセッションを作成する
-                        using (var pop = new Pop3()) {
-                            // POP3への接続タイムアウト設定をする
-                            Options.EnableConnectTimeout();
-
-                            // APOPを使用するときに使うフラグ
-                            pop.APop = AccountInfo.apopFlag;
-
-                            // POP3 over SSL/TLSフラグが有効のときはSSLを使用する
-                            if (AccountInfo.popOverSSL) {
-                                pop.SSL = Pop3.SSL3;
-                                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                            }
-                            else {
-                                // POP3へ接続する
-                                pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
-                            }
-
-                            // POP3への認証処理を行う
-                            pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
-                        }
-                    }
-                    catch (nMail.nMailException nex) {
-                        labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
-                        return;
-                    }
-                    catch (Exception exp) {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "エラーメッセージ:" + exp.Message;
-                        return;
-                    }
-                }
+                Preauthenticate();
 
                 // SMTPのセッションを作成する
                 using (var smtp = new Smtp(AccountInfo.smtpServer)) {
@@ -1732,17 +1664,13 @@ namespace AkaneMail
         /// <param name="listView">対象のリストビュー</param>
         private void ReforcusListView(ListView listView)
         {
-            // ListViewItemSorterを解除する
             listView.ListViewItemSorter = null;
 
-            // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // フォーカスを当て直す
             listView.Items[currentRow].Selected = true;
             listView.SelectedItems[0].EnsureVisible();
             listView.Select();
@@ -1772,14 +1700,11 @@ namespace AkaneMail
                 buttonAttachList.Visible = false;
             }
 
-            // ListViewItemSorterを解除する
             listMail.ListViewItemSorter = null;
 
-            // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
         }
 
@@ -1831,7 +1756,6 @@ namespace AkaneMail
                     break;
             }
 
-            // 画面設定をクリアする。
             ClearInput();
         }
 
@@ -1842,82 +1766,60 @@ namespace AkaneMail
 
         private void menuSetEnv_Click(object sender, EventArgs e)
         {
-            SettingForm Form2 = new SettingForm();
+            var settingForm = new SettingForm();
 
             timerAutoReceive.Enabled = false;
 
-            DialogResult ret = Form2.ShowDialog();
+            var ret = settingForm.ShowDialog();
 
             if (ret == DialogResult.OK) {
-                if (Form2.checkAutoGetMail.Checked) {
-                    timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
-                    timerAutoReceive.Enabled = true;
+                SetTimer(settingForm.checkAutoGetMail.Checked, AccountInfo.getMailInterval);
                 }
-                else {
-                    timerAutoReceive.Enabled = false;
-                }
-            }
-            // ListViewItemSorterを解除する
+
             listMail.ListViewItemSorter = null;
-
-            // リストビューを更新する
             UpdateListView();
-
-            // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
         }
 
         private void timerStatusTime_Tick(object sender, EventArgs e)
         {
-            // 現在の時刻を表示する
             labelDate.Text = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
         }
 
         private void menuNewMail_Click(object sender, EventArgs e)
         {
-            MailEditorForm NewMailForm = new MailEditorForm();
+            var newMailForm = new MailEditorForm();
 
-            // 親フォームをForm1に設定する
-            NewMailForm.MainForm = this;
+            newMailForm.MainForm = this;
 
-            // 送信箱の配列をForm3に渡す
-            NewMailForm.SendList = mailBox.Send.ToList();
+            // TODO たぶんメール渡すだけでいい
+            newMailForm.SendList = mailBox.Send.ToList();
 
-            // メール新規作成フォームを表示する
-            NewMailForm.Show();
+            newMailForm.Show();
         }
 
         private void menuSendMail_Click(object sender, EventArgs e)
         {
-            // メール送信・受信のメニューとツールボタンを無効化する
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonSendMail.Enabled = false;
 
-            // Threadオブジェクトを作成する
-            System.Threading.Thread ts = new System.Threading.Thread(new System.Threading.ThreadStart(SendMail));
-
-            // メール送信スレッドを開始する
-            ts.Start();
+            var t = new Thread(SendMail);
+            t.Start();
         }
 
         private void menuRecieveMail_Click(object sender, EventArgs e)
         {
-            // メール受信のメニューとツールボタンを無効化する
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
 
-            // Threadオブジェクトを作成する
-            System.Threading.Thread tr = new System.Threading.Thread(new System.Threading.ThreadStart(RecieveMail));
-
-            // メール受信スレッドを開始する
-            tr.Start();
+            var t = new Thread(RecieveMail);
+            t.Start();
         }
 
         private void menuDeleteMail_Click(object sender, EventArgs e)
         {
-            // メールを削除
             DeleteMail();
         }
 
@@ -1941,74 +1843,33 @@ namespace AkaneMail
         /// </summary>
         private void menuAlreadyRead_Click(object sender, EventArgs e)
         {
-            var sList = GetShowingMailFolder();
-
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
-
-            // 選択アイテムの数が0のとき
-            if (nLen == 0)
-                return;
-
-            // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
-
-            while (nLen > 0) {
-                nLen--;
-                // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listMail.SelectedItems[nIndex];
-
-                // 元リストからメールアイテムを取得
-                Mail mail = sList[nIndices[nLen]];
-
-                sList[nIndices[nLen]].NotReadYet = !(item.SubItems[1].Text == mail.Subject);
+            ChangeSelectedMailReadStatus(false);
             }
-
-            ReforcusListView(listMail);
-
-            // データ変更フラグをtrueにする
-            dataDirtyFlag = true;
-        }
 
         /// <summary>
         /// 既読メールを未読にする
         /// </summary>
         private void menuNotReadYet_Click(object sender, EventArgs e)
         {
+            ChangeSelectedMailReadStatus(true);
+        }
+
+        private void ChangeSelectedMailReadStatus(bool unread)
+        {
             var sList = GetShowingMailFolder();
 
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
+            var items = listMail.SelectedItems;
+            if (items.Count == 0) return;
 
-            // 選択アイテムの数が0のとき
-            if (nLen == 0)
-                return;
-
-            // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(i => listMail.SelectedItems[i].Name).Select(t => int.Parse(t)).OrderBy(i => i).ToArray();
-
-            while (nLen > 0) {
-                nLen--;
-                // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen].ToString());
-                ListViewItem item = listMail.SelectedItems[nIndex];
-
-                // 元リストからメールアイテムを取得
-                Mail mail = sList[nIndices[nLen]];
-
-                sList[nIndices[nLen]].NotReadYet = item.SubItems[1].Text == mail.Subject;
-            }
+            items.Cast<ListViewItem>().Select(t => int.Parse(t.Name)).Select(i => sList[i]).ToList().ForEach(m => m.NotReadYet = unread);
 
             ReforcusListView(listMail);
 
-            // データ変更フラグをtrueにする
             dataDirtyFlag = true;
         }
 
         private void listMail_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            // 選択された行を取得する
             currentRow = e.ItemIndex;
         }
 
@@ -2023,77 +1884,65 @@ namespace AkaneMail
 
            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // メールの編集
             EditMail(mail, item);
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // ファイル展開用のテンポラリフォルダの削除
             if (Directory.Exists(Application.StartupPath + @"\tmp")) {
                 Directory.Delete(Application.StartupPath + @"\tmp", true);
             }
 
             if (!errorFlag && dataDirtyFlag) {
-                // データファイルを削除する
                 if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
                     File.Delete(Application.StartupPath + @"\Mail.dat");
                 }
 
-                // Threadオブジェクトを作成する
-                System.Threading.Thread t = new System.Threading.Thread(new System.Threading.ThreadStart(mailBox.MailDataSave));
+                var t = new Thread(mailBox.MailDataSave);
 
-                // スレッドを開始する
                 t.Start();
 
-                // スレッドが終了するまで待機
                 t.Join();
             }
 
-            // 環境設定の書き出し
             SaveSettings();
-
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void CheckSocket()
         {
-            // スプラッシュ・スクリーンの表示開始
-            SplashScreen splash = new SplashScreen();
-            splash.ProgressMsg = "メールクライアントの初期化中です";
-            if (File.Exists(@"akanemail.png")) {
-                try {
-                    splash.BackgroundImage = Image.FromFile(@"akanemail.png");
-                }
-                catch {
-                    // 読み込めないときは通常画像を表示するため処理なし
-                }
-            }
-            splash.Show();
-            splash.Refresh();
-
-            // 最大化の時スプラッシュスクリーンよりも先にフォームが出ることがあるので
-            // それを防ぐために一時的にフォームを非表示にする。
-            this.Hide();
-
-            // 環境設定の読み込み
-            LoadSettings();
-
             try {
-                // WinSockの初期化処理
                 nMail.Winsock.Initialize();
             }
             catch (Exception exp) {
-                // 64bit版OSで同梱の32bit版OS用のnMail.dllを使用して起動したときはエラーになるため差し替えのお願いメッセージを表示する
+                // 64bit環境で32bit用のnMail.dllを使用して起動したときはエラーになる
                 if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
                     MessageBox.Show("64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合\nこのエラーが表示されます。\n\nお手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更してAkane Mailを起動\nしてください。", "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // 致命的なnMail.dllのエラーフラグをOn
                     nMailError = true;
                     Application.Exit();
                     return;
                 }
             }
+        }
 
-            // nMailのHTML添付ファイルの展開オプションをONにする
+        private void SetTimer(bool isEnabled, int intervalMinutes)
+        {
+            // 60,000(msec)
+            timerAutoReceive.Interval = intervalMinutes * 60000;
+            timerAutoReceive.Enabled = isEnabled;
+            }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // スプラッシュスクリーンよりも先にフォームが出ることがあるらしい
+            this.Hide();
+
+            SplashScreen splash = new SplashScreen();
+            splash.Initialize();
+
+            LoadSettings();
+
+            CheckSocket();
+
             Options.EnableSaveHtmlFile();
 
             // ファイル展開用のテンポラリフォルダの作成
@@ -2102,135 +1951,98 @@ namespace AkaneMail
             }
 
             try {
-                // Threadオブジェクトを作成する
-                var t = new System.Threading.Thread(new System.Threading.ThreadStart(mailBox.MailDataLoad));
-
-                splash.ProgressMsg = "メールデータの読み込み作業中です";
-
-                // スレッドを開始する
+                var t = new Thread(mailBox.MailDataLoad);
                 t.Start();
 
-                // スレッドが終了するまで待機
+                splash.ProgressMesssage = "メールデータの読み込み作業中です";
+
                 t.Join();
             }
             catch (MailLoadException) {
                 errorFlag = true;
             }
 
-            // メール自動受信が設定されている場合はタイマーを起動する
-            if (AccountInfo.autoMailFlag) {
-                // 取得間隔*60000(60000ミリ秒=1分)をタイマー実行間隔に設定する
-                timerAutoReceive.Interval = AccountInfo.getMailInterval * 60000;
-                timerAutoReceive.Enabled = true;
-            }
+            SetTimer(AccountInfo.autoMailFlag, AccountInfo.getMailInterval);
 
-            // ツリービューとリストビューの表示を更新する
             UpdateTreeView();
             UpdateListView();
 
-            // ListViewItemComparerの作成と設定
-            // 受信or送信日時の降順で並べる
-            listViewItemSorter = new ListViewItemComparer() { Column = 2, Order = SortOrder.Descending };
-            listViewItemSorter.ColumnModes = new ListViewItemComparer.ComparerMode[] { ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.String, ListViewItemComparer.ComparerMode.DateTime, ListViewItemComparer.ComparerMode.Integer };
-
-            // ListViewItemSorterを指定する
+            listViewItemSorter = ListViewItemComparer.Default;
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // スプラッシュ・スクリーンの表示終了
-            splash.Close();
-            if (!splash.IsDisposed)
                 splash.Dispose();
 
-            // 一時的に非表示にした画面を表示させる
             if (!(AccountInfo.minimizeTaskTray && WindowState == FormWindowState.Minimized)) {
                 ShowInTaskbar = true;
                 this.Show();
             }
 
-            // ツリービューを展開する
             treeMailBoxFolder.ExpandAll();
 
-            // メインとなるフォームをアクティブに戻す
             this.Activate();
 
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // Appliction.Idleを削除する
             Application.Idle -= Application_Idle;
 
-            // 致命的なnMail.dllエラーがないとき
             if (!nMailError) {
-                // WinSockを開放する
                 nMail.Winsock.Done();
             }
         }
 
         private void menuReplyMail_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            // 選択アイテムが0のときは反応にしない
             if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // 表示機能はシンプルなものに変わる
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // 返信メールを作成する
             CreateReturnMail(mail);
         }
 
         private void listMail_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            // メールボックスのときは反応しない
             if (listMail.Columns[0].Text == "名前") {
                 return;
             }
 
-            // リストビューで選択したメールデータを取得
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // メールを開く
             OpenMail(mail);
         }
 
         private void menuGetAttatch_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
             ListViewItem item = listMail.SelectedItems[0];
 
-            // 選択アイテムが0のときは反応にしない
             if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // 送信メール以外も展開できるように変更
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // 添付ファイルを展開する
             GetAttachMail(mail);
         }
 
         private void menuSaveMailFile_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
-            // ListViewから選択した1行の情報をitemに格納する
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            // 選択アイテムが0のときは反応にしない
             if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
             // どの項目でも保存できるように変更
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // ファイル名にメールの件名を入れる
             saveFileDialog1.FileName = mail.Subject;
@@ -2250,20 +2062,17 @@ namespace AkaneMail
 
         private void menuClearTrush_Click(object sender, EventArgs e)
         {
-            // ごみ箱の配列を空っぽにする
             if (MessageBox.Show("ごみ箱の中身をすべて削除します。\nよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 mailBox.Trash.Clear();
 
                 ClearInput();
 
-                // データ変更フラグをtrueにする
                 dataDirtyFlag = true;
             }
         }
 
         private void menuAbout_Click(object sender, EventArgs e)
         {
-            // バージョン情報を表示する
             AboutForm AboutForm = new AboutForm();
             AboutForm.ShowDialog();
         }
@@ -2293,10 +2102,7 @@ namespace AkaneMail
             if (listMail.Columns[0].Text == "名前")
                 return;
 
-            // クリックされた列を設定
             listViewItemSorter.Column = e.Column;
-
-            // 並び替える
             listMail.Sort();
         }
 
@@ -2312,11 +2118,9 @@ namespace AkaneMail
 
         private void MainForm_ClientSizeChanged(object sender, EventArgs e)
         {
-            // 最小化時にタスクトレイに格納フラグがtrueでウィンドウが最小化されたとき
             if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray) {
-                // フォームが最小化の状態であればフォームを非表示にする   
+                // 最初化時に通知領域にしか表示しない
                 this.Hide();
-                // トレイリストのアイコンを表示する   
                 notifyIcon1.Visible = true;
             }
         }
@@ -2324,27 +2128,23 @@ namespace AkaneMail
         private void menuTaskRestoreWindow_Click(object sender, EventArgs e)
         {
             this.ShowInTaskbar = true;
-            // フォームを表示する   
             this.Visible = true;
 
-            // 現在の状態が最小化の状態であれば通常の状態に戻す   
             if (this.WindowState == FormWindowState.Minimized) {
                 this.WindowState = FormWindowState.Normal;
             }
 
-            // フォームをアクティブにする   
             this.Activate();
         }
 
         private void menuFile_DropDownOpening(object sender, EventArgs e)
         {
-            // メールの選択件が1かつメールボックスのとき
+            // メールボックスのメールを1件選んでいるとき
             var condition = listMail.SelectedItems.Count == 1 && listMail.Columns[0].Text != "名前";
             menuSaveMailFile.Enabled = condition;
             menuGetAttatch.Enabled = condition;
             menuGetAttatch.Enabled = condition && attachMenuFlag;
 
-            // 削除メールが0件の場合
             menuClearTrush.Enabled = mailBox.Trash.Count != 0;
         }
 
@@ -2415,7 +2215,6 @@ namespace AkaneMail
                 buttonForwardMail.Enabled = listMail.SelectedItems.Count == 1;
             }
 
-            // データ読み込みエラーを起こしたとき
             if (errorFlag) {
                 this.Hide();
                 this.Close();
@@ -2424,21 +2223,16 @@ namespace AkaneMail
 
         private void menuFowerdMail_Click(object sender, EventArgs e)
         {
-            Mail mail = null;
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            // 選択アイテムが0のときは反応にしない
             if (listMail.SelectedItems.Count == 0) {
                 return;
             }
 
-            // 表示機能はシンプルなものに変わる
-            mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
-            // 転送メールの作成
             CreateFowerdMail(mail);
         }
-
         #endregion
     }
 }

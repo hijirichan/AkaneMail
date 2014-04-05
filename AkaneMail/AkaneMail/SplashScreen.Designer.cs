@@ -34,8 +34,9 @@
             // 
             // labelProgress
             // 
+            this.labelProgress.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.labelProgress.BackColor = System.Drawing.Color.Transparent;
-            this.labelProgress.Location = new System.Drawing.Point(-11, 344);
+            this.labelProgress.Location = new System.Drawing.Point(0, 344);
             this.labelProgress.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelProgress.Name = "labelProgress";
             this.labelProgress.Size = new System.Drawing.Size(648, 15);
@@ -44,6 +45,7 @@
             // 
             // labelVersion
             // 
+            this.labelVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelVersion.AutoSize = true;
             this.labelVersion.BackColor = System.Drawing.Color.Transparent;
             this.labelVersion.Location = new System.Drawing.Point(544, 309);
@@ -64,7 +66,7 @@
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.labelProgress);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "SplashScreen";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
