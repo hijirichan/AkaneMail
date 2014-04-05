@@ -258,20 +258,20 @@ namespace AkaneMail
         private void InitializeMailBox()
         {
             var item = new ListViewItem(AccountInfo.fromName);
-            item.SubItems.Add(AccountInfo.mailAddress);
-            if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
+                item.SubItems.Add(AccountInfo.mailAddress);
+                if (File.Exists(Application.StartupPath + @"\Mail.dat")) {
                 var fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
                 var mailDataDate = fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString();
-                item.SubItems.Add(mailDataDate);
-                item.SubItems.Add(fi.Length.ToString());
+                    item.SubItems.Add(mailDataDate);
+                    item.SubItems.Add(fi.Length.ToString());
+                }
+                else {
+                    item.SubItems.Add("データ未作成");
+                    item.SubItems.Add("0");
+                }
+                listMail.Items.Add(item);
+                listMail.EndUpdate();
             }
-            else {
-                item.SubItems.Add("データ未作成");
-                item.SubItems.Add("0");
-            }
-            listMail.Items.Add(item);
-            listMail.EndUpdate();
-        }
 
         private ListViewItem CreateMailItem(Mail mail, int index)
         {
@@ -382,15 +382,15 @@ namespace AkaneMail
 
         private void UpdateViewFully()
         {
-            // テキストボックスを空値にする
-            this.textBody.Text = "";
-            // IEコンポが表示されているいとき
+                // テキストボックスを空値にする
+                this.textBody.Text = "";
+                // IEコンポが表示されているいとき
 
-            if (this.browserBody.Visible) {
-                // IEコンポを閉じてテキストボックスを表示させる
-                this.browserBody.Visible = false;
-                this.textBody.Visible = true;
-            }
+                if (this.browserBody.Visible) {
+                    // IEコンポを閉じてテキストボックスを表示させる
+                    this.browserBody.Visible = false;
+                    this.textBody.Visible = true;
+                }
 
             // ListViewItemSorterを解除する
             listMail.ListViewItemSorter = null;
@@ -400,23 +400,23 @@ namespace AkaneMail
             UpdateListView();
 
             // フラグの値が0のとき
-            // 受信or送信日時の降順で並べる
-            listViewItemSorter.Column = 2;
-            listViewItemSorter.Order = SortOrder.Descending;
+                // 受信or送信日時の降順で並べる
+                listViewItemSorter.Column = 2;
+                listViewItemSorter.Order = SortOrder.Descending;
 
             // ListViewItemSorterを指定する
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            // 受信メールのとき
-            if (listMail.Columns[0].Text == "差出人") {
-                // ListViewの1行目にフォーカスを当て直す
-                listMail.Items[0].Selected = true;
-                listMail.Items[0].Focused = true;
-                listMail.SelectedItems[0].EnsureVisible();
-                listMail.Select();
-                listMail.Focus();
+                // 受信メールのとき
+                if (listMail.Columns[0].Text == "差出人") {
+                    // ListViewの1行目にフォーカスを当て直す
+                    listMail.Items[0].Selected = true;
+                    listMail.Items[0].Focused = true;
+                    listMail.SelectedItems[0].EnsureVisible();
+                    listMail.Select();
+                    listMail.Focus();
+                }
             }
-        }
 
         private void Invoke(Action invokeAction)
         {
@@ -698,11 +698,11 @@ namespace AkaneMail
                         var text = BreakLine(attach.Body);
                         attachMailBody = text;
                         this.textBody.Text = text;
-                    }
-                    else {
+                        }
+                        else {
                         this.textBody.Text = mail.Body;
+                        }
                     }
-                }
                 if (attach.FileNameList != null) {
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
@@ -711,9 +711,9 @@ namespace AkaneMail
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
                         buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.Path + "\\", attach.FileNameList).ToArray());
+                        }
                     }
                 }
-            }
             else {
                 // 添付ファイルが存在しない通常のメールまたは
                 // 送信済みメールのときは本文をテキストボックスに表示する
@@ -827,7 +827,7 @@ namespace AkaneMail
 
                 // GetStringでバイト型配列をUTF-8の配列にエンコードする
                 return Encoding.UTF8.GetString(bs);
-            }
+                }
             else {
                 // テキストボックス .に出力する文字コードをJISに変更する
                 byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
@@ -903,7 +903,7 @@ namespace AkaneMail
                 NewMailForm.buttonAttachList.Visible = true;
                 // 添付ファイルの数だけメニューを追加する
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
-            }
+                }
             else if (this.buttonAttachList.Visible) {
                 // 受信メールで添付ファイルがあるとき
                 // 添付リストメニューを表示
@@ -913,7 +913,7 @@ namespace AkaneMail
                 var attaches = this.buttonAttachList.DropDownItems.Cast<ToolStripItem>()
                     .Select(i => Application.StartupPath + @"\tmp\" + i.Text);
                 NewMailForm.buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attaches).ToArray());
-            }
+                    }
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -1178,8 +1178,8 @@ namespace AkaneMail
                     if (AccountInfo.popOverSSL) {
                         pop.SSL = nMail.Pop3.SSL3;
                     }
-                    // POP3へ接続する
-                    pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
+                        // POP3へ接続する
+                        pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
 
                     // POP3への認証処理を行う
                     pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
@@ -1290,33 +1290,33 @@ namespace AkaneMail
         private void NotifyReceive(int mailCount)
         {
             if (mailCount > 0) {
-                if (AccountInfo.popSoundFlag && AccountInfo.popSoundName != "") {
-                    SoundPlayer sndPlay = new SoundPlayer(AccountInfo.popSoundName);
-                    sndPlay.Play();
-                }
+                    if (AccountInfo.popSoundFlag && AccountInfo.popSoundName != "") {
+                        SoundPlayer sndPlay = new SoundPlayer(AccountInfo.popSoundName);
+                        sndPlay.Play();
+                    }
 
-                // ウィンドウが最小化でタスクトレイに格納されていて何分間隔かで受信をするとき
-                if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray && AccountInfo.autoMailFlag) {
-                    notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-                    notifyIcon1.BalloonTipTitle = "新着メール";
-                    notifyIcon1.BalloonTipText = mailCount + "件の新着メールを受信しました。";
-                    notifyIcon1.ShowBalloonTip(300);
+                    // ウィンドウが最小化でタスクトレイに格納されていて何分間隔かで受信をするとき
+                    if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray && AccountInfo.autoMailFlag) {
+                        notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
+                        notifyIcon1.BalloonTipTitle = "新着メール";
+                        notifyIcon1.BalloonTipText = mailCount + "件の新着メールを受信しました。";
+                        notifyIcon1.ShowBalloonTip(300);
+                    }
+                    else {
+                        Invoke(FlashWindow, this);
+
+                        labelMessage.Text = mailCount + "件の新着メールを受信しました。";
+                    }
+
+                    dataDirtyFlag = true;
                 }
                 else {
-                    Invoke(FlashWindow, this);
+                    labelMessage.Text = "新着のメッセージはありませんでした。";
 
-                    labelMessage.Text = mailCount + "件の新着メールを受信しました。";
+                    Invoke(EnableButton, true);
+                    return;
                 }
-
-                dataDirtyFlag = true;
             }
-            else {
-                labelMessage.Text = "新着のメッセージはありませんでした。";
-
-                Invoke(EnableButton, true);
-                return;
-            }
-        }
 
         private void Preauthenticate()
         {
@@ -1332,7 +1332,7 @@ namespace AkaneMail
                 pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
                 pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
             }
-        }
+            }
 
 
         /// <summary>
@@ -1774,7 +1774,7 @@ namespace AkaneMail
 
             if (ret == DialogResult.OK) {
                 SetTimer(settingForm.checkAutoGetMail.Checked, AccountInfo.getMailInterval);
-            }
+                }
 
             listMail.ListViewItemSorter = null;
             UpdateListView();
@@ -1844,7 +1844,7 @@ namespace AkaneMail
         private void menuAlreadyRead_Click(object sender, EventArgs e)
         {
             ChangeSelectedMailReadStatus(false);
-        }
+            }
 
         /// <summary>
         /// 既読メールを未読にする
@@ -1882,7 +1882,7 @@ namespace AkaneMail
                 return;
             }
 
-            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+           var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             EditMail(mail, item);
         }
@@ -1929,7 +1929,7 @@ namespace AkaneMail
             // 60,000(msec)
             timerAutoReceive.Interval = intervalMinutes * 60000;
             timerAutoReceive.Enabled = isEnabled;
-        }
+            }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -1970,7 +1970,7 @@ namespace AkaneMail
             listViewItemSorter = ListViewItemComparer.Default;
             listMail.ListViewItemSorter = listViewItemSorter;
 
-            splash.Dispose();
+                splash.Dispose();
 
             if (!(AccountInfo.minimizeTaskTray && WindowState == FormWindowState.Minimized)) {
                 ShowInTaskbar = true;
