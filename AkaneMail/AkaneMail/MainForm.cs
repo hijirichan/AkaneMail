@@ -103,7 +103,7 @@ namespace AkaneMail
                 set
                 {
                     if (_column == value) {
-                        Order.Invert();
+                        Order = Order.Invert();
                     }
                     _column = value;
                 }
@@ -1716,12 +1716,12 @@ namespace AkaneMail
 
         private void menuNewMail_Click(object sender, EventArgs e)
         {
-            var newMailForm = new MailEditorForm();
-
-            newMailForm.Owner = this;
-
-            // TODO たぶんメール渡すだけでいい
-            newMailForm.SendList = mailBox.Send.ToList();
+            var newMailForm = new MailEditorForm
+            {
+                Owner = this,
+                // TODO たぶんメール渡すだけでいい
+                SendList = mailBox.Send.ToList()
+            };
 
             newMailForm.Show();
         }
