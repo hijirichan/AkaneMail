@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountInfo.cs" />
+    <Compile Include="Extentions.cs" />
     <Compile Include="FindDialog.cs">
       <SubType>Form</SubType>
     </Compile>
