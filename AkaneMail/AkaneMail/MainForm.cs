@@ -604,6 +604,28 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// 添付ファイルを抽出
+        /// </summary>
+        /// <param name="attach">Attachmentインスタンス</param>
+        /// <param name="mail">メール</param>
+        /// <returns>添付ファイル抽出後のメール</returns>
+        private nMail.Attachment ExtractAttachFile(nMail.Attachment attach, Mail mail)
+        {
+            var AttachMail = attach;
+
+            try {
+                AttachMail.Add(mail.Header, mail.Body);
+                AttachMail.Save();
+            }
+            catch (Exception ex) {
+                labelMessage.Text = String.Format("エラー メッセージ:{0:s}", ex.Message);
+                return null;
+            }
+
+            return AttachMail;
+        }
+
+        /// <summary>
         /// 指定されたメールを開く
         /// </summary>
         /// <param name="mail">メール</param>
@@ -625,17 +647,8 @@ namespace AkaneMail
 
             if (hasAttachments || isHtmlMail) {
                 try {
+                    // デコード設定
                     ChangeConvertMode(mail.Convert);
-
-                    // 旧バージョンからの変換データではないとき
-                    /*if (mail.Convert == "") {
-                        // HTML/Base64のデコードを有効にする
-                        Options.EnableDecodeBody();
-                    }
-                    else {
-                        // HTML/Base64のデコードを無効にする
-                        Options.DisableDecodeBodyText();
-                    }*/
 
                     // ヘッダと本文付きの文字列を添付クラスに追加する
                     attach.Add(mail.Header, mail.Body);
@@ -698,11 +711,11 @@ namespace AkaneMail
                         var text = BreakLine(attach.Body);
                         attachMailBody = text;
                         this.textBody.Text = text;
-                        }
-                        else {
-                        this.textBody.Text = mail.Body;
-                        }
                     }
+                    else {
+                        this.textBody.Text = mail.Body;
+                    }
+                }
                 if (attach.FileNameList != null) {
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
@@ -722,7 +735,6 @@ namespace AkaneMail
 
                 if (mail.Attaches.Length != 0) {
                     buttonAttachList.Visible = true;
-
                     buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(mail.Attaches).ToArray());
                 }
 
