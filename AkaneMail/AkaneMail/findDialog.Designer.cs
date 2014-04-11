@@ -1,6 +1,6 @@
 ﻿namespace AkaneMail
 {
-    partial class findDialog
+    partial class FindDialog
     {
         /// <summary>
         /// Required designer variable.

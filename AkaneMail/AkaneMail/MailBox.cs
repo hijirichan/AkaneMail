@@ -244,7 +244,7 @@ namespace AkaneMail
                                             cc = pop.Field ?? cc;
 
                                             // ヘッダから重要度を取得する
-                                            priority = Mail.ParsePriority(header);
+                                            priority = MailPriority.Parse(header);
                                         }
 
                                         // メール格納配列に格納する
@@ -281,21 +281,21 @@ namespace AkaneMail
                         foreach (var folder in folders) {
                             writer.WriteLine(folder.Count);
                             foreach (var mail in folder) {
-                                writer.WriteLine(mail.address);
-                                writer.WriteLine(mail.subject);
-                                writer.Write(mail.header);
+                                writer.WriteLine(mail.Address);
+                                writer.WriteLine(mail.Subject);
+                                writer.Write(mail.Header);
                                 writer.WriteLine("\x03");
-                                writer.Write(mail.body);
+                                writer.Write(mail.Body);
                                 writer.WriteLine("\x03");
-                                writer.WriteLine(mail.date);
-                                writer.WriteLine(mail.size);
-                                writer.WriteLine(mail.uidl);
-                                writer.WriteLine(mail.attach);
-                                writer.WriteLine(mail.notReadYet.ToString());
-                                writer.WriteLine(mail.cc);
-                                writer.WriteLine(mail.bcc);
-                                writer.WriteLine(mail.priority);
-                                writer.WriteLine(mail.convert);
+                                writer.WriteLine(mail.Date);
+                                writer.WriteLine(mail.Size);
+                                writer.WriteLine(mail.Uidl);
+                                writer.WriteLine(mail.Attach);
+                                writer.WriteLine(mail.NotReadYet.ToString());
+                                writer.WriteLine(mail.Cc);
+                                writer.WriteLine(mail.Bcc);
+                                writer.WriteLine(mail.Priority);
+                                writer.WriteLine(mail.Convert);
                             }
                         }
                     }
