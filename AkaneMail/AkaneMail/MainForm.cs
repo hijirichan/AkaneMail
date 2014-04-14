@@ -626,6 +626,33 @@ namespace AkaneMail
         }
 
         /// <summary>
+        /// デコードされていないメッセージを展開
+        /// </summary>
+        /// <param name="mail">デコード前のメッセージ</param>
+        /// <returns>デコード後のメッセージ</returns>
+        private nMail.Attachment ExtractMessage(Mail mail)
+        {
+            checkNotYetReadMail = mail.NotReadYet;
+
+            Options.EnableDecodeBody();
+
+            var attach = new nMail.Attachment();
+
+            attach.Path = Application.StartupPath + @"\tmp";
+
+            // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
+            var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.Header).Contains("text/html");
+            var hasAttachments = attach.GetId(mail.Header) != nMail.Attachment.NoAttachmentFile;
+
+            var DecodeMessage = ExtractAttachFile(attach, mail);
+
+            if (DecodeMessage == null) return null;
+
+            return DecodeMessage;
+
+        }
+
+        /// <summary>
         /// 指定されたメールを開く
         /// </summary>
         /// <param name="mail">メール</param>
