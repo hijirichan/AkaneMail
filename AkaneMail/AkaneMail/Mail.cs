@@ -106,6 +106,19 @@ namespace AkaneMail
                 htmlBody = Encoding.GetEncoding(codeName).GetString(b);
             }
 
+            htmlBody = RegexAndSpecialChar(htmlBody);
+
+            return htmlBody;
+        }
+
+
+        /// <summary>
+        /// 正規表現と特殊文字等の置換
+        /// </summary>
+        /// <param name="htmlBody">HTML本文</param>
+        /// <returns>置換された文字列</returns>
+        public static string RegexAndSpecialChar(string htmlBody)
+        {
             // 正規表現の設定(<script>, <noscript>)
             Regex re1 = new Regex("<(no)?script.*?script>", RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
