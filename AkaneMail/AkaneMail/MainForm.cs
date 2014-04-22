@@ -293,7 +293,7 @@ namespace AkaneMail
                 item.Font = new Font(this.Font, FontStyle.Bold);
             }
 
-            // 重要度が高い場合は、フォントを太字にする
+            // 重要度が高い場合は、色を赤にする
             if (mail.Priority == MailPriority.Urgent) {
                 item.ForeColor = Color.Tomato;
             }
@@ -743,9 +743,9 @@ namespace AkaneMail
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
                         buttonAttachList.DropDownItems.AddRange(GenerateMenuItem(attach.Path + "\\", attach.FileNameList).ToArray());
-                        }
                     }
                 }
+            }
             else {
                 // 添付ファイルが存在しない通常のメールまたは
                 // 送信済みメールのときは本文をテキストボックスに表示する
@@ -788,7 +788,7 @@ namespace AkaneMail
                     else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
                         // Unicode化されたUTF-8文字列をデコードする
                         var bs = mail.Body.Select(c => (byte)c).ToArray();
-
+                        
                         attachMailBody = Encoding.UTF8.GetString(bs);
                         this.textBody.Text = attachMailBody;
                     }
@@ -1670,29 +1670,6 @@ namespace AkaneMail
         }
 
         /// <summary>
-        ///  選択されたメールを取得します。
-        /// </summary>
-        /// <param name="index">インデックス</param>
-        /// <returns></returns>
-        private Mail GetMailByIndex(object index)
-        {
-            string columnText = listMail.Columns[0].Text;
-
-            switch (columnText) {
-                case "名前":
-                    return null;
-                case "差出人":
-                    return mailBox.Receive[(int)index];
-                case "宛先":
-                    return mailBox.Send[(int)index];
-                case "差出人または宛先":
-                    return mailBox.Trash[(int)index];
-                default:
-                    throw new ArgumentException(columnText + "は有効な値ではありません。");
-            }
-        }
-
-        /// <summary>
         /// リストビューのフォーカスをリセットします。
         /// </summary>
         /// <param name="listView">対象のリストビュー</param>
@@ -1808,7 +1785,7 @@ namespace AkaneMail
 
             if (ret == DialogResult.OK) {
                 SetTimer(settingForm.checkAutoGetMail.Checked, AccountInfo.getMailInterval);
-                }
+            }
 
             listMail.ListViewItemSorter = null;
             UpdateListView();
@@ -1868,7 +1845,21 @@ namespace AkaneMail
                 case "差出人または宛先":
                     return mailBox.Trash;
                 default:
+                    //throw new ArgumentException(listMail.Columns[0].Text + "は有効な値ではありません。");
                     return null;
+            }
+        }
+
+        /// <summary>
+        ///  選択されたメールを取得します。
+        /// </summary>
+        /// <param name="index">インデックス</param>
+        /// <returns></returns>
+        private Mail GetMailByIndex(object index)
+        {
+            lock (this) {
+                var folder = GetShowingMailFolder();
+                return folder != null ? folder[(int)index] : null;
             }
         }
 
@@ -1878,7 +1869,7 @@ namespace AkaneMail
         private void menuAlreadyRead_Click(object sender, EventArgs e)
         {
             ChangeSelectedMailReadStatus(false);
-            }
+        }
 
         /// <summary>
         /// 既読メールを未読にする
@@ -1958,7 +1949,7 @@ namespace AkaneMail
             // 60,000(msec)
             timerAutoReceive.Interval = intervalMinutes * 60000;
             timerAutoReceive.Enabled = isEnabled;
-            }
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
