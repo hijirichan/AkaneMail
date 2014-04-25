@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using nMail;
+using System.Windows.Forms;
+using System.IO;
 
 namespace AkaneMail
 {
@@ -135,6 +137,42 @@ namespace AkaneMail
             return htmlBody;
         }
 
+        public IEnumerable<ToolStripItem> GenerateMenuItem(bool enableWhenRemoved = false)
+        {
+            return NmailAttachEx.GenerateMenuItem("", this.Attaches, enableWhenRemoved);
+        }
+
+    }
+
+    public static class NmailAttachEx
+    {
+        public static IEnumerable<ToolStripItem> GenerateMenuItem(this nMail.Attachment attach, bool enableWhenRemoved = false)
+        {
+            return GenerateMenuItem(attach.Path + "\\", attach.FileNameList as IEnumerable<string>, enableWhenRemoved);
+        }
+
+        public static IEnumerable<ToolStripItem> GenerateMenuItem(string rootPath, IEnumerable<string> attaches, bool enableWhenRemoved = false)
+        {
+            foreach (var attachFile in attaches)
+            {
+                if (File.Exists(rootPath + attachFile))
+                {
+                    yield return new ToolStripMenuItem
+                    {
+                        Text = attachFile,
+                        Image = System.Drawing.Icon.ExtractAssociatedIcon(rootPath + attachFile).ToBitmap()
+                    };
+                }
+                else
+                {
+                    yield return new ToolStripMenuItem
+                    {
+                        Text = attachFile + "は削除されています。",
+                        Enabled = enableWhenRemoved
+                    };
+                }
+            }
+        }
     }
 
     internal static class ByteArrayExtender
