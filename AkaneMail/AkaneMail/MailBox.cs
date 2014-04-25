@@ -27,7 +27,7 @@ namespace AkaneMail
             Add(_trash);
         }
 
-        public MailBox() : this(new MailFolder("Send"), new MailFolder("Receive"), new MailFolder("Trash")) { }
+        public MailBox() : this(new MailFolder("Send", "送信メール"), new MailFolder("Receive", "受信メール"), new MailFolder("Trash", "ごみ箱")) { }
 
         /// <summary>
         /// 指定された名前の MailFolder を取得します。
