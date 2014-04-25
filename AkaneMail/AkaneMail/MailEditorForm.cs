@@ -63,7 +63,7 @@ namespace AkaneMail
 
             // メールサイズの合計を取得する
             var formtexts = new[] { textAddress, textSubject, textBody, textCc, textBcc }
-                .Select(t => t.Text).ToArray();
+                .Select(t => t.Text);
             var moretext = new[] { addr, priority };
             int sizes = formtexts.Concat(moretext)
                 .Sum(b => System.Text.Encoding.UTF8.GetBytes(b).Length);
@@ -202,36 +202,32 @@ namespace AkaneMail
             }
         }
 
+        private void DoInActiveTextBox(Predicate<TextBox> condition, Action<TextBox> action)
+        {
+            var ctrl = this.ActiveControl;
+            if (ctrl is TextBox && condition(ctrl as TextBox)) {
+                action(ctrl as TextBox);
+            }
+        }
+
         private void menuUndo_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl =>
-            {
-                if (ctrl.CanUndo) { ctrl.Undo(); }
-            });
+            DoInActiveTextBox(c => c.CanUndo, ctrl => ctrl.Undo());
         }
 
         private void menuCut_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl =>
-            {
-                if (ctrl.SelectionLength > 0) { ctrl.Cut(); }
-            });
+            DoInActiveTextBox(c => c.SelectionLength > 0, ctrl => ctrl.Cut());
         }
 
         private void menuCopy_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl =>
-            {
-                if (ctrl.SelectionLength > 0) { ctrl.Copy(); }
-            });
+            DoInActiveTextBox(c => c.SelectionLength > 0, ctrl => ctrl.Copy());
         }
 
         private void menuPaste_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl =>
-            {
-                if (Clipboard.ContainsData(DataFormats.Text)) { ctrl.Paste(); }
-            });
+            DoInActiveTextBox(_ => Clipboard.ContainsData(DataFormats.Text), ctrl => ctrl.Paste());
         }
 
         private void menuSelectAll_Click(object sender, EventArgs e)
@@ -250,15 +246,11 @@ namespace AkaneMail
 
         private void menuDelete_Click(object sender, EventArgs e)
         {
-            DoInActiveTextBox(ctrl =>
-            {
-                if (ctrl.SelectionLength > 0) { ctrl.SelectedText = ""; }
-            });
+            DoInActiveTextBox(c => c.SelectionLength > 0, ctrl => ctrl.SelectedText = "");
         }
 
         private void menuSendMailBox_Click(object sender, EventArgs e)
         {
-            // アドレスまたは本文が未入力のとき
             if (textAddress.Text == "" || textBody.Text == "") {
                 if (textAddress.Text == "") {
                     MessageBox.Show("宛先が入力されていません。", "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -449,6 +441,46 @@ namespace AkaneMail
             }
 
             IsDirty = true;
+        }
+
+        public void Initialize(Mail mail, int tag)
+        {
+            Text = mail.Subject + " - Akane Mail";
+
+            // 送信箱の配列をForm3に渡す
+            //SendList = mailBox.Send.ToList();
+            ListTag = tag;
+            IsEdit = true;
+
+            // 宛先、件名、本文をForm3に渡す
+            textAddress.Text = mail.Address;
+            textCc.Text = mail.Cc;
+            textBcc.Text = mail.Bcc;
+            textSubject.Text = mail.Subject;
+            textBody.Text = mail.Body;
+
+            // 重要度をForm3に渡す
+            if (mail.Priority == MailPriority.Urgent)
+            {
+                comboPriority.SelectedIndex = 0;
+            }
+            else if (mail.Priority == MailPriority.Normal)
+            {
+                comboPriority.SelectedIndex = 1;
+            }
+            else
+            {
+                comboPriority.SelectedIndex = 2;
+            }
+
+            // 添付ファイルが付いているとき
+            if (mail.Attaches.Length != 0)
+            {
+                // 添付リストメニューを表示
+                buttonAttachList.Visible = true;
+                // 添付ファイルの数だけメニューを追加する
+                buttonAttachList.DropDownItems.AddRange(mail.GenerateMenuItem(true).ToArray());
+            }
         }
 
     }
