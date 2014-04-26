@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ACryptLib
@@ -14,43 +17,22 @@ namespace ACryptLib
         /// <returns>暗号化された文字列</returns>
         public static string EncryptString(string str, string key)
         {
-            // 文字列をバイト型配列にする
-            var bytesIn = System.Text.Encoding.UTF8.GetBytes(str);
-
-            // DESCryptoServiceProviderオブジェクトの作成
-            var des = new System.Security.Cryptography.DESCryptoServiceProvider();
-
-            // 共有キーと初期化ベクタを決定
-
-            // パスワードをバイト配列にする
-            var bytesKey = System.Text.Encoding.UTF8.GetBytes(key);
-
-            // 共有キーと初期化ベクタを設定
+            var utf8 = Encoding.UTF8;
+            var bytesIn = utf8.GetBytes(str);
+            var bytesKey = utf8.GetBytes(key);
+            
+            var des = new DESCryptoServiceProvider();
             des.Key = ResizeBytesArray(bytesKey, des.Key.Length);
             des.IV = ResizeBytesArray(bytesKey, des.IV.Length);
 
-            // 暗号化されたデータを書き出すためのMemoryStream
-            var msOut = new System.IO.MemoryStream();
-
-            // DES暗号化オブジェクトの作成
-            var desdecrypt = des.CreateEncryptor();
-
-            // 書き込むためのCryptoStreamの作成
-            var cryptStreem = new System.Security.Cryptography.CryptoStream(msOut, desdecrypt, System.Security.Cryptography.CryptoStreamMode.Write);
-
-            // 書き込む
-            cryptStreem.Write(bytesIn, 0, bytesIn.Length);
-            cryptStreem.FlushFinalBlock();
-
-            // 暗号化されたデータを取得
-            byte[] bytesOut = msOut.ToArray();
-
-            // 閉じる
-            cryptStreem.Close();
-            msOut.Close();
-
-            // Base64で文字列に変更して結果を返す
-            return System.Convert.ToBase64String(bytesOut);
+            using (var msOut = new MemoryStream()) {
+                var desdecrypt = des.CreateEncryptor();
+                using (var cryptStreem = new CryptoStream(msOut, desdecrypt, CryptoStreamMode.Write)) {
+                    cryptStreem.Write(bytesIn, 0, bytesIn.Length);
+                    cryptStreem.FlushFinalBlock();
+                    return Convert.ToBase64String(msOut.ToArray());
+                }
+            }
         }
 
         /// <summary>
@@ -60,7 +42,6 @@ namespace ACryptLib
         /// <returns>暗号化された文字列</returns>
         public static string EncryptPasswordString(string str)
         {
-            // パスワード暗号化用のパス文字列を使用して文字列を暗号化する。
             return EncryptString(str, "@K@nEmAiL_3DES_Key");
         }
 
@@ -72,41 +53,21 @@ namespace ACryptLib
         /// <returns>復号化された文字列</returns>
         public static string DecryptString(string str, string key)
         {
-            //DESCryptoServiceProviderオブジェクトの作成
-            var des = new System.Security.Cryptography.DESCryptoServiceProvider();
+            var bytesKey = Encoding.UTF8.GetBytes(key);
 
-            // 共有キーと初期化ベクタを決定
-            // パスワードをバイト配列にする
-            var bytesKey = System.Text.Encoding.UTF8.GetBytes(key);
-
-            // 共有キーと初期化ベクタを設定
+            var des = new DESCryptoServiceProvider();
             des.Key = ResizeBytesArray(bytesKey, des.Key.Length);
             des.IV = ResizeBytesArray(bytesKey, des.IV.Length);
 
-            // Base64で文字列をバイト配列に戻す
-            var bytesIn = System.Convert.FromBase64String(str);
-
-            // 暗号化されたデータを読み込むためのMemoryStream
-            var msIn = new System.IO.MemoryStream(bytesIn);
-
-            // DES復号化オブジェクトの作成
-            var desdecrypt = des.CreateDecryptor();
-
-            // 読み込むためのCryptoStreamの作成
-            var cryptStreem = new System.Security.Cryptography.CryptoStream(msIn, desdecrypt, System.Security.Cryptography.CryptoStreamMode.Read);
-
-            // 復号化されたデータを取得するためのStreamReader
-            var srOut = new System.IO.StreamReader(cryptStreem, System.Text.Encoding.UTF8);
-
-            // 復号化されたデータを取得する
-            var result = srOut.ReadToEnd();
-
-            // 閉じる
-            srOut.Close();
-            cryptStreem.Close();
-            msIn.Close();
-
-            return result;
+            var bytesIn = Convert.FromBase64String(str);
+            using (var msIn = new MemoryStream(bytesIn)) {
+                var desdecrypt = des.CreateDecryptor();
+                using (var cryptStreem = new CryptoStream(msIn, desdecrypt, CryptoStreamMode.Read)) {
+                    var srOut = new StreamReader(cryptStreem, Encoding.UTF8);
+                    return srOut.ReadToEnd();
+                }
+                
+            }
         }
 
         /// <summary>
@@ -116,7 +77,6 @@ namespace ACryptLib
         /// <returns>復号化された文字列</returns>
         public static string DecryptPasswordString(string str)
         {
-            // パスワード暗号化用のパス文字列を使用して文字列を復号化する。
             return DecryptString(str, "@K@nEmAiL_3DES_Key");
         }
 
@@ -128,15 +88,9 @@ namespace ACryptLib
         /// <returns>サイズが変更されたバイト配列</returns>
         private static byte[] ResizeBytesArray(byte[] bytes, int newSize)
         {
-            byte[] newBytes = new byte[newSize];
-
-            if (bytes.Length <= newSize) {
-                bytes.CopyTo(newBytes, 0);
-            }
-            else {
-                for (int i = 0, p = 0; i < bytes.Length; i++, p = (p + 1) % newBytes.Length) {
-                    newBytes[p] ^= bytes[i];
-                }
+            var newBytes = new byte[newSize];
+            foreach (var i in Enumerable.Range(0, bytes.Length)) {
+                newBytes[i % newBytes.Length] ^= bytes[i];
             }
             return newBytes;
         }
