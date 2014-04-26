@@ -319,7 +319,7 @@ namespace AkaneMail
         /// <summary>
         /// メール送信・受信用プログレスバーの非表示
         /// </summary>
-        private void ProgressMailDisable()
+        private void HideProgressMail()
         {
             // プログレスバーを非表示にする
             progressMail.Visible = false;
@@ -952,7 +952,7 @@ namespace AkaneMail
                 Trash(mailBox.Send);
             }
             else if (listMail.Columns[0].Text == "差出人または宛先") {
-                if (MessageBox.Show("選択されたメールは完全に削除されます。\nよろしいですか？", "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK) {
+                if (MessageBox.Show(MainFormMessages.Check.TrashComplete, "確認", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK) {
                     // 削除メールのとき
                     TrashCompletely();
                 }
@@ -1056,7 +1056,7 @@ namespace AkaneMail
 
             try {
                 // ステータスバーに状況表示する
-                labelMessage.Text = "メール受信中";
+                labelMessage.Text = MainFormMessages.Notification.MailReceiving;
 
                 // POP3のセッションを作成する;
                 using (var pop = new nMail.Pop3()) {
@@ -1091,10 +1091,7 @@ namespace AkaneMail
                         labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
                     }
                     else {
-                        // ステータスバーに状況表示する
-                        labelMessage.Text = "新着のメッセージはありませんでした。";
-
-                        // メール受信のメニューとツールボタンを有効化する
+                        labelMessage.Text = MainFormMessages.Notification.AllReceived;
                         Invoke(EnableButton, true);
                         return;
                     }
@@ -1103,12 +1100,10 @@ namespace AkaneMail
                     // 受信済みメールカウントがPOP3サーバ上にあるメール件数と同じとき
                     if (receivedCount == pop.Count) {
                         // ステータスバーに状況表示する
-                        labelMessage.Text = "新着のメッセージはありませんでした。";
+                        labelMessage.Text = MainFormMessages.Notification.AllReceived;
 
-                        // プログレスバーを非表示に戻す
-                        Invoke(ProgressMailDisable);
+                        Invoke(HideProgressMail);
 
-                        // メール受信のメニューとツールボタンを有効化する
                         Invoke(EnableButton, true);
 
                         return;
@@ -1153,7 +1148,7 @@ namespace AkaneMail
                     }
                 }
 
-                Invoke(ProgressMailDisable);
+                Invoke(HideProgressMail);
 
                 // メール受信のメニューとツールボタンを有効化する
                 Invoke(EnableButton, true);
@@ -1161,15 +1156,15 @@ namespace AkaneMail
                 // 未受信メールが1件以上の場合
                 NotifyReceive(mailCount);
             }
-            catch (nMail.nMailException nex) {
-                labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
+            catch (nMail.nMailException ex) {
+                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode);
 
                 Invoke(EnableButton, true);
 
                 return;
             }
-            catch (Exception exp) {
-                labelMessage.Text = "エラーメッセージ:" + exp.Message;
+            catch (Exception ex) {
+                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message);
 
                 Invoke(EnableButton, true);
                 return;
@@ -1181,28 +1176,26 @@ namespace AkaneMail
         private void NotifyReceive(int mailCount)
         {
             if (mailCount > 0) {
-                if (AccountInfo.popSoundFlag && AccountInfo.popSoundName != "") {
-                    SoundPlayer sndPlay = new SoundPlayer(AccountInfo.popSoundName);
-                    sndPlay.Play();
+                if (AccountInfo.popSoundFlag && !string.IsNullOrWhiteSpace(AccountInfo.popSoundName)) {
+                    using (var p = new SoundPlayer(AccountInfo.popSoundName)) { p.Play(); }
                 }
 
                 // ウィンドウが最小化でタスクトレイに格納されていて何分間隔かで受信をするとき
                 if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray && AccountInfo.autoMailFlag) {
                     notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-                    notifyIcon1.BalloonTipTitle = "新着メール";
-                    notifyIcon1.BalloonTipText = mailCount + "件の新着メールを受信しました。";
+                    notifyIcon1.BalloonTipTitle = MainFormMessages.Notification.NewMail;
+                    notifyIcon1.BalloonTipText = MainFormMessages.Notification.NewMailReceived(mailCount);
                     notifyIcon1.ShowBalloonTip(300);
                 }
                 else {
                     Invoke(FlashWindow, this);
-
-                    labelMessage.Text = mailCount + "件の新着メールを受信しました。";
+                    notifyIcon1.BalloonTipText = MainFormMessages.Notification.NewMailReceived(mailCount);
                 }
 
                 dataDirtyFlag = true;
             }
             else {
-                labelMessage.Text = "新着のメッセージはありませんでした。";
+                labelMessage.Text = MainFormMessages.Notification.AllReceived;
 
                 Invoke(EnableButton, true);
                 return;
@@ -1245,7 +1238,7 @@ namespace AkaneMail
                     Invoke(ProgressMailUpdate, mail.Index + 1);
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                 }
-                Invoke(ProgressMailDisable);
+                Invoke(HideProgressMail);
             });
 
             Invoke(() => UpdateView());
@@ -1306,7 +1299,7 @@ namespace AkaneMail
         private void SendMail(Action<Smtp> sendMailAciton)
         {
             try {
-                labelMessage.Text = "メール送信中";
+                labelMessage.Text = MainFormMessages.Notification.MailSending;
 
                 Preauthenticate();
 
@@ -1321,14 +1314,14 @@ namespace AkaneMail
                     sendMailAciton(smtp);
                 }
 
-                labelMessage.Text = "メール送信完了";
+                labelMessage.Text = MainFormMessages.Notification.MailSent;
             }
-            catch (nMail.nMailException nex) {
-                labelMessage.Text = "エラーNo:" + nex.ErrorCode + " エラーメッセージ:" + nex.Message;
+            catch (nMail.nMailException ex) {
+                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode);
                 return;
             }
-            catch (Exception exp) {
-                labelMessage.Text = "エラーメッセージ:" + exp.Message;
+            catch (Exception ex) {
+                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message);
                 return;
             }
         }
@@ -1366,7 +1359,7 @@ namespace AkaneMail
                     // 添付ファイルを保存する
                     attach.Save();
 
-                    MessageBox.Show(attach.Path + "に添付ファイル" + attach.FileName + "を保存しました。", "添付ファイルの取り出し", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(MainFormMessages.Notification.InternalSaved(attach.Path, attach.FileName), "添付ファイルの取り出し", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (nMailException nex) {
                     string message = "";
@@ -1386,7 +1379,7 @@ namespace AkaneMail
                     MessageBox.Show(message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
                 catch (Exception ex) {
-                    MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    MessageBox.Show(MainFormMessages.Error.GeneralErrorMessage(ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 }
             }
         }
@@ -1398,6 +1391,7 @@ namespace AkaneMail
         /// <param name="FileToSave">保存ファイル名</param>
         private void SaveMailFile(Mail mail, string FileToSave)
         {
+            // これたぶんバイト列をそのままファイルに突っ込んでいけば幸せになれる気がする
             string fileBody = "";
             string fileHeader = "";
 
@@ -1436,18 +1430,19 @@ namespace AkaneMail
             }
             else {
                 // ここに落ちてくるのは基本的に添付ファイルのみ
-                Byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Header);
-                fileHeader = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+                var encoding = Encoding.GetEncoding("iso-2200-jp");
+                var b = encoding.GetBytes(mail.Header);
+                fileHeader = encoding.GetString(b);
 
-                b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
-                fileBody = Encoding.GetEncoding("iso-2022-jp").GetString(b);
+                b = encoding.GetBytes(mail.Body);
+                fileBody = encoding.GetString(b);
 
                 // 文字コードをJISに設定する
                 enc = "iso-2022-jp";
             }
 
             // ファイル書き込み用のエンコーディングを取得する
-            Encoding writeEnc = Encoding.GetEncoding(enc);
+            var writeEnc = Encoding.GetEncoding(enc);
 
             using (var writer = new StreamWriter(FileToSave, false, writeEnc)) {
                 // 受信メール(ヘッダが存在する)のとき
@@ -1747,10 +1742,7 @@ namespace AkaneMail
             catch (Exception exp) {
                 // 64bit環境で32bit用のnMail.dllを使用して起動したときはエラーになる
                 if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
-                    MessageBox.Show(
-@"64bit版OSで32bit版OS用のnMail.dllを使用して実行した場合このエラーが表示されます。
-お手数をお掛け致しますが同梱のnMail.dllをnMail.dll.32、nMail.dll.64をnMail.dllに名前を変更してAkane Mailを起動してください。",
-                                    "Akane Mail", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(MainFormMessages.Error.Needx64nMail, MainFormMessages.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     nMailError = true;
                     Application.Exit();
                     return;
@@ -1788,7 +1780,7 @@ namespace AkaneMail
                 var t = new Thread(mailBox.MailDataLoad);
                 t.Start();
 
-                splash.ProgressMesssage = "メールデータの読み込み作業中です";
+                splash.ProgressMesssage = MainFormMessages.Notification.MailLoading;
 
                 t.Join();
             }
@@ -1888,7 +1880,7 @@ namespace AkaneMail
                         SaveMailFile(mail, saveFileDialog1.FileName);
                     }
                     catch (Exception ex) {
-                        MessageBox.Show(String.Format("エラー メッセージ:{0:s}", ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                        MessageBox.Show(MainFormMessages.Error.GeneralErrorMessage(ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                 }
             }
@@ -1896,7 +1888,7 @@ namespace AkaneMail
 
         private void menuClearTrush_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("ごみ箱の中身をすべて削除します。\nよろしいですか？", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
+            if (MessageBox.Show(MainFormMessages.Check.ClearTrash, "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 mailBox.Trash.Clear();
 
                 ClearInput();
@@ -1918,7 +1910,7 @@ namespace AkaneMail
             var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             // ファイルを開くかの確認をする
-            if (MessageBox.Show(e.ClickedItem.Text + "を開きますか？\nファイルによってはウイルスの可能性もあるため\n注意してファイルを開いてください。", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+            if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
                 // 受信されたメールのとき
                 if (mail.Attach.Length == 0) {
                     System.Diagnostics.Process.Start(Application.StartupPath + @"\tmp\" + e.ClickedItem.Text);
