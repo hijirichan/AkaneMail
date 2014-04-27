@@ -66,7 +66,7 @@ namespace AkaneMail
             /// </summary>
             /// <param name="fileName"></param>
             /// <returns></returns>
-            internal static readonly string OpenUnsafeFile(string fileName)
+            internal static string OpenUnsafeFile(string fileName)
             {
                 return
 fileName + @"を開きますか？

@@ -250,12 +250,10 @@ namespace AkaneMail
             var fi = new FileInfo(Application.StartupPath + @"\Mail.dat");
             if (fi.Exists) {
                 var mailDataDate = fi.LastWriteTime.ToShortDateString() + " " + fi.LastWriteTime.ToLongTimeString();
-                item.SubItems.Add(mailDataDate);
-                item.SubItems.Add(fi.Length.ToString());
+                item.SubItems.AddRange(new[] { mailDataDate, fi.Length.ToString() });
             }
             else {
-                item.SubItems.Add("データ未作成");
-                item.SubItems.Add("0");
+                item.SubItems.AddRange(new[] { "データ未作成", "0" });
             }
             listMail.Items.Add(item);
             listMail.EndUpdate();
@@ -976,64 +974,44 @@ namespace AkaneMail
 
         public void Trash(MailFolder fromFolder)
         {
-            // 受信メールのとき
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
-
-            if (nLen == 0)
-                return;
-
             // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen)
-                .Select(i => listMail.SelectedItems[i].Name)
-                .Select(t => int.Parse(t))
-                .OrderBy(i => i)
-                .ToArray();
+            var nIndices = listMail.SelectedItems.Cast<ListViewItem>()
+                .Select(i => int.Parse(i.Name))
+                .OrderByDescending(i => i);
 
-            // キーの並べ替え
-            while (nLen > 0) {
+            foreach(var i in nIndices) {
                 // 選択アイテムのキーから 選択アイテム群の位置を取得
-                var nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
+                var nIndex = listMail.SelectedItems.IndexOfKey(i.ToString());
                 var item = listMail.SelectedItems[nIndex];
 
                 // 元リストからメールアイテムを取得
-                var mail = fromFolder[nIndices[nLen - 1]];
+                var mail = fromFolder[i];
 
                 if (item.SubItems[1].Text == mail.Subject) {
                     mailBox.Trash.Add(mail);
                     fromFolder.Remove(mail);
                 }
-                nLen--;
             }
         }
 
         public void TrashCompletely()
         {
-            // 選択アイテムの数を取得
-            int nLen = listMail.SelectedItems.Count;
-
-            if (nLen == 0)
-                return;
-
             // 選択アイテムのキーを取得
-            var nIndices = Enumerable.Range(0, nLen).Select(n => int.Parse(listMail.SelectedItems[n].Name)).ToArray();
+            var nIndices = listMail.SelectedItems.Cast<ListViewItem>()
+                .Select(i => int.Parse(i.Name))
+                .OrderByDescending(i => i);
 
-            // キーの並べ替え
-            Array.Sort(nIndices);
-            var dList = mailBox.Trash;
-
-            while (nLen > 0) {
+            foreach (var i in nIndices) {
                 // 選択アイテムのキーから 選択アイテム群の位置を取得
-                int nIndex = listMail.SelectedItems.IndexOfKey(nIndices[nLen - 1].ToString());
-                ListViewItem item = listMail.SelectedItems[nIndex];
+                var index = listMail.SelectedItems.IndexOfKey(i.ToString());
+                var item = listMail.SelectedItems[index];
 
                 // 元リストからメールアイテムを取得
-                Mail mail = dList[nIndices[nLen - 1]];
+                var mail = mailBox.Trash[i];
 
                 if (item.SubItems[1].Text == mail.Subject) {
-                    dList.Remove(mail);
+                    mailBox.Trash.Remove(mail);
                 }
-                nLen--;
             }
         }
 
@@ -1050,9 +1028,10 @@ namespace AkaneMail
 
         /// <summary>
         /// POP3サーバからメールを受信する
+        /// </summary>
         private void RecieveMail()
         {
-            int mailCount = 0;              // 未受信メール件数
+            int mailCount = 0; // 未受信メール件数
 
             try {
                 // ステータスバーに状況表示する
@@ -1820,12 +1799,9 @@ namespace AkaneMail
 
         private void menuReplyMail_Click(object sender, EventArgs e)
         {
+            if (listMail.SelectedItems.Count == 0) return;
+
             var item = listMail.SelectedItems[0];
-
-            if (listMail.SelectedItems.Count == 0) {
-                return;
-            }
-
             // 表示機能はシンプルなものに変わる
             var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
@@ -1834,12 +1810,9 @@ namespace AkaneMail
 
         private void listMail_Click(object sender, EventArgs e)
         {
+            if (listMail.Columns[0].Text == "名前") return;
+
             var item = listMail.SelectedItems[0];
-
-            if (listMail.Columns[0].Text == "名前") {
-                return;
-            }
-
             var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
             OpenMail(mail);
@@ -1847,12 +1820,10 @@ namespace AkaneMail
 
         private void menuGetAttatch_Click(object sender, EventArgs e)
         {
-            ListViewItem item = listMail.SelectedItems[0];
 
-            if (listMail.SelectedItems.Count == 0) {
-                return;
-            }
+            if (listMail.SelectedItems.Count == 0) return;
 
+            var item = listMail.SelectedItems[0];
             // 送信メール以外も展開できるように変更
             var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 
@@ -1861,12 +1832,10 @@ namespace AkaneMail
 
         private void menuSaveMailFile_Click(object sender, EventArgs e)
         {
+
+            if (listMail.SelectedItems.Count == 0) return;
+
             var item = listMail.SelectedItems[0];
-
-            if (listMail.SelectedItems.Count == 0) {
-                return;
-            }
-
             // どの項目でも保存できるように変更
             var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
 

@@ -5,15 +5,16 @@ using System.Text;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
 
 namespace AkaneMail
 {
     /// <summary>
     /// メールを保存しておく、名前のついたフォルダーを表します。
     /// </summary>
-    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging
+    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging, INotifyCollectionChanged
     {
-        private List<Mail> _mails;
+        private ObservableCollection<Mail> _mails;
 
         #region DisplayName
         private string _displayName;
@@ -108,8 +109,17 @@ namespace AkaneMail
         {
             _name = name;
             _displayName = displayName;
-            _mails = new List<Mail>();
+            _mails = new ObservableCollection<Mail>();
+            _mails.CollectionChanged += RaiseCollectionChanged;
         }
+        #region INotifyCollectionChanged メンバー
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        #endregion
+        private void RaiseCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (CollectionChanged != null) CollectionChanged(this, e);
+        }
+
 
         /// <summary>
         /// 指定したインデックスにあるメールを取得します。
