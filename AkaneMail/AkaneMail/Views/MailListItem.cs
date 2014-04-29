@@ -48,18 +48,9 @@ namespace AkaneMail.Views
             SubItems.Add(Tag.Date);
             SubItems.Add(Tag.Size);
 
-            // 未読(未送信)の場合は、フォントを太字にする
-            if (Tag.NotReadYet) {
-                Font = new Font(this.Font, FontStyle.Bold);
-            }
-
-            // 重要度に応じてフォントの色を変える
-            if (Tag.Priority == MailPriority.Urgent) {
-                ForeColor = Color.Tomato;
-            }
-            else if (Tag.Priority == MailPriority.NonUrgent) {
-                ForeColor = Color.LightBlue;
-            }
+            var style = Tag.NotReadYet ? FontStyle.Bold : FontStyle.Regular;
+            Font = new Font(this.Font, style);
+            ForeColor = MailPriority.GetPriorityColor(Tag);
         }
     }
    

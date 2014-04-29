@@ -34,10 +34,9 @@ namespace AkaneMail.Views
         {
             InitializeComponent();
             Columns.Initialize();
+            this.ListViewItemSorter = Columns[2] as MailColumnHeader;
+            ((MailColumnHeader)this.ListViewItemSorter).Reset(SortOrder.Descending);
         }
-
-        private ContextMenuStrip MailListMenu;
-        private IContainer components;
 
         #region Events
         /// <summary>選択されているメールが変更されたときに発生します。</summary>

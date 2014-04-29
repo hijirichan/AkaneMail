@@ -95,9 +95,7 @@ namespace AkaneMail.Views
         public static void SetHeader(this ListView.ColumnHeaderCollection columns, MailList.DisplayMode displayMode)
         {
             var h = headers[displayMode].ToHeader();
-            foreach (var i in Enumerable.Range(0, columns.Count)) {
-                columns[i].Text = h[i];
-            }
+            foreach (var i in Enumerable.Range(0, columns.Count)) { columns[i].Text = h[i]; }
         }
     }
 }

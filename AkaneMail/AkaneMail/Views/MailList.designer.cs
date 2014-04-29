@@ -31,12 +31,12 @@ namespace AkaneMail.Views
             // separator1
             // 
             separator1.Name = "separator1";
-            separator1.Size = new System.Drawing.Size(210, 6);
+            separator1.Size = new System.Drawing.Size(267, 6);
             // 
             // separator2
             // 
             separator2.Name = "separator2";
-            separator2.Size = new System.Drawing.Size(210, 6);
+            separator2.Size = new System.Drawing.Size(267, 6);
             // 
             // MailListMenu
             // 
@@ -50,42 +50,49 @@ namespace AkaneMail.Views
             separator2,
             this.SaveAttachmentMenu});
             this.MailListMenu.Name = "MailListMenu";
-            this.MailListMenu.Size = new System.Drawing.Size(214, 160);
+            this.MailListMenu.Size = new System.Drawing.Size(271, 160);
             // 
             // ReplyMenu
             // 
             this.ReplyMenu.Name = "ReplyMenu";
-            this.ReplyMenu.Size = new System.Drawing.Size(213, 24);
+            this.ReplyMenu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.ReplyMenu.Size = new System.Drawing.Size(270, 24);
             this.ReplyMenu.Text = "返信";
             // 
             // ForwardMenu
             // 
             this.ForwardMenu.Name = "ForwardMenu";
-            this.ForwardMenu.Size = new System.Drawing.Size(213, 24);
+            this.ForwardMenu.Size = new System.Drawing.Size(270, 24);
             this.ForwardMenu.Text = "転送";
             // 
             // DeleteMenu
             // 
             this.DeleteMenu.Name = "DeleteMenu";
-            this.DeleteMenu.Size = new System.Drawing.Size(213, 24);
+            this.DeleteMenu.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.DeleteMenu.Size = new System.Drawing.Size(270, 24);
             this.DeleteMenu.Text = "削除";
             // 
             // ReadMenu
             // 
             this.ReadMenu.Name = "ReadMenu";
-            this.ReadMenu.Size = new System.Drawing.Size(213, 24);
+            this.ReadMenu.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.O)));
+            this.ReadMenu.Size = new System.Drawing.Size(270, 24);
             this.ReadMenu.Text = "既読にする";
             // 
             // UnreadMenu
             // 
             this.UnreadMenu.Name = "UnreadMenu";
-            this.UnreadMenu.Size = new System.Drawing.Size(213, 24);
+            this.UnreadMenu.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.U)));
+            this.UnreadMenu.Size = new System.Drawing.Size(270, 24);
             this.UnreadMenu.Text = "未読にする";
             // 
             // SaveAttachmentMenu
             // 
             this.SaveAttachmentMenu.Name = "SaveAttachmentMenu";
-            this.SaveAttachmentMenu.Size = new System.Drawing.Size(213, 24);
+            this.SaveAttachmentMenu.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.SaveAttachmentMenu.Size = new System.Drawing.Size(270, 24);
             this.SaveAttachmentMenu.Text = "添付ファイルを取り出す";
             // 
             // MailList
@@ -98,6 +105,8 @@ namespace AkaneMail.Views
 
         }
 
+        private ContextMenuStrip MailListMenu;
+        private IContainer components;
         private ToolStripMenuItem ReplyMenu;
         private ToolStripMenuItem ForwardMenu;
         private ToolStripMenuItem DeleteMenu;
