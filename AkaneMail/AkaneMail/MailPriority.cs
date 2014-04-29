@@ -8,7 +8,7 @@ using System.Text;
 namespace AkaneMail
 {
     /// <summary>メールの優先度を表します。</summary>
-    static class MailPriority
+    public static class MailPriority
     {
         /// <summary>通常の優先度を表します。</summary>
         public static readonly string Normal = "normal";
@@ -58,6 +58,20 @@ namespace AkaneMail
             }
             return _priority;
         }
+
+        public static Color GetPriorityColor(Mail mail)
+        {
+            if (mail.Priority == Urgent) {
+                return Color.Tomato;
+            }
+            else if (mail.Priority == NonUrgent) {
+                return Color.LightBlue;
+            }
+            else {
+                return Color.Black;
+            }
+        }
+
     }
 
     internal static class Pop3Extender
@@ -70,7 +84,7 @@ namespace AkaneMail
         }
         internal static bool TryGetHeaders(this string header, Pop3 pop, out string value, params string[] contents)
         {
-            value = contents.FirstOrDefault(c => header.Contains(c)).GetHeader(pop, header);
+            value = contents.FirstOrDefault(header.Contains).GetHeader(pop, header);
             return value != null;
         }
     }

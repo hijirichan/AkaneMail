@@ -723,7 +723,7 @@
             this.toolStripSeparator8,
             this.menuTaskApplicationExit});
             this.contextMenuStrip3.Name = "contextMenuStrip3";
-            this.contextMenuStrip3.Size = new System.Drawing.Size(231, 88);
+            this.contextMenuStrip3.Size = new System.Drawing.Size(231, 116);
             // 
             // menuTaskRestoreWindow
             // 

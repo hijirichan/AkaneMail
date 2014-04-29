@@ -63,6 +63,24 @@ namespace AkaneMail
             NotReadYet = unread;
         }
 
+        public bool Update(string address = null, string header = null, string subject = null, string body = null, string attach = null, string date = null, string size = null, string uidl = null, bool? read = null, string convert = null, string cc = null, string bcc = null, string priority = null)
+        {
+            this.Address = address ?? Address;
+            this.Header = header ?? Header;
+            this.Subject = subject ?? Subject;
+            this.Body = body ?? Body;
+            this.Attach = attach ?? Attach;
+            this.Date = date ?? Date;
+            this.Size = size ?? Size;
+            this.Uidl = uidl ?? Uidl;
+            this.NotReadYet = read ?? NotReadYet;
+            this.Cc = cc ?? Cc;
+            this.Bcc = bcc ?? Bcc;
+            this.Priority = priority ?? Priority;
+            this.Convert = convert ?? Convert;
+            return true;
+        }
+
         /// <summary>
         /// 文字コードを取得する
         /// </summary>

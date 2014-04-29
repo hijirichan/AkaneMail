@@ -19,6 +19,9 @@ namespace AkaneMail
         /// </summary>
         public MainForm MainForm { get { return Owner as MainForm; } }
 
+
+        public Mail Mail { get; set; }
+
         /// <summary>
         /// 送信箱の配列
         /// </summary>
@@ -127,7 +130,7 @@ namespace AkaneMail
 
             // 直接送信
             MainForm.DirectSendMail(this.textAddress.Text, this.textCc.Text, this.textBcc.Text, this.textSubject.Text, this.textBody.Text, attaches, priority);
-            string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+            string date = DateTime.Now.ToString("yy/MM/dd hh:mm:ss");
 
             var sendMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attaches, date, size, "", false, "", this.textCc.Text, this.textBcc.Text, priority);
             // コレクションに追加する
@@ -252,12 +255,10 @@ namespace AkaneMail
         private void menuSendMailBox_Click(object sender, EventArgs e)
         {
             if (textAddress.Text == "" || textBody.Text == "") {
-                if (textAddress.Text == "") {
-                    MessageBox.Show("宛先が入力されていません。", "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else if (textBody.Text == "") {
-                    MessageBox.Show("本文が入力されていません。", "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                var message = "";
+                if (textAddress.Text == "") { message = "宛先が入力されていません。"; }
+                else if (textBody.Text == "") { message = "本文が入力されていません。"; }
+                MessageBox.Show(message, "送信箱に入れる", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -276,29 +277,15 @@ namespace AkaneMail
             var attaches = GetAttaches();
 
             // 未送信という文字列だと日付ソートでエラーになる
-            string date = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString();
+            var date = DateTime.Now.ToString("yy/MM/dd hh:mm:ss");
+            var size = GetMailSize(attaches);
  
             if (!IsEdit) {
-                var size = GetMailSize(attaches);
-
                 var newMail = new Mail(this.textAddress.Text, "", this.textSubject.Text, this.textBody.Text, attaches, date, size, "", true, "", this.textCc.Text, this.textBcc.Text, priority);
                 SendList.Add(newMail);
             }
             else {
-                // 選択したメールの内容を書き換える
-                // 送信リストに入れている情報を書き換える
-                var size = GetMailSize(attaches);
-
-                SendList[ListTag].Subject = textSubject.Text;
-                SendList[ListTag].Address = textAddress.Text;
-                SendList[ListTag].Body = textBody.Text;
-                SendList[ListTag].Attach = attaches;
-                SendList[ListTag].Date = date;
-                SendList[ListTag].Size = size;
-                SendList[ListTag].NotReadYet = true;
-                SendList[ListTag].Cc = textCc.Text;
-                SendList[ListTag].Bcc = textBcc.Text;
-                SendList[ListTag].Priority = priority;
+                Mail.Update(textAddress.Text, null, textSubject.Text, textBody.Text, attaches, date, size, null, true, textCc.Text, null, textBcc.Text, priority);
 
                 // Becky!と同じように更新後はテキストも変更
                 MainForm.textBody.Text = textBody.Text;
@@ -322,22 +309,21 @@ namespace AkaneMail
 
         private void MailEditorForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (IsDirty) {
-                string message, title;
-                if (IsEdit) {
-                    message = "送信メールの編集途中ですが、閉じてよろしいですか？\nウィンドウを閉じると編集前の内容に戻ります。";
-                    title = "編集中";
-                }
-                else {
-                    message = "メールの作成途中ですが、閉じてよろしいですか？\nウィンドウを閉じると作成中のメールは保存されません。";
-                    title = "新規作成";
-                }
-                if (MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No) {
-                    e.Cancel = true;
-                    return;
-                }
+            if (!IsDirty) {
+                Application.Idle -= Application_Idle;
+                return;
             }
-            Application.Idle -= Application_Idle;
+
+            string message, title;
+            if (IsEdit) {
+                message = "送信メールの編集途中ですが、閉じてよろしいですか？\nウィンドウを閉じると編集前の内容に戻ります。";
+                title = "編集中";
+            }
+            else {
+                message = "メールの作成途中ですが、閉じてよろしいですか？\nウィンドウを閉じると作成中のメールは保存されません。";
+                title = "新規作成";
+            }
+            e.Cancel = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No;
         }
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -380,23 +366,22 @@ namespace AkaneMail
         private void menuEdit_DropDownOpening(object sender, EventArgs e)
         {
             DoInActiveTextBox(ctrl =>
-                {
-                    this.menuUndo.Enabled = ctrl.CanUndo;
+            {
+                this.menuUndo.Enabled = ctrl.CanUndo;
 
-                    // 検索対象は本文入力のみ
-                    var istestBody = ctrl.Name == "textBody";
-                    menuFind.Enabled = istestBody;
-                    menuReplace.Enabled = istestBody;
-                    
-                    this.menuSelectAll.Enabled = ctrl.Text.Length > 0;
+                // 検索対象は本文入力のみ
+                var istestBody = ctrl.Name == "textBody";
+                menuFind.Enabled = istestBody;
+                menuReplace.Enabled = istestBody;
 
-                    var isctrlSelected = ctrl.SelectionLength > 0;
-                    this.menuCut.Enabled = isctrlSelected;
-                    this.menuCopy.Enabled = isctrlSelected;
-                    this.menuDelete.Enabled = isctrlSelected;
-                });
+                this.menuSelectAll.Enabled = ctrl.Text.Length > 0;
 
-            // クリップボードの内容確認
+                var selected = ctrl.SelectionLength > 0;
+                this.menuCut.Enabled = selected;
+                this.menuCopy.Enabled = selected;
+                this.menuDelete.Enabled = selected;
+            });
+
             this.menuPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
         }
 
@@ -404,9 +389,9 @@ namespace AkaneMail
         {
             DoInActiveTextBox(ctrl =>
             {
-                var isctrlSelected = ctrl.SelectionLength > 0;
-                this.buttonCut.Enabled = isctrlSelected;
-                this.buttonCopy.Enabled = isctrlSelected;
+                var selected = ctrl.SelectionLength > 0;
+                this.buttonCut.Enabled = selected;
+                this.buttonCopy.Enabled = selected;
             });
 
             this.buttonPaste.Enabled = Clipboard.ContainsData(DataFormats.Text);
@@ -443,23 +428,19 @@ namespace AkaneMail
             IsDirty = true;
         }
 
-        public void Initialize(Mail mail, int tag)
+        public void Initialize(Mail mail)
         {
-            Text = mail.Subject + " - Akane Mail";
+            IsEdit = mail == null;
 
-            // 送信箱の配列をForm3に渡す
-            //SendList = mailBox.Send.ToList();
-            ListTag = tag;
-            IsEdit = true;
+            this.Mail = mail ?? new Mail("", "", null, "", "", "", "", "", false, "", "", "", MailPriority.Normal);
 
-            // 宛先、件名、本文をForm3に渡す
+            Text = (mail.Subject ?? "新規作成") + " - Akane Mail";
             textAddress.Text = mail.Address;
             textCc.Text = mail.Cc;
             textBcc.Text = mail.Bcc;
             textSubject.Text = mail.Subject;
             textBody.Text = mail.Body;
 
-            // 重要度をForm3に渡す
             if (mail.Priority == MailPriority.Urgent)
             {
                 comboPriority.SelectedIndex = 0;
@@ -473,14 +454,16 @@ namespace AkaneMail
                 comboPriority.SelectedIndex = 2;
             }
 
-            // 添付ファイルが付いているとき
             if (mail.Attaches.Length != 0)
             {
-                // 添付リストメニューを表示
                 buttonAttachList.Visible = true;
-                // 添付ファイルの数だけメニューを追加する
                 buttonAttachList.DropDownItems.AddRange(mail.GenerateMenuItem(true).ToArray());
             }
+        }
+
+        private void Initialize()
+        {
+            Text = "新規作成 - " + MainFormMessages.ProductName;
         }
 
     }
