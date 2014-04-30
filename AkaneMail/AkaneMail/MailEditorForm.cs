@@ -176,7 +176,7 @@ namespace AkaneMail
 
             form.listMail.ListViewItemSorter = form.listViewItemSorter;
 
-            form.dataDirtyFlag = true;
+            form.dataModified = true;
 
             // インスタンスを使いまわしているのでなければこの2行はいらない
             IsEdit = false;

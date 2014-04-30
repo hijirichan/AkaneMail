@@ -38,14 +38,8 @@ namespace AkaneMail
         private int currentRow;
 
         #region "flags"
-        // データ読み込みエラー発生のときのフラグ
-        public bool errorFlag;
-
         // データ変更が発生したのときのフラグ
-        public bool dataDirtyFlag;
-
-        // 添付ファイルが存在するかのフラグ
-        public bool attachMenuFlag;
+        public bool dataModified;
 
         // 添付付きメールの返信用文字列
         public string attachMailBody = "";
@@ -118,7 +112,7 @@ namespace AkaneMail
             /// <param name="cmod">並び替えの方法</param>
             public ListViewItemComparer(int col, SortOrder ord)
             {
-                _column = col;
+                Column = col;
                 Order = ord;
             }
 
@@ -275,6 +269,7 @@ namespace AkaneMail
             progressMail.Visible = true;
             progressMail.Minimum = 0;
             progressMail.Maximum = value;
+           
         }
 
         /// <summary>
@@ -296,15 +291,6 @@ namespace AkaneMail
             progressMail.Value = 0;
             progressMail.Minimum = 0;
             progressMail.Maximum = 0;
-        }
-
-        /// <summary>
-        /// FlashWindow()の実行
-        /// </summary>
-        private void FlashWindowOn()
-        {
-            // 画面をフラッシュさせる
-            FlashWindow(this);
         }
 
         /// <summary>
@@ -519,7 +505,6 @@ namespace AkaneMail
         {
             buttonAttachList.DropDownItems.Clear();
             buttonAttachList.Visible = false;
-            attachMenuFlag = false;
             attachMailBody = "";
         }
 
@@ -627,7 +612,7 @@ namespace AkaneMail
                     // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルのみの場合はメニューを表示しない
                     if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || attach.FileNameList.Length > 1) {
                         buttonAttachList.Visible = true;
-                        attachMenuFlag = true;
+                        hasAttachments = true;
                         // IE コンポーネントありで、添付ファイルが HTML パートを保存したファイルはメニューに表示しない
                         // foreach (var attachFile in attach.FileNameList.Where(a => a != attach.HtmlFile)) {
                         buttonAttachList.DropDownItems.AddRange(attach.GenerateMenuItem().ToArray());
@@ -699,36 +684,6 @@ namespace AkaneMail
                 text = text.Replace("\n\n", "\r\n").Replace("\n", "\r\n");
             }
             return text;
-        }
-
-        private string EncodeBody(Mail mail, nMail.Attachment attach)
-        {
-            // ISO-2022-JPでかつquoted-printableがある場合(nMail.dllが対応するまでの暫定処理)
-            if (attach.GetHeaderField("Content-Type:", mail.Header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("quoted-printable")) {
-                // 文章をデコードする
-                Options.EnableDecodeBody();
-
-                // ヘッダと本文付きの文字列を添付クラスに追加する
-                attach.Add(mail.Header, mail.Body);
-
-                // 添付ファイルを取り外す
-                attach.Save();
-
-                return BreakLine(attach.Body);
-            }
-            else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
-                // Unicode化されたUTF-8文字列をデコードする
-                // 1件のメールサイズの大きさのbyte型配列を確保
-                var bs = mail.Body.Select(c => (byte)c).ToArray();
-
-                // GetStringでバイト型配列をUTF-8の配列にエンコードする
-                return Encoding.UTF8.GetString(bs);
-            }
-            else {
-                // テキストボックス .に出力する文字コードをJISに変更する
-                byte[] b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
-                return Encoding.GetEncoding("iso-2022-jp").GetString(b);
-            }
         }
 
         /// <summary>
@@ -899,7 +854,7 @@ namespace AkaneMail
 
                 ReforcusListView(listMail);
 
-                dataDirtyFlag = true;
+                dataModified = true;
             }
             else if (listMail.Columns[0].Text == "宛先") {
                 InitializeMailEditorForm(mail, (int)item.Tag, this);
@@ -942,7 +897,7 @@ namespace AkaneMail
                 listMail.Select();
                 listMail.Focus();
             }
-            dataDirtyFlag = true;
+            dataModified = true;
         }
 
         private IEnumerable<int> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
@@ -967,7 +922,6 @@ namespace AkaneMail
 
                 using (var pop = new nMail.Pop3()) {
                     Options.EnableConnectTimeout();
-
                     pop.APop = AccountInfo.apopFlag;
 
                     if (AccountInfo.popOverSSL) {
@@ -981,7 +935,6 @@ namespace AkaneMail
                     if (receivingMailIds.Any()) {
                         // プログレスバーを表示(受信件数/未受信件数)
                         Invoke(ProgressMailInit, receivingMailIds.Count());
-
                         // HTML/Base64のデコードを無効にする
                         Options.DisableDecodeBodyText();
 
@@ -989,7 +942,6 @@ namespace AkaneMail
 
                         Invoke(HideProgressMail);
                     }
-
                     NotifyReceive(receivingMailIds.Count());
                     Invoke(UpdateViewFully);
                 }
@@ -1057,7 +1009,7 @@ namespace AkaneMail
                     Invoke(FlashWindow, this);
                 }
 
-                dataDirtyFlag = true;
+                dataModified = true;
             }
             else {
                 Invoke(SetMessage, MainFormMessages.Notification.AllReceived);
@@ -1087,7 +1039,7 @@ namespace AkaneMail
         private void SendMail()
         {
             var draftMails = mailBox.Send.Where(m => m.NotReadYet);
-            if (draftMails.Any()) {
+            if (!draftMails.Any()) {
                 Invoke(EnableButton, true);
                 return;
             }
@@ -1253,57 +1205,52 @@ namespace AkaneMail
             string fileBody = "";
             string fileHeader = "";
 
-            // ヘッダから文字コードを取得する(添付付きは取得できない)
-            string enc = Mail.ParseEncoding(mail.Header);
-
-            // 出力する文字コードがUTF-8ではないとき
-            if (enc.ToLower().Contains("iso-") || enc.ToLower().Contains("shift_") || enc.ToLower().Contains("euc") || enc.ToLower().Contains("windows")) {
-                // 出力するヘッダをUTF-8から各文字コードに変換する
-                var b = Encoding.GetEncoding(enc).GetBytes(mail.Header);
-                fileHeader = Encoding.GetEncoding(enc).GetString(b);
-
-                // 出力する本文をUTF-8から各文字コードに変換する
-                b = Encoding.GetEncoding(enc).GetBytes(mail.Body);
-                fileBody = Encoding.GetEncoding(enc).GetString(b);
-            }
-            else if (enc.ToLower().Contains("utf-8") || mail.Header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
+            var encoding = DecideEncoding(mail);
+            if (encoding.BodyName == Encoding.UTF8.BodyName) {
                 // text/plainまたはmultipart/alternativeでUTF-8でエンコードされたメールのとき
-                
                 // nMailの仕様上、UTF-8の文字列が時々化けるのでいったんバイト列にしてからデコードし直す
                 var bs = mail.Body.Select(s => (byte)s).ToArray();
 
                 fileBody = Encoding.UTF8.GetString(bs);
-
                 fileHeader = mail.Header;
             }
             else {
-                // だいたい添付ファイルがここに来る
-                enc = "iso-2022-jp";
-                var encoding = Encoding.GetEncoding(enc);
                 var b = encoding.GetBytes(mail.Header);
                 fileHeader = encoding.GetString(b);
 
                 b = encoding.GetBytes(mail.Body);
                 fileBody = encoding.GetString(b);
-
             }
 
-            // ファイル書き込み用のエンコーディングを取得する
-            var writeEnc = Encoding.GetEncoding(enc);
-
-            using (var writer = new StreamWriter(FileToSave, false, writeEnc)) {
+            using (var writer = new StreamWriter(FileToSave, false, encoding)) {
                 // 受信メール(ヘッダが存在する)のとき
                 if (mail.Header.Length > 0) {
                     writer.Write(fileHeader);
-                    writer.Write("\r\n");
                 }
                 else {
                     // 送信メールのときはヘッダの代わりに送り先と件名を出力
                     writer.WriteLine("To: " + mail.Address);
                     writer.WriteLine("Subject: " + mail.Subject);
-                    writer.Write("\r\n");
                 }
+                writer.Write("\r\n");
+
                 writer.Write(fileBody);
+            }
+        }
+
+        private Encoding DecideEncoding(Mail mail)
+        {
+            // ヘッダーから文字コードを取得する(添付付きは取得できない)
+            string enc = Mail.ParseEncoding(mail.Header) .ToLower();
+            if (new [] { "iso-",  "shift_", "euc", "windows", "utf-8"}.Any(enc.Contains)) {
+                return  Encoding.GetEncoding(enc);
+            }
+            else if (mail.Header.Contains("X-NMAIL-BODY-UTF8: 8bit")) {
+                return Encoding.UTF8;
+            }
+            else {
+                // 添付ファイルがだいたいここに来る
+                return Encoding.GetEncoding("iso-2022-jp");
             }
         }
 
@@ -1314,18 +1261,9 @@ namespace AkaneMail
         /// <param name="index">インデックス</param>
         /// <param name="columnText">選択されているカラムの文字列</param>
         /// <returns></returns>
-        private Mail GetSelectedMail(object index, string columnText)
+        private Mail GetSelectedMail(object index)
         {
-            switch (columnText) {
-                case "差出人":
-                    return mailBox.Receive[(int)index];
-                case "宛先":
-                    return mailBox.Send[(int)index];
-                case "差出人または宛先":
-                    return mailBox.Trash[(int)index];
-                default:
-                    throw new ArgumentException(columnText + "は有効な値ではありません。");
-            }
+            return GetShowingMailFolder()[(int)index];
         }
 
         /// <summary>
@@ -1454,15 +1392,14 @@ namespace AkaneMail
             newMailForm.Show();
         }
 
-        private void menuSendMail_Click(object sender, EventArgs e)
+        private async void menuSendMail_Click(object sender, EventArgs e)
         {
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
             buttonSendMail.Enabled = false;
 
-            var t = new Thread(SendMail);
-            t.Start();
+            await Task.Run(() => SendMail());
         }
 
         private async void menuRecieveMail_Click(object sender, EventArgs e)
@@ -1524,7 +1461,7 @@ namespace AkaneMail
 
             ReforcusListView(listMail);
 
-            dataDirtyFlag = true;
+            dataModified = true;
         }
 
         private void listMail_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -1537,7 +1474,7 @@ namespace AkaneMail
             // メールボックスのときは反応しない
             if (AccountSelected()) return;
             var item = listMail.SelectedItems[0];
-            var mail = GetSelectedMail(item.Tag, item.Text);
+            var mail = GetSelectedMail(item.Tag);
 
             EditMail(mail, item);
         }
@@ -1548,7 +1485,7 @@ namespace AkaneMail
                 Directory.Delete(TempFileRoot, true);
             }
 
-            if (!errorFlag && dataDirtyFlag) {
+            if (dataModified) {
                 if (File.Exists(MailDataPath)) {
                     File.Delete(MailDataPath);
                 }
@@ -1585,28 +1522,30 @@ namespace AkaneMail
         {
             // スプラッシュスクリーンよりも先にフォームが出ることがあるらしい
             this.Hide();
-
-            SplashScreen splash = new SplashScreen();
+            var splash = new SplashScreen();
             splash.Initialize();
 
-            LoadSettings();
-
+            var load = Task.Run(() => LoadSettings());
             CheckSocket();
-
             Options.EnableSaveHtmlFile();
 
             // ファイル展開用のテンポラリフォルダの作成
             if (!Directory.Exists(TempFileRoot)) {
                 Directory.CreateDirectory(TempFileRoot);
             }
-
+            await load;
             try {
                 var t = Task.Run(() => mailBox.MailDataLoad());
                 splash.ProgressMesssage = MainFormMessages.Notification.MailLoading;
                 await t;
             }
-            catch (MailLoadException) {
-                errorFlag = true;
+            catch (MailLoadException ex) {
+                Invoke(() =>
+                {
+                    MessageBox.Show("読み込みエラーが発生しました。\n メッセージ:" + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    dataModified = false;
+                    Application.Exit();
+                });
             }
 
             SetTimer(AccountInfo.autoMailFlag, AccountInfo.getMailInterval);
@@ -1634,8 +1573,7 @@ namespace AkaneMail
         private void MenuAction(Func<bool> CancelCondition, Action<Mail> action)
         {
             if (CancelCondition()) return;
-            var item = listMail.SelectedItems[0];
-            action(GetSelectedMail(item.Tag, item.Text));
+            action(GetSelectedMail(listMail.SelectedItems[0].Tag));
         }
 
         private void menuReplyMail_Click(object sender, EventArgs e)
@@ -1678,10 +1616,8 @@ namespace AkaneMail
         {
             if (MessageBox.Show(MainFormMessages.Check.ClearTrash, "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 mailBox.Trash.Clear();
-
                 ClearInput();
-
-                dataDirtyFlag = true;
+                dataModified = true;
             }
         }
 
@@ -1693,9 +1629,7 @@ namespace AkaneMail
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            var item = listMail.SelectedItems[0];
-
-            var mail = GetSelectedMail(item.Tag, item.Text);
+            var mail = GetSelectedMail(listMail.SelectedItems[0].Tag);
 
             // ファイルを開くかの確認をする
             if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
@@ -1756,7 +1690,6 @@ namespace AkaneMail
             var condition = listMail.SelectedItems.Count == 1 && !AccountSelected();
             menuSaveMailFile.Enabled = condition;
             menuGetAttatch.Enabled = condition;
-            menuGetAttatch.Enabled = condition && attachMenuFlag;
 
             menuClearTrush.Enabled = mailBox.Trash.Count != 0;
         }
@@ -1777,25 +1710,19 @@ namespace AkaneMail
 
         private void menuListView_Opening(object sender, CancelEventArgs e)
         {
-            // メールの選択件が1かつメールボックスのとき
+            // メール返信・転送・添付ファイル保存の有効/無効化
             var condition = !AccountSelected() && listMail.SelectedItems.Count == 1;
             menuContextReplyMail.Enabled = condition;
             menuContextFowerdMail.Enabled = condition;
-            menuContextGetAttatch.Enabled = condition && attachMenuFlag;
+            menuContextGetAttatch.Enabled = condition;
 
-            // メールの選択数が0またはメールボックスのとき
-            if (listMail.SelectedItems.Count == 0 || AccountSelected()) {
-                menuContextDeleteMail.Enabled = false;
-            }
-            else if (listMail.SelectedItems.Count == 1) {
-                menuContextDeleteMail.Enabled = true;
-            }
+            // メールの未既読操作、削除の有効/無効化
+            var mailCondition = listMail.SelectedItems.Count > 0 && !AccountSelected();
+            menuContextDeleteMail.Enabled = mailCondition;
+            menuNotReadYet.Enabled = mailCondition;
+            menuAlreadyRead.Enabled = mailCondition;
 
-            // メールが既読で、メールボックス以外で何かが選択されているとき
-            menuNotReadYet.Enabled = listMail.SelectedItems.Count > 0 && !AccountSelected();
-            menuAlreadyRead.Enabled = listMail.SelectedItems.Count > 0 && !AccountSelected();
-
-            // 送信メールを選択したとき
+            // ラベルの変更
             if (listMail.Columns[0].Text == "宛先") {
                 menuAlreadyRead.Text = "送信済にする(&K)";
                 menuNotReadYet.Text = "未送信にする(&U)";
@@ -1824,21 +1751,11 @@ namespace AkaneMail
                 buttonReplyMail.Enabled = listMail.SelectedItems.Count == 1;
                 buttonForwardMail.Enabled = listMail.SelectedItems.Count == 1;
             }
-
-            if (errorFlag) {
-                this.Hide();
-                this.Close();
-            }
         }
 
         private void menuFowerdMail_Click(object sender, EventArgs e)
         {
-            if (listMail.SelectedItems.Count == 0) return;
-
-            var item = listMail.SelectedItems[0];
-            var mail = GetSelectedMail(item.Tag, item.Text);
-
-            CreateFowerdMail(mail);
+            MenuAction(() => listMail.SelectedItems.Count == 0, CreateFowerdMail);
         }
         #endregion
     }
