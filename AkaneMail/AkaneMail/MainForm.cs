@@ -966,15 +966,16 @@ namespace AkaneMail
             dataDirtyFlag = true;
         }
 
-        private IEnumerable<string> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
+        private IEnumerable<int> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
         {
-            foreach (var i in Enumerable.Range(1, pop.Count)) {
-                pop.GetUidl(i);
-                var uidl = pop.Uidl;
-                if (locals.Any(m => m.Uidl == uidl)) {
-                    yield return uidl;
-                }
-            }
+            // 古い順に通し番号が振られるので、新しい順に見てヒットするまでTakeするとよさそう？
+            var latestUid = locals.AsParallel().OrderBy(d => DateTime.Parse(d.Date)).Last().Uidl;
+            pop.GetUidl(nMail.Pop3.UidlAll);
+            return pop.Uidl.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => s.Split(new [] {' '}))
+                .Reverse()
+                .TakeWhile(s => s[1] != latestUid)
+                .Select(s => int.Parse(s[0]));
         }
 
         /// <summary>
@@ -996,23 +997,23 @@ namespace AkaneMail
                     pop.Connect(AccountInfo.popServer, AccountInfo.popPortNumber);
                     pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
 
-                    var receivedCount = CheckReceivingMails(pop);
+                    var receivingMailIds = CheckReceivingMails(pop);
                     // すべてのメールを準済みだったとき
-                    if (receivedCount == 0) {
+                    if (!receivingMailIds.Any()) {
                         labelMessage.Text = MainFormMessages.Notification.AllReceived;
                         return;
                     }
 
                     // プログレスバーを表示(受信件数/未受信件数)
-                    Invoke(ProgressMailInit, receivedCount);
+                    Invoke(ProgressMailInit, receivingMailIds.Count());
 
                     // HTML/Base64のデコードを無効にする
                     Options.DisableDecodeBodyText();
 
-                    Receive(pop, receivedCount);
+                    Receive(pop, receivingMailIds);
 
                     Invoke(HideProgressMail);
-                    NotifyReceive(receivedCount);
+                    NotifyReceive(receivingMailIds.Count());
                     Invoke(UpdateViewFully);
                 }
             }
@@ -1028,34 +1029,33 @@ namespace AkaneMail
 
         }
 
-        private int CheckReceivingMails(Pop3 pop)
+        private IEnumerable<int> CheckReceivingMails(Pop3 pop)
         {
             var countMail = Task.Run(() =>
             {
                 var locals = mailBox.Receive.Union(mailBox.Trash);
-                return QueryUnreadMailUids(pop, locals).Count();
+                return QueryUnreadMailUids(pop, locals);
             });
 
-            if (pop.Count == 0) return 0;
+            if (pop.Count == 0) return new int[] { };
 
             labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
 
-            return pop.Count - countMail.Result;
+            return countMail.Result;
         }
 
-        private void Receive(Pop3 pop, int count)
+        private void Receive(Pop3 pop, IEnumerable<int> counts)
         {
-            var from = pop.Count - count;
-            foreach (var no in Enumerable.Range(from, count)) {
-                Invoke(() => labelMessage.Text = no + "件目のメールを受信しています。");
-                pop.GetUidl(no);
-                pop.GetMail(no);
+            foreach (var no in counts.Select((num, i) => new {num, i })) {
+                Invoke(() => labelMessage.Text = no.num + "件目のメールを受信しています。");
+                pop.GetUidl(no.num);
+                pop.GetMail(no.num);
 
                 mailBox.Receive.Add(new Mail(pop, true, ""));
 
-                if (AccountInfo.deleteMail) { pop.Delete(no); }
+                if (AccountInfo.deleteMail) { pop.Delete(no.num); }
 
-                Invoke(ProgressMailUpdate, no - from);
+                Invoke(ProgressMailUpdate, no.i);
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             }
 
