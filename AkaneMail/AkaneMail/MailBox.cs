@@ -306,5 +306,33 @@ namespace AkaneMail
                 }
             }
         }
+
+        /// <summary>
+        /// メールを削除します。
+        /// </summary>
+        public void MoveToTrash(string name, IEnumerable<ListViewItem> items)
+        {
+            var mails = from item in items
+                       let i = (int)item.Tag
+                       select this[name][i];
+            foreach (var mail in mails) {
+                Trash.Add(mail);
+                this[name].Remove(mail);
+            }
+        }
+        
+        /// <summary>
+        /// メールを完全に削除します。
+        /// </summary>
+        /// <param name="items"></param>
+        public void TrashCompletely(IEnumerable<ListViewItem> items)
+        {
+            var mails = from item in items
+                        let i = (int)item.Tag
+                        select Trash[i];
+            foreach (var mail in mails) {
+                Trash.Remove(mail);
+            }
+        }
     }
 }
