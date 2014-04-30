@@ -1672,62 +1672,47 @@ namespace AkaneMail
             }
         }
 
+        private void MenuAction(Func<bool> CancelCondition, Action<Mail> action)
+        {
+            if (CancelCondition()) return;
+            var item = listMail.SelectedItems[0];
+            action(GetSelectedMail(item.Tag, item.Text));
+        }
 
         private void menuReplyMail_Click(object sender, EventArgs e)
         {
-           
-            if (listMail.SelectedItems.Count == 0) return;
-
-            var item = listMail.SelectedItems[0];
             // 表示機能はシンプルなものに変わる
-            var mail = GetSelectedMail(item.Tag, item.Text);
-
-            CreateReturnMail(mail);
+            MenuAction(() => listMail.SelectedItems.Count == 0, CreateReturnMail);
         }
 
         private void listMail_Click(object sender, EventArgs e)
         {
-            if (AccountSelected()) return;
-
-            var item = listMail.SelectedItems[0];
-            var mail = GetSelectedMail(item.Tag, item.Text);
-
-            OpenMail(mail);
+            MenuAction(AccountSelected, OpenMail);
         }
 
         private void menuGetAttatch_Click(object sender, EventArgs e)
         {
-
-            if (listMail.SelectedItems.Count == 0) return;
-
-            var item = listMail.SelectedItems[0];
             // 送信メール以外も展開できるように変更
-            var mail = GetSelectedMail(item.Tag, item.Text);
-
-            GetAttachMail(mail);
+            MenuAction(() => listMail.SelectedItems.Count == 0, GetAttachMail);
         }
 
         private void menuSaveMailFile_Click(object sender, EventArgs e)
         {
+            MenuAction(() => listMail.SelectedItems.Count == 0, mail => 
+            {
+                // ファイル名にメールの件名を入れる
+                saveFileDialog1.FileName = mail.Subject;
 
-            if (listMail.SelectedItems.Count == 0) return;
-
-            var item = listMail.SelectedItems[0];
-            // どの項目でも保存できるように変更
-            var mail = GetSelectedMail(item.Tag, item.Text);
-
-            // ファイル名にメールの件名を入れる
-            saveFileDialog1.FileName = mail.Subject;
-
-            // 名前を付けて保存
-            if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
-            if (string.IsNullOrWhiteSpace(saveFileDialog1.FileName)) return;
-            try {
-                SaveMailFile(mail, saveFileDialog1.FileName);
-            }
-            catch (Exception ex) {
-                MessageBox.Show(MainFormMessages.Error.GeneralErrorMessage(ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-            }
+                // 名前を付けて保存
+                if (saveFileDialog1.ShowDialog() != DialogResult.OK) return;
+                if (string.IsNullOrWhiteSpace(saveFileDialog1.FileName)) return;
+                try {
+                    SaveMailFile(mail, saveFileDialog1.FileName);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show(MainFormMessages.Error.GeneralErrorMessage(ex.Message), "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                }
+            });
         }
 
         private void menuClearTrush_Click(object sender, EventArgs e)
@@ -1749,9 +1734,9 @@ namespace AkaneMail
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            ListViewItem item = listMail.SelectedItems[0];
+            var item = listMail.SelectedItems[0];
 
-            var mail = GetSelectedMail(item.Tag, listMail.Columns[0].Text);
+            var mail = GetSelectedMail(item.Tag, item.Text);
 
             // ファイルを開くかの確認をする
             if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
@@ -1769,8 +1754,7 @@ namespace AkaneMail
         private void listMail_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // メールボックスのときはソートしない
-            if (AccountSelected())
-                return;
+            if (AccountSelected()) return;
 
             listViewItemSorter.Column = e.Column;
             listMail.Sort();
@@ -1820,7 +1804,6 @@ namespace AkaneMail
 
         private void menuMail_DropDownOpening(object sender, EventArgs e)
         {
-
             if (AccountSelected()) {
                 menuDeleteMail.Enabled = false;
                 menuReplyMail.Enabled = false;
