@@ -32,7 +32,7 @@ namespace AkaneMail
         MailBox mailBox;
 
         // ListViewItemSorterに指定するフィールド
-        public ListViewItemComparer listViewItemSorter;
+        public ListViewItemComparer listViewItemSorter = ListViewItemComparer.Default;
 
         // 選択された行を格納するフィールド
         private int currentRow;
@@ -49,9 +49,6 @@ namespace AkaneMail
 
         // 添付付きメールの返信用文字列
         public string attachMailBody = "";
-
-        // nMailの致命的なエラーの確認フラグ(現状は64bitOSの32bit版DLL読み込みエラーのみ)
-        public bool nMailError;
         #endregion
 
         // 環境保存用のクラスインスタンス
@@ -70,20 +67,9 @@ namespace AkaneMail
         /// </summary>
         public class ListViewItemComparer : System.Collections.IComparer
         {
-
-            public static ListViewItemComparer Default
-            {
-                get { return _default; }
-            }
-
             static ListViewItemComparer()
             {
-                _default = new ListViewItemComparer
-                {
-                    Column = 2,
-                    Order = SortOrder.Descending,
-                    ColumnModes = new[] { ComparerMode.String, ComparerMode.String, ComparerMode.DateTime, ComparerMode.Integer }
-                };
+                ColumnModes = new[] { ComparerMode.String, ComparerMode.String, ComparerMode.DateTime, ComparerMode.Integer };
             }
 
             /// <summary>
@@ -97,8 +83,6 @@ namespace AkaneMail
             };
 
             private int _column;
-            private static ListViewItemComparer _default;
-
             /// <summary>
             /// 並び替えるListView列の番号
             /// </summary>
@@ -114,20 +98,17 @@ namespace AkaneMail
                 }
             }
 
+            public static ListViewItemComparer Default { get { return new ListViewItemComparer(2, SortOrder.Descending); } }
+
             /// <summary>
             /// 昇順か降順か
             /// </summary>
-            public SortOrder Order { get; set; }
-
-            /// <summary>
-            /// 並び替えの方法
-            /// </summary>
-            public ComparerMode Mode { get; private set; }
+            private SortOrder Order { get; set; }
 
             /// <summary>
             /// 列ごとの並び替えの方法
             /// </summary>
-            public ComparerMode[] ColumnModes { get; set; }
+            private static  ComparerMode[] ColumnModes { get; set; }
 
             /// <summary>
             /// ListViewItemComparerクラスのコンストラクタ
@@ -135,42 +116,21 @@ namespace AkaneMail
             /// <param name="col">並び替える列番号</param>
             /// <param name="ord">昇順か降順か</param>
             /// <param name="cmod">並び替えの方法</param>
-            public ListViewItemComparer(int col, SortOrder ord, ComparerMode cmod)
+            public ListViewItemComparer(int col, SortOrder ord)
             {
                 _column = col;
                 Order = ord;
-                Mode = cmod;
             }
 
-            public ListViewItemComparer()
-            {
-                _column = 0;
-                Order = SortOrder.Ascending;
-                Mode = ComparerMode.String;
-            }
-
+            public ListViewItemComparer() : this(0, SortOrder.Ascending) { }
+ 
             // xがyより小さいときはマイナスの数、大きいときはプラスの数、
             // 同じときは0を返す
             public int Compare(object x, object y)
             {
                 if (ColumnModes == null || ColumnModes.Length <= Column) return 0;
 
-
-                var itemx = ((ListViewItem)x).SubItems[Column].Text;
-                var itemy = ((ListViewItem)y).SubItems[Column].Text;
-
-                var result = 0;
-                switch (ColumnModes[Column]) {
-                    case ComparerMode.String:
-                        result = string.Compare(itemx, itemy);
-                        break;
-                    case ComparerMode.Integer:
-                        result = int.Parse(itemx) - int.Parse(itemy);
-                        break;
-                    case ComparerMode.DateTime:
-                        result = DateTime.Compare(DateTime.Parse(itemx), DateTime.Parse(itemy));
-                        break;
-                }
+                var result = Compare(((ListViewItem)x).SubItems[Column].Text, ((ListViewItem)y).SubItems[Column].Text);
 
                 // 降順の時は結果を+-逆にする
                 if (Order == SortOrder.Descending)
@@ -179,6 +139,20 @@ namespace AkaneMail
                     result = 0;
 
                 return result;
+            }
+
+            private int Compare(string itemx, string itemy)
+            {
+                switch (ColumnModes[Column]) {
+                    case ComparerMode.String:
+                        return string.Compare(itemx, itemy);
+                    case ComparerMode.Integer:
+                        return int.Parse(itemx) - int.Parse(itemy);
+                    case ComparerMode.DateTime:
+                        return DateTime.Compare(DateTime.Parse(itemx), DateTime.Parse(itemy));
+                    default:
+                        return 0;
+                }
             }
         }
 
@@ -248,6 +222,7 @@ namespace AkaneMail
 
         private void InitializeMailBox()
         {
+            listMail.Items.Clear();
             var item = new ListViewItem(AccountInfo.fromName);
             item.SubItems.Add(AccountInfo.mailAddress);
             var fi = new FileInfo(MailDataPath);
@@ -259,7 +234,6 @@ namespace AkaneMail
                 item.SubItems.AddRange(new[] { "データ未作成", "0" });
             }
             listMail.Items.Add(item);
-            listMail.EndUpdate();
         }
 
         private ListViewItem CreateMailItem(Mail mail, int index)
@@ -380,6 +354,11 @@ namespace AkaneMail
                 listMail.Select();
                 listMail.Focus();
             }
+        }
+
+        private void SetMessage(string message)
+        {
+            labelMessage.Text = message;
         }
 
         private void Invoke(Action invokeAction)
@@ -547,11 +526,11 @@ namespace AkaneMail
         /// <summary>
         /// デコード機能を使用するかを設定
         /// </summary>
-        /// <param name="Convert"></param>
-        private void ChangeConvertMode(string Convert)
+        /// <param name="convert"></param>
+        private void ChangeConvertMode(string convert)
         {
             // 変換フラグがない時はHTML/Base64のデコードを有効にする
-            if (Convert.Trim() == "") {
+            if (string.IsNullOrWhiteSpace(convert)) {
                 Options.EnableDecodeBody();
             }
             else {
@@ -605,7 +584,7 @@ namespace AkaneMail
                     else {
                         // 本文にHTMLタグが直書きされているタイプのHTMLメールのとき
                         // 展開したHTMLファイルをストリーム読み込みしてテキストを返信用の変数に格納する
-                        using (var sr = new StreamReader(Application.StartupPath + @"\tmp\" + attach.HtmlFile, Encoding.Default)) {
+                        using (var sr = new StreamReader(TempFileRoot + "\\" + attach.HtmlFile, Encoding.Default)) {
                             string htmlBody = sr.ReadToEnd();
 
                             // HTMLからタグを取り除いた本文を返信文に格納する
@@ -625,7 +604,7 @@ namespace AkaneMail
                     if (isHtmlMail && !AccountInfo.bodyIEShow && attach.HtmlFile != "") {
                         // 本文にHTMLタグが直書きされているタイプのHTMLメールのとき
                         // 展開したHTMLファイルをストリーム読み込みしてテキストボックスに表示する
-                        using (var sr = new StreamReader(Application.StartupPath + @"\tmp\" + attach.HtmlFile, Encoding.Default)) {
+                        using (var sr = new StreamReader(TempFileRoot + "\\" + attach.HtmlFile, Encoding.Default)) {
                             string htmlBody = sr.ReadToEnd();
 
                             // HTMLからタグを取り除く
@@ -968,7 +947,7 @@ namespace AkaneMail
 
         private IEnumerable<int> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
         {
-            // 古い順に通し番号が振られるので、新しい順に見てヒットするまでTakeするとよさそう？
+            // 古い順に通し番号が振られるので、新しい順に見て既存のメールのUIDがヒットするまでTakeする
             var latestUid = locals.AsParallel().OrderBy(d => DateTime.Parse(d.Date)).Last().Uidl;
             pop.GetUidl(nMail.Pop3.UidlAll);
             return pop.Uidl.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
@@ -984,7 +963,7 @@ namespace AkaneMail
         private void RecieveMail()
         {
             try {
-                labelMessage.Text = MainFormMessages.Notification.MailReceiving;
+                Invoke(SetMessage, MainFormMessages.Notification.MailReceiving);
 
                 using (var pop = new nMail.Pop3()) {
                     Options.EnableConnectTimeout();
@@ -998,30 +977,28 @@ namespace AkaneMail
                     pop.Authenticate(AccountInfo.userName, AccountInfo.passWord);
 
                     var receivingMailIds = CheckReceivingMails(pop);
-                    // すべてのメールを準済みだったとき
-                    if (!receivingMailIds.Any()) {
-                        labelMessage.Text = MainFormMessages.Notification.AllReceived;
-                        return;
+                    // 受信していないメールがあったとき
+                    if (receivingMailIds.Any()) {
+                        // プログレスバーを表示(受信件数/未受信件数)
+                        Invoke(ProgressMailInit, receivingMailIds.Count());
+
+                        // HTML/Base64のデコードを無効にする
+                        Options.DisableDecodeBodyText();
+
+                        Receive(pop, receivingMailIds);
+
+                        Invoke(HideProgressMail);
                     }
 
-                    // プログレスバーを表示(受信件数/未受信件数)
-                    Invoke(ProgressMailInit, receivingMailIds.Count());
-
-                    // HTML/Base64のデコードを無効にする
-                    Options.DisableDecodeBodyText();
-
-                    Receive(pop, receivingMailIds);
-
-                    Invoke(HideProgressMail);
                     NotifyReceive(receivingMailIds.Count());
                     Invoke(UpdateViewFully);
                 }
             }
             catch (nMail.nMailException ex) {
-                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode);
+                Invoke(SetMessage, MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode));
             }
             catch (Exception ex) {
-                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message);
+                Invoke(SetMessage, MainFormMessages.Error.GeneralErrorMessage(ex.Message));
             }
             finally {
                 Invoke(EnableButton, true);
@@ -1039,7 +1016,7 @@ namespace AkaneMail
 
             if (pop.Count == 0) return new int[] { };
 
-            labelMessage.Text = pop.Count + "件のメッセージがサーバ上にあります。";
+            Invoke(SetMessage, pop.Count + "件のメッセージがサーバ上にあります。");
 
             return countMail.Result;
         }
@@ -1047,7 +1024,7 @@ namespace AkaneMail
         private void Receive(Pop3 pop, IEnumerable<int> counts)
         {
             foreach (var no in counts.Select((num, i) => new {num, i })) {
-                Invoke(() => labelMessage.Text = no.num + "件目のメールを受信しています。");
+                Invoke(SetMessage, no.num + "件目のメールを受信しています。");
                 pop.GetUidl(no.num);
                 pop.GetMail(no.num);
 
@@ -1064,28 +1041,26 @@ namespace AkaneMail
         private void NotifyReceive(int mailCount)
         {
             if (mailCount > 0) {
+                // 通知音の再生(設定してあれば)
                 if (AccountInfo.popSoundFlag && !string.IsNullOrWhiteSpace(AccountInfo.popSoundName)) {
                     using (var p = new SoundPlayer(AccountInfo.popSoundName)) { p.Play(); }
                 }
 
-                // ウィンドウが最小化でタスクトレイに格納されていて何分間隔かで受信をするとき
+                notifyIcon1.BalloonTipText = MainFormMessages.Notification.NewMailReceived(mailCount);
+                // 通知の表示(タスクトレイに入っていて自動受信したとき)
                 if (this.WindowState == FormWindowState.Minimized && AccountInfo.minimizeTaskTray && AccountInfo.autoMailFlag) {
                     notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
                     notifyIcon1.BalloonTipTitle = MainFormMessages.Notification.NewMail;
-                    notifyIcon1.BalloonTipText = MainFormMessages.Notification.NewMailReceived(mailCount);
                     notifyIcon1.ShowBalloonTip(300);
                 }
                 else {
                     Invoke(FlashWindow, this);
-                    notifyIcon1.BalloonTipText = MainFormMessages.Notification.NewMailReceived(mailCount);
                 }
 
                 dataDirtyFlag = true;
             }
             else {
-                labelMessage.Text = MainFormMessages.Notification.AllReceived;
-
-                Invoke(EnableButton, true);
+                Invoke(SetMessage, MainFormMessages.Notification.AllReceived);
             }
         }
 
@@ -1185,7 +1160,7 @@ namespace AkaneMail
         private void SendMail(Action<Smtp> sendMailAciton)
         {
             try {
-                labelMessage.Text = MainFormMessages.Notification.MailSending;
+               Invoke(SetMessage,MainFormMessages.Notification.MailSending);
 
                 Preauthenticate();
 
@@ -1200,15 +1175,13 @@ namespace AkaneMail
                     sendMailAciton(smtp);
                 }
 
-                labelMessage.Text = MainFormMessages.Notification.MailSent;
+                Invoke(SetMessage, MainFormMessages.Notification.MailSent);
             }
             catch (nMail.nMailException ex) {
-                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode);
-                return;
+                Invoke(SetMessage, MainFormMessages.Error.GeneralErrorMessage(ex.Message, ex.ErrorCode));
             }
             catch (Exception ex) {
-                labelMessage.Text = MainFormMessages.Error.GeneralErrorMessage(ex.Message);
-                return;
+                Invoke(SetMessage,  MainFormMessages.Error.GeneralErrorMessage(ex.Message));
             }
         }
         #endregion
@@ -1391,8 +1364,6 @@ namespace AkaneMail
             UpdateView();
         }
 
-
-
         /// <summary>
         /// リストビューのカラム説明を設定
         /// </summary>
@@ -1416,25 +1387,25 @@ namespace AkaneMail
                 case "MailBoxRoot":
                     // メールボックスが選択された場合
                     SetListViewColumns("名前", "メールアドレス", "最終データ更新日", "データサイズ");
-                    labelMessage.Text = "メールボックス";
+                    Invoke(SetMessage,  "メールボックス");
                     listMail.ContextMenuStrip = null;
                     break;
                 case "ReceiveMailBox":
                     // 受信メールが選択された場合
                     SetListViewColumns("差出人", "件名", "受信日時", "サイズ");
-                    labelMessage.Text = "受信メール";
+                    Invoke(SetMessage, "受信メール");
                     listMail.ContextMenuStrip = menuListView;
                     break;
                 case "SendMailBox":
                     // 送信メールが選択された場合
                     SetListViewColumns("宛先", "件名", "送信日時", "サイズ"); ;
-                    labelMessage.Text = "送信メール";
+                    Invoke(SetMessage, "送信メール");
                     listMail.ContextMenuStrip = menuListView;
                     break;
                 case "DeleteMailBox":
                     // ごみ箱が選択された場合
                     SetListViewColumns("差出人または宛先", "件名", "受信日時または送信日時", "サイズ");
-                    labelMessage.Text = "ごみ箱";
+                    Invoke(SetMessage, "ごみ箱");
                     listMail.ContextMenuStrip = menuListView;
                     break;
                 default:
@@ -1494,13 +1465,12 @@ namespace AkaneMail
             t.Start();
         }
 
-        private void menuRecieveMail_Click(object sender, EventArgs e)
+        private async void menuRecieveMail_Click(object sender, EventArgs e)
         {
             menuRecieveMail.Enabled = false;
             buttonRecieveMail.Enabled = false;
 
-            var t = new Thread(RecieveMail);
-            t.Start();
+            await Task.Run(() => RecieveMail());
         }
 
         private void menuDeleteMail_Click(object sender, EventArgs e)
@@ -1598,7 +1568,7 @@ namespace AkaneMail
                 // 64bit環境で32bit用のnMail.dllを使用して起動したときはエラーになる
                 if (exp.Message.Contains("間違ったフォーマットのプログラムを読み込もうとしました。")) {
                     MessageBox.Show(MainFormMessages.Error.Needx64nMail, MainFormMessages.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    nMailError = true;
+                    Application.Idle -= Application_Idle;
                     Application.Exit();
                 }
             }
@@ -1611,7 +1581,7 @@ namespace AkaneMail
             timerAutoReceive.Enabled = isEnabled;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             // スプラッシュスクリーンよりも先にフォームが出ることがあるらしい
             this.Hide();
@@ -1631,24 +1601,15 @@ namespace AkaneMail
             }
 
             try {
-                var t = new Thread(mailBox.MailDataLoad);
-                t.Start();
-
+                var t = Task.Run(() => mailBox.MailDataLoad());
                 splash.ProgressMesssage = MainFormMessages.Notification.MailLoading;
-
-                t.Join();
+                await t;
             }
             catch (MailLoadException) {
                 errorFlag = true;
             }
 
             SetTimer(AccountInfo.autoMailFlag, AccountInfo.getMailInterval);
-
-            UpdateTreeView();
-            UpdateListView();
-
-            listViewItemSorter = ListViewItemComparer.Default;
-            listMail.ListViewItemSorter = listViewItemSorter;
 
             splash.Dispose();
 
@@ -1657,19 +1618,17 @@ namespace AkaneMail
                 this.Show();
             }
 
+            listMail.ListViewItemSorter = ListViewItemComparer.Default;
+            // このタイミングで初期化が走るらしい
             treeMailBoxFolder.ExpandAll();
 
             this.Activate();
-
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Idle -= Application_Idle;
-
-            if (!nMailError) {
-                nMail.Winsock.Done();
-            }
+            nMail.Winsock.Done();
         }
 
         private void MenuAction(Func<bool> CancelCondition, Action<Mail> action)
@@ -1742,7 +1701,7 @@ namespace AkaneMail
             if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
                 // 受信されたメールのとき
                 if (mail.Attach.Length == 0) {
-                    System.Diagnostics.Process.Start(TempFileRoot + e.ClickedItem.Text);
+                    System.Diagnostics.Process.Start(TempFileRoot + "\\" + e.ClickedItem.Text);
                 }
                 else {
                     // 送信メールのとき

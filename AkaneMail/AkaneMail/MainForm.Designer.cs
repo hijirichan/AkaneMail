@@ -452,7 +452,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 53);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -474,7 +474,7 @@
             this.treeMailBoxFolder.ImageIndex = 0;
             this.treeMailBoxFolder.ImageList = this.imageList1;
             this.treeMailBoxFolder.Location = new System.Drawing.Point(0, 0);
-            this.treeMailBoxFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.treeMailBoxFolder.Margin = new System.Windows.Forms.Padding(4);
             this.treeMailBoxFolder.Name = "treeMailBoxFolder";
             treeNode1.ImageIndex = 1;
             treeNode1.Name = "nodeReceive";
@@ -529,7 +529,7 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -542,7 +542,7 @@
             this.splitContainer2.Panel2.Controls.Add(this.textBody);
             this.splitContainer2.Panel2.Controls.Add(this.browserBody);
             this.splitContainer2.Size = new System.Drawing.Size(831, 621);
-            this.splitContainer2.SplitterDistance = 232;
+            this.splitContainer2.SplitterDistance = 231;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -558,9 +558,9 @@
             this.listMail.FullRowSelect = true;
             this.listMail.HideSelection = false;
             this.listMail.Location = new System.Drawing.Point(0, 0);
-            this.listMail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.listMail.Margin = new System.Windows.Forms.Padding(4);
             this.listMail.Name = "listMail";
-            this.listMail.Size = new System.Drawing.Size(831, 232);
+            this.listMail.Size = new System.Drawing.Size(831, 231);
             this.listMail.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listMail.TabIndex = 1;
             this.listMail.UseCompatibleStateImageBehavior = false;
@@ -573,25 +573,25 @@
             // columnFromTo
             // 
             this.columnFromTo.Tag = "string";
-            this.columnFromTo.Text = "差出人";
+            this.columnFromTo.Text = "名前";
             this.columnFromTo.Width = 174;
             // 
             // columnSubject
             // 
             this.columnSubject.Tag = "string";
-            this.columnSubject.Text = "件名";
+            this.columnSubject.Text = "メールアドレス";
             this.columnSubject.Width = 188;
             // 
             // columnDate
             // 
             this.columnDate.Tag = "date";
-            this.columnDate.Text = "受信時刻";
+            this.columnDate.Text = "最終データ更新日";
             this.columnDate.Width = 150;
             // 
             // columnSize
             // 
             this.columnSize.Tag = "num";
-            this.columnSize.Text = "サイズ";
+            this.columnSize.Text = "データサイズ";
             this.columnSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.columnSize.Width = 80;
             // 
@@ -666,11 +666,11 @@
             // 
             this.textBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBody.Location = new System.Drawing.Point(0, 0);
-            this.textBody.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBody.Margin = new System.Windows.Forms.Padding(4);
             this.textBody.Multiline = true;
             this.textBody.Name = "textBody";
             this.textBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBody.Size = new System.Drawing.Size(831, 384);
+            this.textBody.Size = new System.Drawing.Size(831, 385);
             this.textBody.TabIndex = 2;
             // 
             // browserBody
@@ -679,10 +679,10 @@
             this.browserBody.AllowWebBrowserDrop = false;
             this.browserBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.browserBody.Location = new System.Drawing.Point(0, 0);
-            this.browserBody.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.browserBody.Margin = new System.Windows.Forms.Padding(4);
             this.browserBody.MinimumSize = new System.Drawing.Size(27, 25);
             this.browserBody.Name = "browserBody";
-            this.browserBody.Size = new System.Drawing.Size(831, 384);
+            this.browserBody.Size = new System.Drawing.Size(831, 385);
             this.browserBody.TabIndex = 3;
             this.browserBody.TabStop = false;
             this.browserBody.Visible = false;
@@ -723,7 +723,7 @@
             this.toolStripSeparator8,
             this.menuTaskApplicationExit});
             this.contextMenuStrip3.Name = "contextMenuStrip3";
-            this.contextMenuStrip3.Size = new System.Drawing.Size(231, 116);
+            this.contextMenuStrip3.Size = new System.Drawing.Size(231, 88);
             // 
             // menuTaskRestoreWindow
             // 
