@@ -566,7 +566,6 @@
             this.listMail.UseCompatibleStateImageBehavior = false;
             this.listMail.View = System.Windows.Forms.View.Details;
             this.listMail.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listMail_ColumnClick);
-            this.listMail.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listMail_ItemSelectionChanged);
             this.listMail.Click += new System.EventHandler(this.listMail_Click);
             this.listMail.DoubleClick += new System.EventHandler(this.listMail_DoubleClick);
             // 

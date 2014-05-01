@@ -16,7 +16,7 @@ namespace AkaneMail
                 case SortOrder.Descending:
                     return SortOrder.Ascending;
                 default:
-                    return SortOrder.None;
+                    return SortOrder.Ascending;
             }
         }
     }

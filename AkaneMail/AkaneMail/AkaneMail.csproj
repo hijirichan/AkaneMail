@@ -60,6 +60,7 @@
     <Compile Include="FindDialog.Designer.cs">
       <DependentUpon>FindDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="MailBox.cs" />
     <Compile Include="MailEditorForm.Creations.cs">
       <SubType>Form</SubType>

@@ -25,7 +25,7 @@ namespace AkaneMail
         public string Priority { get; set; }             // 優先度(None/Low/Normal/High)
         public string Convert { get; set; }              // バージョン識別用
 
-        public string[] Attaches { get { return Attach.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries); } }
+        public string[] Attachments { get { return Attach.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries); } }
 
         // コンストラクタ
         //TODO 引数減らす
@@ -157,7 +157,7 @@ namespace AkaneMail
 
         public IEnumerable<ToolStripItem> GenerateMenuItem(bool enableWhenRemoved = false)
         {
-            return NmailAttachEx.GenerateMenuItem("", this.Attaches, enableWhenRemoved);
+            return NmailAttachEx.GenerateMenuItem("", this.Attachments, enableWhenRemoved);
         }
 
     }
