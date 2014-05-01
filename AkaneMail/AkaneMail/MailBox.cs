@@ -329,5 +329,20 @@ namespace AkaneMail
                 Trash.Remove(mail);
             }
         }
+
+        public MailFolder GetSelectedMailFolder(string text)
+        {
+            switch (text) {
+                case "差出人":
+                    return Receive;
+                case "宛先":
+                    return Send;
+                case "差出人または宛先":
+                    return Trash;
+                default:
+                    return null;
+            }
+        }
+
     }
 }

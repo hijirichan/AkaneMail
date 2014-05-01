@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using ACryptLib;
 
 namespace AkaneMail
 {
@@ -33,5 +34,49 @@ namespace AkaneMail
         public int m_windowWidth = 0;                                   // ウィンドウの幅
         public int m_windowHeight = 0;                                  // ウィンドウの高さ
         public FormWindowState m_windowStat = FormWindowState.Normal;   // ウィンドウの状態
+
+        public static MailSettings Load(string file)
+        {
+            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
+            using (var fs = new FileStream(file, FileMode.Open)) {
+                return serializer.Deserialize(fs) as MailSettings;
+            }
+        }
+
+        /// <summary>
+        /// アプリケーション設定を設定ファイルに書き出す
+        /// </summary>
+        public void Save(string file)
+        {
+            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
+
+            using (var fs = new FileStream(file, FileMode.Create)) {
+                serializer.Serialize(fs, this);
+            }
+        }
+
+        /// <summary>文字列を暗号化します</summary>
+        /// <remarks>例外発生時は旧バージョンと同じ動作をします</remarks>
+        public static string Encrypt(string password)
+        {
+            try {
+                return ACrypt.EncryptPasswordString(password);
+            }
+            catch (Exception) {
+                return password;
+            }
+        }
+
+        /// <summary>文字列を復号します</summary>
+        /// <remarks>例外発生時は旧バージョンと同じ動作をします</remarks>
+        public static string Decrypt(string password)
+        {
+            try {
+                return ACrypt.DecryptPasswordString(password);
+            }
+            catch (Exception) {
+                return password;
+            }
+        }
     }
 }

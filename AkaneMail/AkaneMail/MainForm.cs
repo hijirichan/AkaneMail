@@ -37,13 +37,8 @@ namespace AkaneMail
         // 選択された行を格納するフィールド
         private int currentRow;
 
-        #region "flags"
         // データ変更が発生したのときのフラグ
         public bool dataModified;
-
-        // メールの返信用本文
-        public string MailBody { get; set; }
-        #endregion
 
         // 環境保存用のクラスインスタンス
         private MailSettings MailSetting;
@@ -187,7 +182,7 @@ namespace AkaneMail
 
             listMail.BeginUpdate();
             listMail.Items.Clear();
-            var folder = GetSelectedMailFolder(listMail.Columns[0].Text);
+            var folder = mailBox.GetSelectedMailFolder(listMail.Columns[0].Text);
             listMail.Items.AddRange(folder.Select(CreateMailItem).ToArray());
             listMail.EndUpdate();
         }
@@ -195,23 +190,6 @@ namespace AkaneMail
         private bool AccountSelected()
         {
             return listMail.Columns[0].Text == "名前";
-        }
-
-        private IEnumerable<Mail> GetSelectedMailFolder(string text)
-        {
-            if (text == "差出人") {
-                // 受信メールの場合
-                return mailBox.Receive;
-            }
-            else if (text == "宛先") {
-                // 送信メールの場合
-                return mailBox.Send;
-            }
-            else if (text == "差出人または宛先") {
-                // 削除メールの場合
-                return mailBox.Trash;
-            }
-            else return null;
         }
 
         private void InitializeMailBox()
@@ -370,16 +348,13 @@ namespace AkaneMail
 
             // 環境設定ファイルが存在する場合は環境設定情報を読み込んでアカウント情報に設定する
             if (File.Exists(SettingFilePath)) {
-                var serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
-                using (var fs = new FileStream(SettingFilePath, FileMode.Open)) {
-                    MailSetting = (MailSettings)serializer.Deserialize(fs);
-                }
+                MailSetting = MailSettings.Load(SettingFilePath);
 
                 #region アカウント情報
                 AccountInfo.fromName = MailSetting.m_fromName;
                 AccountInfo.mailAddress = MailSetting.m_mailAddress;
                 AccountInfo.userName = MailSetting.m_userName;
-                AccountInfo.passWord = Decrypt(MailSetting.m_passWord);
+                AccountInfo.passWord = MailSettings.Decrypt(MailSetting.m_passWord);
                 #endregion
 
                 #region 接続情報
@@ -423,92 +398,6 @@ namespace AkaneMail
         }
 
         /// <summary>
-        /// アプリケーション設定を設定ファイルに書き出す
-        /// </summary>
-        public void SaveSettings()
-        {
-            MailSetting = new MailSettings()
-            {
-                #region アカウント情報
-                m_fromName = AccountInfo.fromName,
-                m_mailAddress = AccountInfo.mailAddress,
-                m_userName = AccountInfo.userName,
-                m_passWord = Encrypt(AccountInfo.passWord),
-                #endregion
-
-                #region 接続情報
-                m_smtpServer = AccountInfo.smtpServer,
-                m_popServer = AccountInfo.popServer,
-                m_smtpPortNo = AccountInfo.smtpPortNumber,
-                m_popPortNo = AccountInfo.popPortNumber,
-                m_apopFlag = AccountInfo.apopFlag,
-                m_deleteMail = AccountInfo.deleteMail,
-                m_popBeforeSMTP = AccountInfo.popBeforeSMTP,
-                m_popOverSSL = AccountInfo.popOverSSL,
-                m_smtpAuth = AccountInfo.smtpAuth,
-                #endregion
-
-                #region 自動受信設定
-                m_autoMailFlag = AccountInfo.autoMailFlag,
-                m_getMailInterval = AccountInfo.getMailInterval,
-                #endregion
-
-                #region 通知設定
-                m_popSoundFlag = AccountInfo.popSoundFlag,
-                m_popSoundName = AccountInfo.popSoundName,
-                m_bodyIEShow = AccountInfo.bodyIEShow,
-                m_minimizeTaskTray = AccountInfo.minimizeTaskTray,
-                #endregion
-
-                #region ウィンドウ設定
-                m_windowLeft = this.Left,
-                m_windowTop = this.Top,
-                m_windowWidth = this.Width,
-                m_windowHeight = this.Height,
-                m_windowStat = this.WindowState
-                #endregion
-            };
-
-            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(MailSettings));
-
-            using (var fs = new FileStream(SettingFilePath, FileMode.Create)) {
-                serializer.Serialize(fs, MailSetting);
-            }
-        }
-
-        /// <summary>文字列を暗号化します</summary>
-        /// <remarks>例外発生時は旧バージョンと同じ動作をします</remarks>
-        private string Encrypt(string password)
-        {
-            try {
-                return ACrypt.EncryptPasswordString(password);
-            }
-            catch (Exception) {
-                return password;
-            }
-        }
-
-        /// <summary>文字列を復号します</summary>
-        /// <remarks>例外発生時は旧バージョンと同じ動作をします</remarks>
-        private string Decrypt(string password)
-        {
-            try {
-                return ACrypt.DecryptPasswordString(password);
-            }
-            catch (Exception) {
-                return password;
-            }
-        }
-
-        /// <summary> 添付ファイルメニューに登録されている要素を破棄する </summary>
-        private void ClearAttachMenu()
-        {
-            buttonAttachList.DropDownItems.Clear();
-            buttonAttachList.Visible = false;
-            MailBody = "";
-        }
-
-        /// <summary>
         /// デコード機能を使用するかを設定
         /// </summary>
         /// <param name="convert"></param>
@@ -529,13 +418,14 @@ namespace AkaneMail
         /// <param name="mail">メール</param>
         private void OpenMail(Mail mail)
         {
-            ClearAttachMenu();
-
             var attach = new nMail.Attachment { Path = TempFileRoot };
 
-            // Contents-Typeがtext/htmlのメールか確認するフラグを取得する
             var isHtmlMail = attach.GetHeaderField("Content-Type:", mail.Header).Contains("text/html");
             var hasAttachments = attach.GetId(mail.Header) != nMail.Attachment.NoAttachmentFile;
+
+            // 表示状態の決定
+            this.browserBody.Visible = AccountInfo.bodyIEShow && attach.HtmlFile != "";
+            this.textBody.Visible = !this.browserBody.Visible;
 
             if (hasAttachments || isHtmlMail || attach.HtmlFile != "") {
 
@@ -549,32 +439,30 @@ namespace AkaneMail
                     return;
                 }
 
-                MailBody = ReadHtmlBody(attach, mail);
+                textBody.Text = ReadHtmlBody(attach, mail);
                 if (AccountInfo.bodyIEShow) {
                     browserBody.AllowNavigation = true;
                     browserBody.Navigate(attach.Path + @"\" + attach.HtmlFile);
                 }
-                else {
-                    this.textBody.Text = MailBody;
-                }
             }
             else {
-                MailBody = DecodeBody(attach, mail);
-                textBody.Text = MailBody;
+                textBody.Text = DecodeBody(attach, mail);
             }
-
-            // 表示状態の決定
-            this.browserBody.Visible = AccountInfo.bodyIEShow && attach.HtmlFile != "";
-            this.textBody.Visible = !this.browserBody.Visible;
 
             //添付ファイルリストの表示決定
+            buttonAttachList.DropDownItems.Clear();
+            var paths = GetAttachmentFilePaths(attach, mail);
+            buttonAttachList.Visible = paths.Any();
+            buttonAttachList.DropDownItems.AddRange(NmailAttachEx.GenerateMenuItem("", paths).ToArray());
+        }
+
+        private IEnumerable<string> GetAttachmentFilePaths(nMail.Attachment attach, Mail mail)
+        {
             if (!AccountInfo.bodyIEShow || attach.HtmlFile == "" || (attach.FileNameList ?? new string[] { }).Length > 1) {
-                buttonAttachList.Visible = true;
-                buttonAttachList.DropDownItems.AddRange(attach.GenerateMenuItem().ToArray());
+                return attach.FileNameList.Select(p => Path.Combine(attach.Path, p));
             }
-            else if (mail.Attaches.Any()) {
-                buttonAttachList.Visible = true;
-                buttonAttachList.DropDownItems.AddRange(mail.GenerateMenuItem().ToArray());
+            else {
+                return mail.Attaches;
             }
         }
 
@@ -592,16 +480,16 @@ namespace AkaneMail
 
         private string DecodeBody(nMail.Attachment attach, Mail mail)
         {
-            if ((attach.GetHeaderField("Content-Type:", mail.Header).ToLower().Contains("iso-2022-jp") && attach.GetHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("quoted-printable")) || attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("base64")) {
+            var contentType = attach.GetHeaderField("Content-Type:", mail.Header).ToLower();
+            var contentEncoding = attach.GetHeaderField("Content-Transfer-Encoding:", mail.Header);
+            if ((contentType.Contains("iso-2022-jp") && contentEncoding.Contains("quoted-printable")) || attach.GetDecodeHeaderField("Content-Transfer-Encoding:", mail.Header).Contains("base64")) {
                return AttachmentDecode(attach, mail);
             }
             else if (attach.GetHeaderField("X-NMAIL-BODY-UTF8:", mail.Header).Contains("8bit")) {
-                // Unicode化されたUTF-8文字列をデコードする
                 var bs = mail.Body.Select(c => (byte)c).ToArray();
                 return Encoding.UTF8.GetString(bs);
             }
             else {
-                // テキストボックスに出力する文字コードをJISに変更する
                 var b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
                return Encoding.GetEncoding("iso-2022-jp").GetString(b);
             }
@@ -641,7 +529,7 @@ namespace AkaneMail
             NewMailForm.textSubject.Text = "Re:" + mail.Subject;
              
             // 本文
-            NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + MailBody;
+            NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + textBody.Text;
 
             // メール新規作成フォームを表示する
             NewMailForm.Show();
@@ -673,7 +561,7 @@ namespace AkaneMail
                 NewMailForm.buttonAttachList.Visible = true;
 
                 var attaches = this.buttonAttachList.DropDownItems.Cast<ToolStripItem>().Select(i => i.Text);
-                NewMailForm.buttonAttachList.DropDownItems.AddRange(NmailAttachEx.GenerateMenuItem(Application.StartupPath + @"\tmp\", attaches).ToArray());
+                NewMailForm.buttonAttachList.DropDownItems.AddRange(NmailAttachEx.GenerateMenuItem(TempFileRoot + "\\", attaches).ToArray());
             }
 
             // メール新規作成フォームを表示する
@@ -711,7 +599,7 @@ namespace AkaneMail
                 .AppendLine("Date: " + sentAt)
                 .AppendLine(" Subject:" + subject)
                 .AppendLine("----\r\n")
-                .Append(MailBody);
+                .Append(textBody.Text);
 
                 return builder.ToString();
         }
@@ -817,9 +705,9 @@ namespace AkaneMail
             dataModified = true;
         }
 
-        private IEnumerable<int> QueryUnreadMailUids(nMail.Pop3 pop, IEnumerable<Mail> locals)
+        private IEnumerable<int> QueryRetreivingMailIds(nMail.Pop3 pop, IEnumerable<Mail> locals)
         {
-            // 古い順に通し番号が振られるので、新しい順に見て既存のメールのUIDがヒットするまでTakeする
+            // 古い順に通し番号が振られるので、新しい順に見て手元のメールでUIDがヒットするまでTakeする
             var latestUid = locals.AsParallel().OrderBy(d => DateTime.Parse(d.Date)).Last().Uidl;
             pop.GetUidl(nMail.Pop3.UidlAll);
             return pop.Uidl.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
@@ -859,7 +747,7 @@ namespace AkaneMail
 
                         Invoke(HideProgressMail);
                     }
-                    NotifyReceive(receivingMailIds.Count());
+                    Invoke(NotifyReceive, receivingMailIds.Count());
                     Invoke(UpdateViewFully);
                 }
             }
@@ -880,7 +768,7 @@ namespace AkaneMail
             var countMail = Task.Run(() =>
             {
                 var locals = mailBox.Receive.Union(mailBox.Trash);
-                return QueryUnreadMailUids(pop, locals);
+                return QueryRetreivingMailIds(pop, locals);
             });
 
             if (pop.Count == 0) return new int[] { };
@@ -904,7 +792,6 @@ namespace AkaneMail
                 Invoke(ProgressMailUpdate, no.i);
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             }
-
         }
 
         private void NotifyReceive(int mailCount)
@@ -1063,13 +950,10 @@ namespace AkaneMail
         {
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK) return;
             try {
-                // 添付ファイルクラスを作成する
                 nMail.Attachment attach = new nMail.Attachment();
 
-                // 保存パスを設定する
                 attach.Path = folderBrowserDialog1.SelectedPath;
 
-                // 添付ファイル展開用のテンポラリファイルを作成する
                 var tmpFileName = Path.GetTempFileName();
                 using (var writer = new StreamWriter(tmpFileName)) {
                     writer.Write(mail.Header);
@@ -1077,13 +961,9 @@ namespace AkaneMail
                     writer.Write(mail.Body);
                 }
 
-                // テンポラリファイルを開いて添付ファイルを開く
                 using (var reader = new StreamReader(tmpFileName)) {
-                    string header = reader.ReadToEnd();
-                    // ヘッダと本文付きの文字列を添付クラスに追加する
-                    attach.Add(header);
+                    attach.Add(reader.ReadToEnd());
                 }
-                // 添付ファイルを保存する
                 attach.Save();
 
                 MessageBox.Show(MainFormMessages.Notification.InternalSaved(attach.Path, attach.FileName), "添付ファイルの取り出し", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1277,14 +1157,12 @@ namespace AkaneMail
 
         private void menuSetEnv_Click(object sender, EventArgs e)
         {
-            var settingForm = new SettingForm();
-
             timerAutoReceive.Enabled = false;
 
-            var ret = settingForm.ShowDialog();
+            var ret = new SettingForm().ShowDialog();
 
             if (ret == DialogResult.OK) {
-                SetTimer(settingForm.checkAutoGetMail.Checked, AccountInfo.getMailInterval);
+                SetTimer(AccountInfo.autoMailFlag, AccountInfo.getMailInterval);
             }
 
             listMail.ListViewItemSorter = null;
@@ -1410,7 +1288,7 @@ namespace AkaneMail
                 await Task.Run(() => mailBox.MailDataSave());
             }
 
-            SaveSettings();
+            MailSetting.Save(SettingFilePath);
         }
 
         private void CheckSocket()
@@ -1531,11 +1409,10 @@ namespace AkaneMail
 
         private void menuClearTrush_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(MainFormMessages.Check.ClearTrash, "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
-                mailBox.Trash.Clear();
-                ClearInput();
-                dataModified = true;
-            }
+            if (MessageBox.Show(MainFormMessages.Check.ClearTrash, "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+            mailBox.Trash.Clear();
+            ClearInput();
+            dataModified = true;
         }
 
         private void menuAbout_Click(object sender, EventArgs e)
@@ -1546,24 +1423,23 @@ namespace AkaneMail
 
         private void buttonAttachList_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            var mail = GetSelectedMail(listMail.SelectedItems[0].Tag);
-
             // ファイルを開くかの確認をする
-            if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
-                // 受信されたメールのとき
-                if (mail.Attach.Length == 0) {
-                    System.Diagnostics.Process.Start(TempFileRoot + "\\" + e.ClickedItem.Text);
-                }
-                else {
-                    // 送信メールのとき
-                    System.Diagnostics.Process.Start(e.ClickedItem.Text);
-                }
+            if (MessageBox.Show(MainFormMessages.Check.OpenUnsafeFile(e.ClickedItem.Text), "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes) return;
+
+            var mail = GetSelectedMail(listMail.SelectedItems[0].Tag);
+            // 受信されたメールのとき
+            if (mail.Attach.Length == 0) {
+                System.Diagnostics.Process.Start(TempFileRoot + "\\" + e.ClickedItem.Text);
+            }
+            else {
+                // 送信メールのとき
+                System.Diagnostics.Process.Start(e.ClickedItem.Text);
             }
         }
+        
 
         private void listMail_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            // メールボックスのときはソートしない
             if (AccountSelected()) return;
 
             listViewItemSorter.Column = e.Column;
