@@ -40,10 +40,9 @@
             // 
             // buttonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(345, 15);
-            this.buttonOK.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonOK.Location = new System.Drawing.Point(259, 12);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(100, 29);
+            this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 0;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -52,20 +51,18 @@
             // labelVersion
             // 
             this.labelVersion.AutoSize = true;
-            this.labelVersion.Location = new System.Drawing.Point(67, 21);
-            this.labelVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelVersion.Location = new System.Drawing.Point(50, 17);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(163, 15);
+            this.labelVersion.Size = new System.Drawing.Size(131, 12);
             this.labelVersion.TabIndex = 1;
             this.labelVersion.Text = "Akane Mail Version 1.2.1";
             // 
             // pictureBox1
             // 
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(16, 20);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 16);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(43, 40);
+            this.pictureBox1.Size = new System.Drawing.Size(32, 32);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
@@ -73,30 +70,27 @@
             // labelCopyright
             // 
             this.labelCopyright.AutoSize = true;
-            this.labelCopyright.Location = new System.Drawing.Point(67, 45);
-            this.labelCopyright.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelCopyright.Location = new System.Drawing.Point(50, 36);
             this.labelCopyright.Name = "labelCopyright";
-            this.labelCopyright.Size = new System.Drawing.Size(242, 15);
+            this.labelCopyright.Size = new System.Drawing.Size(193, 12);
             this.labelCopyright.TabIndex = 3;
-            this.labelCopyright.Text = "Copyright (C) 2013 Angelic Software";
+            this.labelCopyright.Text = "Copyright (C) 2014 Angelic Software";
             // 
             // labelNmailVersion
             // 
             this.labelNmailVersion.AutoSize = true;
-            this.labelNmailVersion.Location = new System.Drawing.Point(67, 71);
-            this.labelNmailVersion.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.labelNmailVersion.Location = new System.Drawing.Point(50, 57);
             this.labelNmailVersion.Name = "labelNmailVersion";
-            this.labelNmailVersion.Size = new System.Drawing.Size(140, 15);
+            this.labelNmailVersion.Size = new System.Drawing.Size(113, 12);
             this.labelNmailVersion.TabIndex = 5;
             this.labelNmailVersion.Text = "nMail.dll Version 0.00";
             // 
             // linkHomePage
             // 
             this.linkHomePage.AutoSize = true;
-            this.linkHomePage.Location = new System.Drawing.Point(67, 98);
-            this.linkHomePage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.linkHomePage.Location = new System.Drawing.Point(50, 78);
             this.linkHomePage.Name = "linkHomePage";
-            this.linkHomePage.Size = new System.Drawing.Size(210, 15);
+            this.linkHomePage.Size = new System.Drawing.Size(165, 12);
             this.linkHomePage.TabIndex = 7;
             this.linkHomePage.TabStop = true;
             this.linkHomePage.Text = "http://www.angel-teatime.com/";
@@ -104,9 +98,9 @@
             // 
             // AboutForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(461, 135);
+            this.ClientSize = new System.Drawing.Size(346, 108);
             this.Controls.Add(this.linkHomePage);
             this.Controls.Add(this.labelNmailVersion);
             this.Controls.Add(this.labelCopyright);
@@ -114,7 +108,6 @@
             this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.buttonOK);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutForm";

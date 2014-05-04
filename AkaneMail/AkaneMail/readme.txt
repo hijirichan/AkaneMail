@@ -1,8 +1,11 @@
 Akane Mail Version 1.2.1
 作者:Angelic Sotware(作成者：砂倉瑞希)
 
-対応OS：WindowsXP/2003/2008/Vista/7/8(.NET Framework 4.0以降に対応している環境)
-※Windows RTはCPUの互換性がないため動作しません。
+対応OS：Windows Vista/7/8/Windows Server 2008/2012(.NET Framework 4.5以降に対応している環境)
+
+※.NET Framework4.5に上げたのとサポートが終了した関係上WindowsXPでは動作いたしません。
+※Windows RTはWindowsストアアプリ以外のアプリケーションが追加出来ない制限のとCPUの互換性が
+  ないため動作しません。
 
 メモリ：256MB以上を推奨(全環境)
 ハードディスク：1MB以上(USBメモリ運用が可能なように設定をファイルにしています。)
