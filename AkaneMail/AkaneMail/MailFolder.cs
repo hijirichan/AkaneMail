@@ -4,57 +4,81 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
 
 namespace AkaneMail
 {
     /// <summary>
     /// メールを保存しておく、名前のついたフォルダーを表します。
     /// </summary>
-    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging
+    public class MailFolder : IEnumerable<Mail>, INotifyPropertyChanged, INotifyPropertyChanging, INotifyCollectionChanged
     {
-        private List<Mail> _mails;
+        private ObservableCollection<Mail> _mails;
 
+        #region DisplayName
+        private string _displayName;
+        /// <summary>
+        /// 画面に表示される名前を取得または設定します。
+        /// </summary>
+        public string DisplayName
+        {
+            get { return _displayName; }
+            set
+            {
+                if (value == _displayName) return;
+                ChangeProperty(() => _displayName = value);
+            }
+        }
+        #endregion
+
+        #region Name
         private string _name;
-        private bool _canRename = true;
-
         /// <summary>
         /// MailFolder の名前を取得または設定します。
         /// </summary>
         /// <exception cref="InvalidOperationException">リネームは許可されていません。</exception>
         public string Name
         {
-            get
-            {
-                return _name;
-            }
+            get { return _name; }
             set
             {
-                if (value == _name)
-                    return;
-                if (!CanRename)
-                    throw new InvalidOperationException("リネームは許可されていません。");
-                OnPropertyChanging(new PropertyChangingEventArgs("Name"));
-                _name = value;
-                OnPropertyChanged(new PropertyChangedEventArgs("Name"));
+                if (value == _name) return;
+                if (!CanRename) throw new InvalidOperationException("リネームは許可されていません。");
+                ChangeProperty(() => _name = value);
             }
         }
+        #endregion
 
         /// <summary>
         /// MailFolder に格納されているメールの数を取得します。
         /// </summary>
         public int Count { get { return _mails.Count; } }
 
+        #region CanRename
+        private bool _canRename = true;
         public bool CanRename
         {
             get { return _canRename; }
             set
             {
-                if (value == _canRename)
-                    return;
-                OnPropertyChanging(new PropertyChangingEventArgs("CanRename"));
-                _canRename = value;
-                OnPropertyChanged(new PropertyChangedEventArgs("CanRename"));
+                if (value == _canRename) return;
+                ChangeProperty(() => _canRename = value);
             }
+        }
+        #endregion
+
+        #region 更新通知
+        /// <summary>
+        /// プロパティの更新を通知できるように値を設定します。
+        /// </summary>
+        /// <param name="propertyChange">プロパティを更新する操作</param>
+        /// <param name="propertyName">更新を通知するプロパティの名前。既定では呼び出し元のメソッドまたはプロパティの名前が使われます。</param>
+        protected void ChangeProperty(Action propertyChange, [CallerMemberName]string propertyName = "")
+        {
+            OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
+            propertyChange();
+            OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
@@ -76,15 +100,26 @@ namespace AkaneMail
             if (PropertyChanging != null)
                 PropertyChanging(this, e);
         }
+        #endregion
 
         /// <summary>
         /// 指定された名前で MailFolder クラスの新しいインスタンスを初期化します。
         /// </summary>
-        public MailFolder(string name)
+        public MailFolder(string name, string displayName = "")
         {
             _name = name;
-            _mails = new List<Mail>();
+            _displayName = displayName;
+            _mails = new ObservableCollection<Mail>();
+            _mails.CollectionChanged += RaiseCollectionChanged;
         }
+        #region INotifyCollectionChanged メンバー
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        #endregion
+        private void RaiseCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (CollectionChanged != null) CollectionChanged(this, e);
+        }
+
 
         /// <summary>
         /// 指定したインデックスにあるメールを取得します。
@@ -94,10 +129,7 @@ namespace AkaneMail
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> が 0 未満または <see cref="Count"/> 以上です。</exception>
         public Mail this[int index]
         {
-            get
-            {
-                return _mails[index];
-            }
+            get { return _mails[index]; }
         }
 
         /// <summary>
@@ -159,6 +191,11 @@ namespace AkaneMail
             catch (ArgumentOutOfRangeException) {
                 throw;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}({1})", DisplayName, Count);
         }
     }
 }

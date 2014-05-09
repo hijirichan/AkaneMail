@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using nMail;
+using System.Windows.Forms;
+using System.IO;
 
 namespace AkaneMail
 {
@@ -23,7 +25,7 @@ namespace AkaneMail
         public string Priority { get; set; }             // 優先度(None/Low/Normal/High)
         public string Convert { get; set; }              // バージョン識別用
 
-        public string[] Attaches { get { return Attach.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries); } }
+        public string[] Attachments { get { return Attach.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries); } }
 
         // コンストラクタ
         //TODO 引数減らす
@@ -59,6 +61,24 @@ namespace AkaneMail
             Convert = "";
             Priority = MailPriority.Parse(pop.Header);
             NotReadYet = unread;
+        }
+
+        public bool Update(string address = null, string header = null, string subject = null, string body = null, string attach = null, string date = null, string size = null, string uidl = null, bool? read = null, string convert = null, string cc = null, string bcc = null, string priority = null)
+        {
+            this.Address = address ?? Address;
+            this.Header = header ?? Header;
+            this.Subject = subject ?? Subject;
+            this.Body = body ?? Body;
+            this.Attach = attach ?? Attach;
+            this.Date = date ?? Date;
+            this.Size = size ?? Size;
+            this.Uidl = uidl ?? Uidl;
+            this.NotReadYet = read ?? NotReadYet;
+            this.Cc = cc ?? Cc;
+            this.Bcc = bcc ?? Bcc;
+            this.Priority = priority ?? Priority;
+            this.Convert = convert ?? Convert;
+            return true;
         }
 
         /// <summary>
@@ -135,6 +155,42 @@ namespace AkaneMail
             return htmlBody;
         }
 
+        public IEnumerable<ToolStripItem> GenerateMenuItem(bool enableWhenRemoved = false)
+        {
+            return NmailAttachEx.GenerateMenuItem("", this.Attachments, enableWhenRemoved);
+        }
+
+    }
+
+    public static class NmailAttachEx
+    {
+        public static IEnumerable<ToolStripItem> GenerateMenuItem(this nMail.Attachment attach, bool enableWhenRemoved = false)
+        {
+            return GenerateMenuItem(attach.Path + "\\", attach.FileNameList as IEnumerable<string>, enableWhenRemoved);
+        }
+
+        public static IEnumerable<ToolStripItem> GenerateMenuItem(string rootPath, IEnumerable<string> attaches, bool enableWhenRemoved = false)
+        {
+            foreach (var attachFile in attaches)
+            {
+                if (File.Exists(rootPath + attachFile))
+                {
+                    yield return new ToolStripMenuItem
+                    {
+                        Text = attachFile,
+                        Image = System.Drawing.Icon.ExtractAssociatedIcon(rootPath + attachFile).ToBitmap()
+                    };
+                }
+                else
+                {
+                    yield return new ToolStripMenuItem
+                    {
+                        Text = attachFile + "は削除されています。",
+                        Enabled = enableWhenRemoved
+                    };
+                }
+            }
+        }
     }
 
     internal static class ByteArrayExtender

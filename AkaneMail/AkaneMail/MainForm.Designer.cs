@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
+            treeNode5,
+            treeNode6,
+            treeNode7});
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSaveMailFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,7 +134,8 @@
             this.menuHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 26);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1045, 27);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -148,45 +149,45 @@
             this.toolStripSeparator5,
             this.menuAppExit});
             this.menuFile.Name = "menuFile";
-            this.menuFile.Size = new System.Drawing.Size(85, 22);
+            this.menuFile.Size = new System.Drawing.Size(86, 23);
             this.menuFile.Text = "ファイル(&F)";
             this.menuFile.DropDownOpening += new System.EventHandler(this.menuFile_DropDownOpening);
             // 
             // menuSaveMailFile
             // 
             this.menuSaveMailFile.Name = "menuSaveMailFile";
-            this.menuSaveMailFile.Size = new System.Drawing.Size(239, 22);
+            this.menuSaveMailFile.Size = new System.Drawing.Size(253, 24);
             this.menuSaveMailFile.Text = "名前を付けて保存(&A)...";
             this.menuSaveMailFile.Click += new System.EventHandler(this.menuSaveMailFile_Click);
             // 
             // menuGetAttatch
             // 
             this.menuGetAttatch.Name = "menuGetAttatch";
-            this.menuGetAttatch.Size = new System.Drawing.Size(239, 22);
+            this.menuGetAttatch.Size = new System.Drawing.Size(253, 24);
             this.menuGetAttatch.Text = "添付ファイルを取り出す(&G)...";
             this.menuGetAttatch.Click += new System.EventHandler(this.menuGetAttatch_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(250, 6);
             // 
             // menuClearTrush
             // 
             this.menuClearTrush.Name = "menuClearTrush";
-            this.menuClearTrush.Size = new System.Drawing.Size(239, 22);
+            this.menuClearTrush.Size = new System.Drawing.Size(253, 24);
             this.menuClearTrush.Text = "ごみ箱を空にする(&Y)...";
             this.menuClearTrush.Click += new System.EventHandler(this.menuClearTrush_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(250, 6);
             // 
             // menuAppExit
             // 
             this.menuAppExit.Name = "menuAppExit";
-            this.menuAppExit.Size = new System.Drawing.Size(239, 22);
+            this.menuAppExit.Size = new System.Drawing.Size(253, 24);
             this.menuAppExit.Text = "アプリケーションの終了(&X)";
             this.menuAppExit.Click += new System.EventHandler(this.menuAppExit_Click);
             // 
@@ -202,59 +203,59 @@
             this.toolStripMenuItem4,
             this.menuDeleteMail});
             this.menuMail.Name = "menuMail";
-            this.menuMail.Size = new System.Drawing.Size(76, 22);
+            this.menuMail.Size = new System.Drawing.Size(81, 23);
             this.menuMail.Text = "メール(&M)";
             this.menuMail.DropDownOpening += new System.EventHandler(this.menuMail_DropDownOpening);
             // 
             // menuSendMail
             // 
             this.menuSendMail.Name = "menuSendMail";
-            this.menuSendMail.Size = new System.Drawing.Size(167, 22);
+            this.menuSendMail.Size = new System.Drawing.Size(179, 24);
             this.menuSendMail.Text = "送信(&S)";
             this.menuSendMail.Click += new System.EventHandler(this.menuSendMail_Click);
             // 
             // menuRecieveMail
             // 
             this.menuRecieveMail.Name = "menuRecieveMail";
-            this.menuRecieveMail.Size = new System.Drawing.Size(167, 22);
+            this.menuRecieveMail.Size = new System.Drawing.Size(179, 24);
             this.menuRecieveMail.Text = "受信(&M)";
             this.menuRecieveMail.Click += new System.EventHandler(this.menuRecieveMail_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(176, 6);
             // 
             // menuNewMail
             // 
             this.menuNewMail.Name = "menuNewMail";
-            this.menuNewMail.Size = new System.Drawing.Size(167, 22);
+            this.menuNewMail.Size = new System.Drawing.Size(179, 24);
             this.menuNewMail.Text = "新規作成(&N)";
             this.menuNewMail.Click += new System.EventHandler(this.menuNewMail_Click);
             // 
             // menuReplyMail
             // 
             this.menuReplyMail.Name = "menuReplyMail";
-            this.menuReplyMail.Size = new System.Drawing.Size(167, 22);
+            this.menuReplyMail.Size = new System.Drawing.Size(179, 24);
             this.menuReplyMail.Text = "返信(&R)";
             this.menuReplyMail.Click += new System.EventHandler(this.menuReplyMail_Click);
             // 
             // menuFowerdMail
             // 
             this.menuFowerdMail.Name = "menuFowerdMail";
-            this.menuFowerdMail.Size = new System.Drawing.Size(167, 22);
+            this.menuFowerdMail.Size = new System.Drawing.Size(179, 24);
             this.menuFowerdMail.Text = "転送(&T)";
             this.menuFowerdMail.Click += new System.EventHandler(this.menuFowerdMail_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(176, 6);
             // 
             // menuDeleteMail
             // 
             this.menuDeleteMail.Name = "menuDeleteMail";
-            this.menuDeleteMail.Size = new System.Drawing.Size(167, 22);
+            this.menuDeleteMail.Size = new System.Drawing.Size(179, 24);
             this.menuDeleteMail.Text = "メールの削除(&D)";
             this.menuDeleteMail.Click += new System.EventHandler(this.menuDeleteMail_Click);
             // 
@@ -263,13 +264,13 @@
             this.menuTool.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuSetEnv});
             this.menuTool.Name = "menuTool";
-            this.menuTool.Size = new System.Drawing.Size(74, 22);
+            this.menuTool.Size = new System.Drawing.Size(80, 23);
             this.menuTool.Text = "ツール(&T)";
             // 
             // menuSetEnv
             // 
             this.menuSetEnv.Name = "menuSetEnv";
-            this.menuSetEnv.Size = new System.Drawing.Size(142, 22);
+            this.menuSetEnv.Size = new System.Drawing.Size(162, 24);
             this.menuSetEnv.Text = "環境設定(&S)";
             this.menuSetEnv.Click += new System.EventHandler(this.menuSetEnv_Click);
             // 
@@ -280,27 +281,27 @@
             this.toolStripMenuItem2,
             this.menuAbout});
             this.menuHelp.Name = "menuHelp";
-            this.menuHelp.Size = new System.Drawing.Size(75, 22);
+            this.menuHelp.Size = new System.Drawing.Size(81, 23);
             this.menuHelp.Text = "ヘルプ(&H)";
             // 
             // menuHelpOpen
             // 
             this.menuHelpOpen.Enabled = false;
             this.menuHelpOpen.Name = "menuHelpOpen";
-            this.menuHelpOpen.Size = new System.Drawing.Size(178, 22);
+            this.menuHelpOpen.Size = new System.Drawing.Size(188, 24);
             this.menuHelpOpen.Text = "目次(&H)";
             this.menuHelpOpen.Visible = false;
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(175, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(185, 6);
             this.toolStripMenuItem2.Visible = false;
             // 
             // menuAbout
             // 
             this.menuAbout.Name = "menuAbout";
-            this.menuAbout.Size = new System.Drawing.Size(178, 22);
+            this.menuAbout.Size = new System.Drawing.Size(188, 24);
             this.menuAbout.Text = "バージョン情報(&A)";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
@@ -311,16 +312,17 @@
             this.progressMail,
             this.buttonAttachList,
             this.labelDate});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 535);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 670);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(784, 27);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(1045, 32);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // labelMessage
             // 
             this.labelMessage.Name = "labelMessage";
-            this.labelMessage.Size = new System.Drawing.Size(697, 22);
+            this.labelMessage.Size = new System.Drawing.Size(737, 27);
             this.labelMessage.Spring = true;
             this.labelMessage.Text = "現在のステータス";
             this.labelMessage.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -328,7 +330,7 @@
             // progressMail
             // 
             this.progressMail.Name = "progressMail";
-            this.progressMail.Size = new System.Drawing.Size(100, 21);
+            this.progressMail.Size = new System.Drawing.Size(133, 26);
             this.progressMail.Visible = false;
             // 
             // buttonAttachList
@@ -337,7 +339,7 @@
             this.buttonAttachList.Image = ((System.Drawing.Image)(resources.GetObject("buttonAttachList.Image")));
             this.buttonAttachList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonAttachList.Name = "buttonAttachList";
-            this.buttonAttachList.Size = new System.Drawing.Size(29, 25);
+            this.buttonAttachList.Size = new System.Drawing.Size(29, 30);
             this.buttonAttachList.ToolTipText = "添付ファイル";
             this.buttonAttachList.Visible = false;
             this.buttonAttachList.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.buttonAttachList_DropDownItemClicked);
@@ -346,7 +348,7 @@
             // 
             this.labelDate.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
             this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(72, 22);
+            this.labelDate.Size = new System.Drawing.Size(85, 27);
             this.labelDate.Text = "現在の時刻";
             // 
             // toolStrip1
@@ -362,9 +364,9 @@
             this.buttonDeleteMail,
             this.toolStripSeparator2,
             this.buttonHelp});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 26);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 27);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1045, 26);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -373,7 +375,7 @@
             this.buttonSendMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonSendMail.Image")));
             this.buttonSendMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonSendMail.Name = "buttonSendMail";
-            this.buttonSendMail.Size = new System.Drawing.Size(52, 22);
+            this.buttonSendMail.Size = new System.Drawing.Size(59, 23);
             this.buttonSendMail.Text = "送信";
             this.buttonSendMail.Click += new System.EventHandler(this.menuSendMail_Click);
             // 
@@ -382,21 +384,21 @@
             this.buttonRecieveMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonRecieveMail.Image")));
             this.buttonRecieveMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonRecieveMail.Name = "buttonRecieveMail";
-            this.buttonRecieveMail.Size = new System.Drawing.Size(52, 22);
+            this.buttonRecieveMail.Size = new System.Drawing.Size(59, 23);
             this.buttonRecieveMail.Text = "受信";
             this.buttonRecieveMail.Click += new System.EventHandler(this.menuRecieveMail_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 26);
             // 
             // buttonNewMail
             // 
             this.buttonNewMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonNewMail.Image")));
             this.buttonNewMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonNewMail.Name = "buttonNewMail";
-            this.buttonNewMail.Size = new System.Drawing.Size(76, 22);
+            this.buttonNewMail.Size = new System.Drawing.Size(89, 23);
             this.buttonNewMail.Text = "新規作成";
             this.buttonNewMail.Click += new System.EventHandler(this.menuNewMail_Click);
             // 
@@ -405,7 +407,7 @@
             this.buttonReplyMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonReplyMail.Image")));
             this.buttonReplyMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonReplyMail.Name = "buttonReplyMail";
-            this.buttonReplyMail.Size = new System.Drawing.Size(52, 22);
+            this.buttonReplyMail.Size = new System.Drawing.Size(59, 23);
             this.buttonReplyMail.Text = "返信";
             this.buttonReplyMail.Click += new System.EventHandler(this.menuReplyMail_Click);
             // 
@@ -414,42 +416,43 @@
             this.buttonForwardMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonForwardMail.Image")));
             this.buttonForwardMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonForwardMail.Name = "buttonForwardMail";
-            this.buttonForwardMail.Size = new System.Drawing.Size(52, 22);
+            this.buttonForwardMail.Size = new System.Drawing.Size(59, 23);
             this.buttonForwardMail.Text = "転送";
             this.buttonForwardMail.Click += new System.EventHandler(this.menuFowerdMail_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 26);
             // 
             // buttonDeleteMail
             // 
             this.buttonDeleteMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonDeleteMail.Image")));
             this.buttonDeleteMail.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonDeleteMail.Name = "buttonDeleteMail";
-            this.buttonDeleteMail.Size = new System.Drawing.Size(52, 22);
+            this.buttonDeleteMail.Size = new System.Drawing.Size(59, 23);
             this.buttonDeleteMail.Text = "削除";
             this.buttonDeleteMail.Click += new System.EventHandler(this.menuDeleteMail_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
             // 
             // buttonHelp
             // 
             this.buttonHelp.Image = ((System.Drawing.Image)(resources.GetObject("buttonHelp.Image")));
             this.buttonHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(64, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(64, 23);
             this.buttonHelp.Text = "ヘルプ";
             this.buttonHelp.Click += new System.EventHandler(this.menuAbout_Click);
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 51);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 53);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -459,8 +462,9 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(784, 484);
-            this.splitContainer1.SplitterDistance = 157;
+            this.splitContainer1.Size = new System.Drawing.Size(1045, 617);
+            this.splitContainer1.SplitterDistance = 209;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
             // 
             // treeMailBoxFolder
@@ -470,29 +474,30 @@
             this.treeMailBoxFolder.ImageIndex = 0;
             this.treeMailBoxFolder.ImageList = this.imageList1;
             this.treeMailBoxFolder.Location = new System.Drawing.Point(0, 0);
+            this.treeMailBoxFolder.Margin = new System.Windows.Forms.Padding(4);
             this.treeMailBoxFolder.Name = "treeMailBoxFolder";
-            treeNode1.ImageIndex = 1;
-            treeNode1.Name = "nodeReceive";
-            treeNode1.SelectedImageIndex = 1;
-            treeNode1.Tag = "ReceiveMailBox";
-            treeNode1.Text = "受信メール (0)";
-            treeNode2.ImageIndex = 2;
-            treeNode2.Name = "nodeSend";
-            treeNode2.SelectedImageIndex = 2;
-            treeNode2.Tag = "SendMailBox";
-            treeNode2.Text = "送信メール (0)";
-            treeNode3.ImageIndex = 3;
-            treeNode3.Name = "nodeDelete";
-            treeNode3.SelectedImageIndex = 3;
-            treeNode3.Tag = "DeleteMailBox";
-            treeNode3.Text = "ごみ箱 (0)";
-            treeNode4.Name = "rootMail";
-            treeNode4.Tag = "MailBoxRoot";
-            treeNode4.Text = "メールボックス";
+            treeNode5.ImageIndex = 1;
+            treeNode5.Name = "nodeReceive";
+            treeNode5.SelectedImageIndex = 1;
+            treeNode5.Tag = "ReceiveMailBox";
+            treeNode5.Text = "受信メール (0)";
+            treeNode6.ImageIndex = 2;
+            treeNode6.Name = "nodeSend";
+            treeNode6.SelectedImageIndex = 2;
+            treeNode6.Tag = "SendMailBox";
+            treeNode6.Text = "送信メール (0)";
+            treeNode7.ImageIndex = 3;
+            treeNode7.Name = "nodeDelete";
+            treeNode7.SelectedImageIndex = 3;
+            treeNode7.Tag = "DeleteMailBox";
+            treeNode7.Text = "ごみ箱 (0)";
+            treeNode8.Name = "rootMail";
+            treeNode8.Tag = "MailBoxRoot";
+            treeNode8.Text = "メールボックス";
             this.treeMailBoxFolder.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode4});
+            treeNode8});
             this.treeMailBoxFolder.SelectedImageIndex = 0;
-            this.treeMailBoxFolder.Size = new System.Drawing.Size(157, 484);
+            this.treeMailBoxFolder.Size = new System.Drawing.Size(209, 617);
             this.treeMailBoxFolder.TabIndex = 0;
             this.treeMailBoxFolder.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMailBoxFolder_AfterSelect);
             // 
@@ -501,13 +506,13 @@
             this.menuTreeView.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuContextClearTrush});
             this.menuTreeView.Name = "contextMenuStrip2";
-            this.menuTreeView.Size = new System.Drawing.Size(203, 26);
+            this.menuTreeView.Size = new System.Drawing.Size(219, 28);
             this.menuTreeView.Opening += new System.ComponentModel.CancelEventHandler(this.menuTreeView_Opening);
             // 
             // menuContextClearTrush
             // 
             this.menuContextClearTrush.Name = "menuContextClearTrush";
-            this.menuContextClearTrush.Size = new System.Drawing.Size(202, 22);
+            this.menuContextClearTrush.Size = new System.Drawing.Size(218, 24);
             this.menuContextClearTrush.Text = "ごみ箱を空にする(&Y)...";
             this.menuContextClearTrush.Click += new System.EventHandler(this.menuClearTrush_Click);
             // 
@@ -524,6 +529,7 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(4);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -535,8 +541,9 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBody);
             this.splitContainer2.Panel2.Controls.Add(this.browserBody);
-            this.splitContainer2.Size = new System.Drawing.Size(623, 484);
-            this.splitContainer2.SplitterDistance = 181;
+            this.splitContainer2.Size = new System.Drawing.Size(831, 617);
+            this.splitContainer2.SplitterDistance = 229;
+            this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
             // listMail
@@ -551,39 +558,39 @@
             this.listMail.FullRowSelect = true;
             this.listMail.HideSelection = false;
             this.listMail.Location = new System.Drawing.Point(0, 0);
+            this.listMail.Margin = new System.Windows.Forms.Padding(4);
             this.listMail.Name = "listMail";
-            this.listMail.Size = new System.Drawing.Size(623, 181);
+            this.listMail.Size = new System.Drawing.Size(831, 229);
             this.listMail.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listMail.TabIndex = 1;
             this.listMail.UseCompatibleStateImageBehavior = false;
             this.listMail.View = System.Windows.Forms.View.Details;
             this.listMail.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listMail_ColumnClick);
-            this.listMail.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listMail_ItemSelectionChanged);
             this.listMail.Click += new System.EventHandler(this.listMail_Click);
             this.listMail.DoubleClick += new System.EventHandler(this.listMail_DoubleClick);
             // 
             // columnFromTo
             // 
             this.columnFromTo.Tag = "string";
-            this.columnFromTo.Text = "差出人";
+            this.columnFromTo.Text = "名前";
             this.columnFromTo.Width = 174;
             // 
             // columnSubject
             // 
             this.columnSubject.Tag = "string";
-            this.columnSubject.Text = "件名";
+            this.columnSubject.Text = "メールアドレス";
             this.columnSubject.Width = 188;
             // 
             // columnDate
             // 
             this.columnDate.Tag = "date";
-            this.columnDate.Text = "受信時刻";
+            this.columnDate.Text = "最終データ更新日";
             this.columnDate.Width = 150;
             // 
             // columnSize
             // 
             this.columnSize.Tag = "num";
-            this.columnSize.Text = "サイズ";
+            this.columnSize.Text = "データサイズ";
             this.columnSize.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.columnSize.Width = 80;
             // 
@@ -599,58 +606,58 @@
             this.toolStripMenuItem1,
             this.menuContextGetAttatch});
             this.menuListView.Name = "contextMenuStrip1";
-            this.menuListView.Size = new System.Drawing.Size(228, 148);
+            this.menuListView.Size = new System.Drawing.Size(239, 160);
             this.menuListView.Opening += new System.ComponentModel.CancelEventHandler(this.menuListView_Opening);
             // 
             // menuContextReplyMail
             // 
             this.menuContextReplyMail.Name = "menuContextReplyMail";
-            this.menuContextReplyMail.Size = new System.Drawing.Size(227, 22);
+            this.menuContextReplyMail.Size = new System.Drawing.Size(238, 24);
             this.menuContextReplyMail.Text = "返信(&R)";
             this.menuContextReplyMail.Click += new System.EventHandler(this.menuReplyMail_Click);
             // 
             // menuContextFowerdMail
             // 
             this.menuContextFowerdMail.Name = "menuContextFowerdMail";
-            this.menuContextFowerdMail.Size = new System.Drawing.Size(227, 22);
+            this.menuContextFowerdMail.Size = new System.Drawing.Size(238, 24);
             this.menuContextFowerdMail.Text = "転送(&T)";
             this.menuContextFowerdMail.Click += new System.EventHandler(this.menuFowerdMail_Click);
             // 
             // menuContextDeleteMail
             // 
             this.menuContextDeleteMail.Name = "menuContextDeleteMail";
-            this.menuContextDeleteMail.Size = new System.Drawing.Size(227, 22);
+            this.menuContextDeleteMail.Size = new System.Drawing.Size(238, 24);
             this.menuContextDeleteMail.Text = "削除(&D)";
             this.menuContextDeleteMail.Click += new System.EventHandler(this.menuDeleteMail_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(235, 6);
             // 
             // menuAlreadyRead
             // 
             this.menuAlreadyRead.Name = "menuAlreadyRead";
-            this.menuAlreadyRead.Size = new System.Drawing.Size(227, 22);
+            this.menuAlreadyRead.Size = new System.Drawing.Size(238, 24);
             this.menuAlreadyRead.Text = "既読にする(&K)";
             this.menuAlreadyRead.Click += new System.EventHandler(this.menuAlreadyRead_Click);
             // 
             // menuNotReadYet
             // 
             this.menuNotReadYet.Name = "menuNotReadYet";
-            this.menuNotReadYet.Size = new System.Drawing.Size(227, 22);
+            this.menuNotReadYet.Size = new System.Drawing.Size(238, 24);
             this.menuNotReadYet.Text = "未読にする(&U)";
             this.menuNotReadYet.Click += new System.EventHandler(this.menuNotReadYet_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(224, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(235, 6);
             // 
             // menuContextGetAttatch
             // 
             this.menuContextGetAttatch.Name = "menuContextGetAttatch";
-            this.menuContextGetAttatch.Size = new System.Drawing.Size(227, 22);
+            this.menuContextGetAttatch.Size = new System.Drawing.Size(238, 24);
             this.menuContextGetAttatch.Text = "添付ファイルを取り出す(&G)";
             this.menuContextGetAttatch.Click += new System.EventHandler(this.menuGetAttatch_Click);
             // 
@@ -658,10 +665,11 @@
             // 
             this.textBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBody.Location = new System.Drawing.Point(0, 0);
+            this.textBody.Margin = new System.Windows.Forms.Padding(4);
             this.textBody.Multiline = true;
             this.textBody.Name = "textBody";
             this.textBody.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBody.Size = new System.Drawing.Size(623, 299);
+            this.textBody.Size = new System.Drawing.Size(831, 383);
             this.textBody.TabIndex = 2;
             // 
             // browserBody
@@ -670,9 +678,10 @@
             this.browserBody.AllowWebBrowserDrop = false;
             this.browserBody.Dock = System.Windows.Forms.DockStyle.Fill;
             this.browserBody.Location = new System.Drawing.Point(0, 0);
-            this.browserBody.MinimumSize = new System.Drawing.Size(20, 20);
+            this.browserBody.Margin = new System.Windows.Forms.Padding(4);
+            this.browserBody.MinimumSize = new System.Drawing.Size(27, 25);
             this.browserBody.Name = "browserBody";
-            this.browserBody.Size = new System.Drawing.Size(623, 299);
+            this.browserBody.Size = new System.Drawing.Size(831, 383);
             this.browserBody.TabIndex = 3;
             this.browserBody.TabStop = false;
             this.browserBody.Visible = false;
@@ -713,44 +722,44 @@
             this.toolStripSeparator8,
             this.menuTaskApplicationExit});
             this.contextMenuStrip3.Name = "contextMenuStrip3";
-            this.contextMenuStrip3.Size = new System.Drawing.Size(227, 82);
+            this.contextMenuStrip3.Size = new System.Drawing.Size(231, 88);
             // 
             // menuTaskRestoreWindow
             // 
             this.menuTaskRestoreWindow.Name = "menuTaskRestoreWindow";
-            this.menuTaskRestoreWindow.Size = new System.Drawing.Size(226, 22);
+            this.menuTaskRestoreWindow.Size = new System.Drawing.Size(230, 24);
             this.menuTaskRestoreWindow.Text = "元のサイズに戻す(&R)";
             this.menuTaskRestoreWindow.Click += new System.EventHandler(this.menuTaskRestoreWindow_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(223, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(227, 6);
             // 
             // menuTaskMailNew
             // 
             this.menuTaskMailNew.Name = "menuTaskMailNew";
-            this.menuTaskMailNew.Size = new System.Drawing.Size(226, 22);
+            this.menuTaskMailNew.Size = new System.Drawing.Size(230, 24);
             this.menuTaskMailNew.Text = "新規作成(&N)";
             this.menuTaskMailNew.Click += new System.EventHandler(this.menuNewMail_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(223, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(227, 6);
             // 
             // menuTaskApplicationExit
             // 
             this.menuTaskApplicationExit.Name = "menuTaskApplicationExit";
-            this.menuTaskApplicationExit.Size = new System.Drawing.Size(226, 22);
+            this.menuTaskApplicationExit.Size = new System.Drawing.Size(230, 24);
             this.menuTaskApplicationExit.Text = "アプリケーションの終了(&X)";
             this.menuTaskApplicationExit.Click += new System.EventHandler(this.menuAppExit_Click);
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 562);
+            this.ClientSize = new System.Drawing.Size(1045, 702);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);

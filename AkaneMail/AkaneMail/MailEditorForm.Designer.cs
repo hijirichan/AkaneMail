@@ -600,7 +600,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "新規作成 - Akane Mail";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MailEditorForm_FormClosing);
-            this.Load += new System.EventHandler(this.MailEditorForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MailEditorForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MailEditorForm_DragEnter);
             this.menuStrip1.ResumeLayout(false);
