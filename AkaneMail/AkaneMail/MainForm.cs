@@ -477,7 +477,6 @@ namespace AkaneMail
             NewMailForm.textAddress.Text = mail.Address;
             NewMailForm.textSubject.Text = "Re:" + mail.Subject;
 
-            // 本文
             NewMailForm.textBody.Text = "\r\n\r\n---" + mail.Address + " was wrote ---\r\n\r\n" + textBody.Text;
 
             NewMailForm.Show();
