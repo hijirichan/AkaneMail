@@ -719,7 +719,7 @@ namespace AkaneMail
         private void Receive(Pop3 pop, IEnumerable<int> counts)
         {
             foreach (var no in counts.Select((num, i) => new { num, i })) {
-                Invoke(SetMessage, (this.mailBox.Receive.Count + no.i + 1).ToString() + "件目のメールを受信しています。");
+                Invoke(SetMessage, (no.i + 1).ToString() + "件目のメールを受信しています。");
                 pop.GetUidl(no.num);
                 pop.GetMail(no.num);
 

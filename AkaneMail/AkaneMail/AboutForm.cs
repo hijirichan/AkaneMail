@@ -27,7 +27,7 @@ namespace AkaneMail
         {
             labelNmailVersion.Text = "nMail.dll Version " + nMail.Options.Version;
             labelVersion.Text = "Akane Mail Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            labelCopyright.Text = "Copyright (C) 2013 Angelic Software";
+            labelCopyright.Text = "Copyright (C) 2014 Angelic Software";
         }
 
         private void linkHomePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
