@@ -62,9 +62,6 @@
     </Compile>
     <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="MailBox.cs" />
-    <Compile Include="MailEditorForm.Creations.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MailFolder.cs" />
     <Compile Include="MailPriority.cs" />
     <Compile Include="MailSaveException.cs" />

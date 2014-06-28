@@ -683,8 +683,6 @@ namespace AkaneMail
                         Options.DisableDecodeBodyText();
 
                         Receive(pop, receivingMailIds);
-
-                        Invoke(HideProgressMail);
                     }
                     Invoke(NotifyReceive, receivingMailIds.Count());
                     Invoke(UpdateViewFully);
@@ -697,6 +695,7 @@ namespace AkaneMail
                 Invoke(SetMessage, MainFormMessages.Error.GeneralErrorMessage(ex.Message));
             }
             finally {
+                Invoke(HideProgressMail);
                 Invoke(EnableButton);
             }
 
@@ -720,7 +719,7 @@ namespace AkaneMail
         private void Receive(Pop3 pop, IEnumerable<int> counts)
         {
             foreach (var no in counts.Select((num, i) => new { num, i })) {
-                Invoke(SetMessage, no.num + "件目のメールを受信しています。");
+                Invoke(SetMessage, (this.mailBox.Receive.Count + no.i + 1).ToString() + "件目のメールを受信しています。");
                 pop.GetUidl(no.num);
                 pop.GetMail(no.num);
 
@@ -752,6 +751,7 @@ namespace AkaneMail
                     Invoke(FlashWindow, this);
                 }
                 dataModified = true;
+                Invoke(SetMessage, MainFormMessages.Notification.NewMailReceived(mailCount));
             }
             else {
                 Invoke(SetMessage, MainFormMessages.Notification.AllReceived);
