@@ -28,7 +28,7 @@ namespace AkaneMail
         private void AboutForm_Load(object sender, EventArgs e)
         {
             labelNmailVersion.Text = "nMail.dll Version " + nMail.Options.Version;
-            labelVersion.Text = "Akane Mail Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+            labelVersion.Text = "Akane Mail Version " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             var copy = GetAssemblyAttributes<AssemblyCopyrightAttribute>(Assembly.GetExecutingAssembly());
             labelCopyright.Text = copy.Copyright;
         }
