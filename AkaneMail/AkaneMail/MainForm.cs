@@ -441,6 +441,7 @@ namespace AkaneMail
                 return Encoding.UTF8.GetString(bs);
             }
             else {
+                if (attach.Body.Length > 0) { return attach.Body; }
                 var b = Encoding.GetEncoding("iso-2022-jp").GetBytes(mail.Body);
                 return Encoding.GetEncoding("iso-2022-jp").GetString(b);
             }
@@ -727,7 +728,7 @@ namespace AkaneMail
 
                 if (AccountInfo.deleteMail) { pop.Delete(no.num); }
 
-                Invoke(ProgressMailUpdate, no.i);
+                Invoke(ProgressMailUpdate, no.i + 1);
                 Task.Delay(TimeSpan.FromSeconds(1)).Wait();
             }
         }

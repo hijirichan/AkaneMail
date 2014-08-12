@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace AkaneMail
 {
@@ -27,7 +29,8 @@ namespace AkaneMail
         {
             labelNmailVersion.Text = "nMail.dll Version " + nMail.Options.Version;
             labelVersion.Text = "Akane Mail Version " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            labelCopyright.Text = "Copyright (C) 2014 Angelic Software";
+            var copy = GetAssemblyAttributes<AssemblyCopyrightAttribute>(Assembly.GetExecutingAssembly());
+            labelCopyright.Text = copy.Copyright;
         }
 
         private void linkHomePage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -37,6 +40,13 @@ namespace AkaneMail
 
             //ブラウザで開く
             System.Diagnostics.Process.Start(strHomeUrl);
+        }
+
+        static T GetAssemblyAttributes<T>(Assembly target) where T : class
+        {
+            var attributes = target.GetCustomAttributes(typeof(T), false);
+            if (attributes != null && attributes.Any()) return attributes[0] as T;
+            return null;
         }
     }
 }
