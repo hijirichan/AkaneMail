@@ -307,9 +307,9 @@ namespace AkaneMail
         /// </summary>
         public void MoveToTrash(string name, IEnumerable<ListViewItem> items)
         {
-            var mails = from item in items
+            var mails = (from item in items
                        let i = (int)item.Tag
-                       select this[name][i];
+                       select this[name][i]).ToList();
             foreach (var mail in mails) {
                 Trash.Add(mail);
                 this[name].Remove(mail);
@@ -322,9 +322,9 @@ namespace AkaneMail
         /// <param name="items"></param>
         public void TrashCompletely(IEnumerable<ListViewItem> items)
         {
-            var mails = from item in items
+            var mails = (from item in items
                         let i = (int)item.Tag
-                        select Trash[i];
+                        select Trash[i]).ToList();
             foreach (var mail in mails) {
                 Trash.Remove(mail);
             }
