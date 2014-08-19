@@ -155,6 +155,14 @@ namespace AkaneMail
             return htmlBody;
         }
 
+        /// <summary>
+        /// 選択したメールが送信メールか調べる
+        /// </summary>
+        public bool IsMailToSend()
+        {
+            return this.Header.Length == 0;
+        }
+
         public IEnumerable<ToolStripItem> GenerateMenuItem(bool enableWhenRemoved = false)
         {
             return NmailAttachEx.GenerateMenuItem("", this.Attachments, enableWhenRemoved);

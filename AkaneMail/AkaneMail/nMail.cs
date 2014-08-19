@@ -506,6 +506,13 @@ namespace nMail
 		/// </remarks>
 		public const int AllowUnknownCA = 0x0400;
 		/// <summary>
+		/// Common Name が一致しなくてもエラーにしません。
+		/// </summary>
+		/// <remarks>
+		/// <see cref="SSL"/>で指定します。
+		/// </remarks>
+		public const int IgnoreInvalidName = 0x0040;
+		/// <summary>
 		/// POP3 の標準ポート番号です
 		/// </summary>
 		public const int StandardPortNo = 110;
@@ -2342,6 +2349,13 @@ namespace nMail
 		/// <see cref="SSL"/>で指定します。
 		/// </remarks>
 		public const int AllowUnknownCA = 0x0400;
+		/// <summary>
+		/// Common Name が一致しなくてもエラーにしません。
+		/// </summary>
+		/// <remarks>
+		/// <see cref="SSL"/>で指定します。
+		/// </remarks>
+		public const int IgnoreInvalidName = 0x0040;
 		/// <summary>
 		/// SMTP の標準ポート番号です
 		/// </summary>
@@ -5501,6 +5515,13 @@ namespace nMail
 		/// <see cref="SSL"/>で指定します。
 		/// </remarks>
 		public const int AllowUnknownCA = 0x0400;
+		/// <summary>
+		/// Common Name が一致しなくてもエラーにしません。
+		/// </summary>
+		/// <remarks>
+		/// <see cref="SSL"/>で指定します。
+		/// </remarks>
+		public const int IgnoreInvalidName = 0x0040;
 		/// <summary>
 		/// IMAP4 の標準ポート番号です
 		/// </summary>

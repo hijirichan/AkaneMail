@@ -682,7 +682,9 @@ namespace AkaneMail
                         Invoke(ProgressMailInit, receivingMailIds.Count());
                         // HTML/Base64のデコードを無効にする
                         Options.DisableDecodeBodyText();
-
+                        // ヘッダ・本文のデコードを無効にする(メール送受信コンポーネント変更の前段階)
+                        // Options.DisableDecodeHeader();
+                        // Options.DisableDecodeBodyAll();
                         Receive(pop, receivingMailIds);
                     }
                     Invoke(NotifyReceive, receivingMailIds.Count());
