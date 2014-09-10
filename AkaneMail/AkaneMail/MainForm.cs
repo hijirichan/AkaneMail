@@ -362,6 +362,9 @@ namespace AkaneMail
         /// <param name="mail">メール</param>
         private void OpenMail(Mail mail)
         {
+            // 複数メール選択時は処理をしない
+            if (listMail.SelectedItems.Count != 1) return;
+
             var attach = new nMail.Attachment { Path = TempFileRoot };
             try {
                 ChangeConvertMode(mail.Convert);
