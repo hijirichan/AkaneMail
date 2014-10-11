@@ -669,7 +669,14 @@ namespace AkaneMail
                 Invoke(SetMessage, MainFormMessages.Notification.MailReceiving);
 
                 using (var pop = new nMail.Pop3()) {
+                    // POPサーバ接続タイムアウトによるエラーを有効にする
                     Options.EnableConnectTimeout();
+
+                    // ヘッダ・本文のデコードを無効にする
+                    Options.DisableDecodeHeader();
+                    Options.DisableDecodeBodyText();
+                    Options.DisableDecodeBodyAll();
+
                     pop.APop = AccountInfo.apopFlag;
 
                     if (AccountInfo.popOverSSL) {
@@ -683,11 +690,6 @@ namespace AkaneMail
                     if (receivingMailIds.Any()) {
                         // プログレスバーを表示(受信件数/未受信件数)
                         Invoke(ProgressMailInit, receivingMailIds.Count());
-                        // HTML/Base64のデコードを無効にする
-                        Options.DisableDecodeBodyText();
-                        // ヘッダ・本文のデコードを無効にする(メール送受信コンポーネント変更の前段階)
-                        // Options.DisableDecodeHeader();
-                        // Options.DisableDecodeBodyAll();
                         Receive(pop, receivingMailIds);
                     }
                     Invoke(NotifyReceive, receivingMailIds.Count());
