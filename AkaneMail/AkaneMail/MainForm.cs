@@ -177,8 +177,8 @@ namespace AkaneMail
         /// </summary>
         private void EnableButton()
         {
-            menuRecieveMail.Enabled = true;
-            buttonRecieveMail.Enabled = true;
+            menuReceiveMail.Enabled = true;
+            buttonReceiveMail.Enabled = true;
 
             menuSendMail.Enabled = true;
             buttonSendMail.Enabled = true;
@@ -663,7 +663,7 @@ namespace AkaneMail
         /// <summary>
         /// POP3サーバからメールを受信する
         /// </summary>
-        private void RecieveMail()
+        private void ReceiveMail()
         {
             try {
                 Invoke(SetMessage, MainFormMessages.Notification.MailReceiving);
@@ -674,7 +674,6 @@ namespace AkaneMail
 
                     // ヘッダ・本文のデコードを無効にする
                     Options.DisableDecodeHeader();
-                    Options.DisableDecodeBodyText();
                     Options.DisableDecodeBodyAll();
 
                     pop.APop = AccountInfo.apopFlag;
@@ -1131,20 +1130,20 @@ namespace AkaneMail
 
         private async void menuSendMail_Click(object sender, EventArgs e)
         {
-            menuRecieveMail.Enabled = false;
-            buttonRecieveMail.Enabled = false;
-            buttonRecieveMail.Enabled = false;
+            menuReceiveMail.Enabled = false;
+            buttonReceiveMail.Enabled = false;
+            buttonReceiveMail.Enabled = false;
             buttonSendMail.Enabled = false;
 
             await Task.Run(() => SendMail());
         }
 
-        private async void menuRecieveMail_Click(object sender, EventArgs e)
+        private async void menuReceiveMail_Click(object sender, EventArgs e)
         {
-            menuRecieveMail.Enabled = false;
-            buttonRecieveMail.Enabled = false;
+            menuReceiveMail.Enabled = false;
+            buttonReceiveMail.Enabled = false;
 
-            await Task.Run(() => RecieveMail());
+            await Task.Run(() => ReceiveMail());
         }
 
         private void menuDeleteMail_Click(object sender, EventArgs e)
@@ -1385,7 +1384,7 @@ namespace AkaneMail
 
         private void timerAutoReceive_Tick(object sender, EventArgs e)
         {
-            menuRecieveMail_Click(sender, e);
+            menuReceiveMail_Click(sender, e);
         }
 
         private void browserBody_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)

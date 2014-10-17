@@ -47,7 +47,7 @@
             this.menuAppExit = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMail = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSendMail = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuRecieveMail = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuReceiveMail = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuNewMail = new System.Windows.Forms.ToolStripMenuItem();
             this.menuReplyMail = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,7 +67,7 @@
             this.labelDate = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.buttonSendMail = new System.Windows.Forms.ToolStripButton();
-            this.buttonRecieveMail = new System.Windows.Forms.ToolStripButton();
+            this.buttonReceiveMail = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.buttonNewMail = new System.Windows.Forms.ToolStripButton();
             this.buttonReplyMail = new System.Windows.Forms.ToolStripButton();
@@ -194,7 +194,7 @@
             // 
             this.menuMail.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuSendMail,
-            this.menuRecieveMail,
+            this.menuReceiveMail,
             this.toolStripMenuItem3,
             this.menuNewMail,
             this.menuReplyMail,
@@ -213,12 +213,12 @@
             this.menuSendMail.Text = "送信(&S)";
             this.menuSendMail.Click += new System.EventHandler(this.menuSendMail_Click);
             // 
-            // menuRecieveMail
+            // menuReceiveMail
             // 
-            this.menuRecieveMail.Name = "menuRecieveMail";
-            this.menuRecieveMail.Size = new System.Drawing.Size(167, 22);
-            this.menuRecieveMail.Text = "受信(&M)";
-            this.menuRecieveMail.Click += new System.EventHandler(this.menuRecieveMail_Click);
+            this.menuReceiveMail.Name = "menuReceiveMail";
+            this.menuReceiveMail.Size = new System.Drawing.Size(167, 22);
+            this.menuReceiveMail.Text = "受信(&M)";
+            this.menuReceiveMail.Click += new System.EventHandler(this.menuReceiveMail_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -353,7 +353,7 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.buttonSendMail,
-            this.buttonRecieveMail,
+            this.buttonReceiveMail,
             this.toolStripSeparator1,
             this.buttonNewMail,
             this.buttonReplyMail,
@@ -377,14 +377,13 @@
             this.buttonSendMail.Text = "送信";
             this.buttonSendMail.Click += new System.EventHandler(this.menuSendMail_Click);
             // 
-            // buttonRecieveMail
+            // buttonReceiveMail
             // 
-            this.buttonRecieveMail.Image = ((System.Drawing.Image)(resources.GetObject("buttonRecieveMail.Image")));
-            this.buttonRecieveMail.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.buttonRecieveMail.Name = "buttonRecieveMail";
-            this.buttonRecieveMail.Size = new System.Drawing.Size(52, 22);
-            this.buttonRecieveMail.Text = "受信";
-            this.buttonRecieveMail.Click += new System.EventHandler(this.menuRecieveMail_Click);
+            this.buttonReceiveMail.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.buttonReceiveMail.Name = "buttonReceiveMail";
+            this.buttonReceiveMail.Size = new System.Drawing.Size(36, 22);
+            this.buttonReceiveMail.Text = "受信";
+            this.buttonReceiveMail.Click += new System.EventHandler(this.menuReceiveMail_Click);
             // 
             // toolStripSeparator1
             // 
@@ -794,7 +793,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuAppExit;
         private System.Windows.Forms.ToolStripMenuItem menuMail;
         private System.Windows.Forms.ToolStripMenuItem menuSendMail;
-        private System.Windows.Forms.ToolStripMenuItem menuRecieveMail;
+        private System.Windows.Forms.ToolStripMenuItem menuReceiveMail;
         private System.Windows.Forms.ToolStripMenuItem menuTool;
         private System.Windows.Forms.ToolStripMenuItem menuSetEnv;
         private System.Windows.Forms.ToolStripMenuItem menuHelp;
@@ -810,7 +809,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton buttonSendMail;
-        private System.Windows.Forms.ToolStripButton buttonRecieveMail;
+        private System.Windows.Forms.ToolStripButton buttonReceiveMail;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton buttonNewMail;
         private System.Windows.Forms.ToolStripButton buttonReplyMail;
