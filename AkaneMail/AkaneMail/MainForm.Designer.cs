@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode6,
-            treeNode7});
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("受信メール (0)", 1, 1);
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("送信メール (0)", 2, 2);
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("ごみ箱 (0)", 3, 3);
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("メールボックス", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3});
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSaveMailFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -471,26 +471,26 @@
             this.treeMailBoxFolder.ImageList = this.imageList1;
             this.treeMailBoxFolder.Location = new System.Drawing.Point(0, 0);
             this.treeMailBoxFolder.Name = "treeMailBoxFolder";
-            treeNode5.ImageIndex = 1;
-            treeNode5.Name = "nodeReceive";
-            treeNode5.SelectedImageIndex = 1;
-            treeNode5.Tag = "ReceiveMailBox";
-            treeNode5.Text = "受信メール (0)";
-            treeNode6.ImageIndex = 2;
-            treeNode6.Name = "nodeSend";
-            treeNode6.SelectedImageIndex = 2;
-            treeNode6.Tag = "SendMailBox";
-            treeNode6.Text = "送信メール (0)";
-            treeNode7.ImageIndex = 3;
-            treeNode7.Name = "nodeDelete";
-            treeNode7.SelectedImageIndex = 3;
-            treeNode7.Tag = "DeleteMailBox";
-            treeNode7.Text = "ごみ箱 (0)";
-            treeNode8.Name = "rootMail";
-            treeNode8.Tag = "MailBoxRoot";
-            treeNode8.Text = "メールボックス";
+            treeNode1.ImageIndex = 1;
+            treeNode1.Name = "nodeReceive";
+            treeNode1.SelectedImageIndex = 1;
+            treeNode1.Tag = "ReceiveMailBox";
+            treeNode1.Text = "受信メール (0)";
+            treeNode2.ImageIndex = 2;
+            treeNode2.Name = "nodeSend";
+            treeNode2.SelectedImageIndex = 2;
+            treeNode2.Tag = "SendMailBox";
+            treeNode2.Text = "送信メール (0)";
+            treeNode3.ImageIndex = 3;
+            treeNode3.Name = "nodeDelete";
+            treeNode3.SelectedImageIndex = 3;
+            treeNode3.Tag = "DeleteMailBox";
+            treeNode3.Text = "ごみ箱 (0)";
+            treeNode4.Name = "rootMail";
+            treeNode4.Tag = "MailBoxRoot";
+            treeNode4.Text = "メールボックス";
             this.treeMailBoxFolder.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode8});
+            treeNode4});
             this.treeMailBoxFolder.SelectedImageIndex = 0;
             this.treeMailBoxFolder.Size = new System.Drawing.Size(156, 484);
             this.treeMailBoxFolder.TabIndex = 0;
